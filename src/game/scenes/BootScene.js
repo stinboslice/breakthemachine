@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { loadAllAssets } from "../systems/AssetManifest.js";
+import { DataStore } from "../systems/DataStore.js";
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -11,6 +12,13 @@ export class BootScene extends Phaser.Scene {
   }
 
   create() {
+    // 🔹 INIT DATA SYSTEM
+    this.dataStore = new DataStore(this);
+    this.dataStore.loadAll();
+
+    console.log("Loaded classes:", this.dataStore.data.classes);
+
+    // 🔹 BASIC VISUAL CONFIRMATION
     const width = this.scale.width;
     const height = this.scale.height;
 
@@ -25,7 +33,7 @@ export class BootScene extends Phaser.Scene {
       strokeThickness: 6
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, height / 2 + 64, "Boot scene loaded", {
+    this.add.text(width / 2, height / 2 + 64, "Boot + Data Loaded", {
       fontFamily: "Georgia",
       fontSize: "22px",
       color: "#b9a66a",
