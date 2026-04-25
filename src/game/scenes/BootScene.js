@@ -12,10 +12,12 @@ export class BootScene extends Phaser.Scene {
   }
 
   create() {
-    this.dataStore = new DataStore(this);
-    this.dataStore.loadAll();
+    const dataStore = new DataStore(this);
+    dataStore.loadAll();
 
-    console.log("Loaded classes:", this.dataStore.data.classes);
+    this.registry.set("dataStore", dataStore);
+
+    console.log("Loaded classes:", dataStore.data.classes);
 
     const width = this.scale.width;
     const height = this.scale.height;
@@ -38,9 +40,9 @@ export class BootScene extends Phaser.Scene {
       stroke: "#000000",
       strokeThickness: 4
     }).setOrigin(0.5);
-    
+
     this.time.delayedCall(1000, () => {
-  this.scene.start("SetupScene");
-});
+      this.scene.start("SetupScene");
+    });
   }
 }
