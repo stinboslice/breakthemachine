@@ -4,7 +4,8 @@ export const IMAGE_ASSETS = [
   ["player_vanguard_idle", "assets/sprites/player_vanguard_idle.png"],
   ["player_rogue_idle", "assets/sprites/player_rogue_idle.png"],
   ["player_berserker_idle", "assets/sprites/player_berserker_idle.png"],
-  // BACKGROUNDS
+  ["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
+    // BACKGROUNDS
   ["bg_cutscene_default", "assets/backgrounds/bg_cutscene_default.png"],
 
   ["bg_depth_1", "assets/backgrounds/bg_depth_1.png"],
