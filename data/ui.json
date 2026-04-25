@@ -1,0 +1,21 @@
+{
+  "topBarTitle": "EXTRACTION MACHINE",
+  "battleMenu": {
+    "lightAttack": "LIGHT",
+    "specialAttack": "SPECIAL",
+    "info": "INFO"
+  },
+  "extractPanel": {
+    "extract": "EXTRACT",
+    "continue": "CONTINUE"
+  },
+  "labels": {
+    "class": "Class",
+    "weapon": "Weapon",
+    "weaponTier": "Weapon Tier",
+    "buffs": "Buffs",
+    "turnOrder": "TURN ORDER",
+    "battleLog": "BATTLE LOG",
+    "startRun": "START RUN"
+  }
+}
