@@ -33,16 +33,19 @@ export class BootScene extends Phaser.Scene {
       strokeThickness: 6
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, height / 2 + 64, "Boot + Data Loaded", {
-      fontFamily: "Georgia",
-      fontSize: "22px",
-      color: "#b9a66a",
-      stroke: "#000000",
-      strokeThickness: 4
-    }).setOrigin(0.5);
+    this.add.text(width / 2, height / 2 + 64, "Boot + Data Loaded | V2", {
+  fontFamily: "Georgia",
+  fontSize: "22px",
+  color: "#b9a66a",
+  stroke: "#000000",
+  strokeThickness: 4
+}).setOrigin(0.5);
 
-    this.time.delayedCall(1000, () => {
-      this.scene.start("SetupScene");
-    });
+this.time.addEvent({
+  delay: 800,
+  callback: () => {
+    this.scene.start("SetupScene");
+  }
+});
   }
 }
