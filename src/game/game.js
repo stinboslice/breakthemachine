@@ -4,7 +4,7 @@ import { SetupScene } from "./scenes/SetupScene.js";
 import { BattleScene } from "./scenes/BattleScene.js";
 
 export function createGame() {
-  const config = {
+  return new Phaser.Game({
     type: Phaser.AUTO,
     parent: "game-root",
     width: 1280,
@@ -17,7 +17,5 @@ export function createGame() {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH
     }
-  };
-
-  return new Phaser.Game(config);
+  });
 }
