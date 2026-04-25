@@ -7,62 +7,57 @@ function getPlayerSpriteBase(classId) {
   return "player_rogue";
 }
 
-function makeSpriteKey(base, frame) {
-  return `${base}_${frame}`;
-}
-
 export class BattleScene extends Phaser.Scene {
   constructor() {
     super("BattleScene");
-
-    this.bg = null;
-    this.player = null;
-    this.enemySprites = {};
-    this.enemyText = {};
   }
 
   create() {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    this.bg = this.add.image(width / 2, height / 2, "bg_depth_1");
-    this.bg.setDisplaySize(width, height);
+    const dataStore = this.registry.get("dataStore");
+    const selectedClassId = this.registry.get("selectedClassId") || "rogue";
 
-    this.player = this.add.image(width * 0.78, height * 0.84, "player_rogue_idle");
+    const enemy = dataStore?.data?.enemies?.find(e => e.id === "level1_light_enemy");
+
+    this.add.image(width / 2, height / 2, "bg_depth_1")
+      .setDisplaySize(width, height);
+
+    const playerBase = getPlayerSpriteBase(selectedClassId);
+
+    this.player = this.add.image(width * 0.75, height * 0.82, `${playerBase}_idle`);
     this.player.setOrigin(0.5, 1);
     this.player.setScale(2);
 
-    this.add.text(width / 2, 48, "Battle Scene Loaded", {
+    if (enemy) {
+      this.enemy = this.add.image(width * 0.28, height * 0.82, `${enemy.spritePrefix}_idle`);
+      this.enemy.setOrigin(0.5, 1);
+      this.enemy.setScale(1.7);
+
+      this.add.text(width * 0.28, height * 0.18, enemy.name, {
+        fontFamily: "Georgia",
+        fontSize: "26px",
+        color: "#f4e7c1",
+        stroke: "#000000",
+        strokeThickness: 5
+      }).setOrigin(0.5);
+
+      this.add.text(width * 0.28, height * 0.24, `HP ${enemy.hp}`, {
+        fontFamily: "Georgia",
+        fontSize: "18px",
+        color: "#c9b56d",
+        stroke: "#000000",
+        strokeThickness: 4
+      }).setOrigin(0.5);
+    }
+
+    this.add.text(width / 2, 48, "LEVEL 1  WAVE 1", {
       fontFamily: "Georgia",
       fontSize: "28px",
       color: "#f4e7c1",
       stroke: "#000000",
       strokeThickness: 5
     }).setOrigin(0.5);
-
-    this.scale.on("resize", this.handleResize, this);
-  }
-
-  handleResize(gameSize) {
-    const width = gameSize.width;
-    const height = gameSize.height;
-
-    if (this.bg) {
-      this.bg.setPosition(width / 2, height / 2);
-      this.bg.setDisplaySize(width, height);
-    }
-
-    if (this.player) {
-      this.player.setPosition(width * 0.78, height * 0.84);
-    }
-  }
-
-  setPlayerFrame(classId, frame) {
-    const base = getPlayerSpriteBase(classId);
-    const key = makeSpriteKey(base, frame);
-
-    if (this.player && this.textures.exists(key)) {
-      this.player.setTexture(key);
-    }
   }
 }
