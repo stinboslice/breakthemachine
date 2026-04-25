@@ -1,1 +1,5 @@
-a
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  base: "/breakthemachine/"
+});
