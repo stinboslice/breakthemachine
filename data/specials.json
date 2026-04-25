@@ -1,0 +1,23 @@
+[
+  {
+    "classId": "vanguard",
+    "name": "Crushing Blow",
+    "multiplier": 1.8,
+    "usesPerLevel": 3,
+    "description": "A heavy single target strike with high burst damage."
+  },
+  {
+    "classId": "rogue",
+    "name": "Phantom Flurry",
+    "multiplier": 1.6,
+    "usesPerLevel": 3,
+    "description": "A rapid precision strike built for burst and momentum."
+  },
+  {
+    "classId": "berserker",
+    "name": "Ruin Splitter",
+    "multiplier": 2.0,
+    "usesPerLevel": 3,
+    "description": "A brutal all in strike that hits hardest of all classes."
+  }
+]
