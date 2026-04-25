@@ -10,6 +10,16 @@ export class SetupScene extends Phaser.Scene {
     const height = this.scale.height;
 
     const dataStore = this.registry.get("dataStore");
+
+    if (!dataStore || !dataStore.data || !dataStore.data.classes) {
+      this.add.text(width / 2, height / 2, "DATA STORE NOT FOUND", {
+        fontFamily: "Georgia",
+        fontSize: "32px",
+        color: "#ff4444"
+      }).setOrigin(0.5);
+      return;
+    }
+
     const classes = dataStore.data.classes;
 
     this.add.image(width / 2, height / 2, "bg_cutscene_default")
@@ -26,7 +36,6 @@ export class SetupScene extends Phaser.Scene {
     classes.forEach((cls, index) => {
       const x = width * 0.25 + index * width * 0.25;
       const y = height * 0.48;
-
       const spriteKey = `player_${cls.id}_idle`;
 
       this.add.image(x, y, spriteKey)
@@ -34,7 +43,7 @@ export class SetupScene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true })
         .on("pointerdown", () => {
           this.registry.set("selectedClassId", cls.id);
-          console.log("Selected class:", cls.id);
+          this.scene.start("BattleScene");
         });
 
       this.add.text(x, y + 150, cls.name, {
