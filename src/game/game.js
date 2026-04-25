@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene.js";
+import { BattleScene } from "./scenes/BattleScene.js";
 
 export function createGame() {
   const config = {
@@ -10,7 +11,7 @@ export function createGame() {
     backgroundColor: "#08080c",
     pixelArt: true,
     roundPixels: true,
-    scene: [BootScene],
+    scene: [BootScene, BattleScene],
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH
