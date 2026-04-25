@@ -38,5 +38,9 @@ export class BootScene extends Phaser.Scene {
       stroke: "#000000",
       strokeThickness: 4
     }).setOrigin(0.5);
+    
+    this.time.delayedCall(1000, () => {
+  this.scene.start("SetupScene");
+});
   }
 }
