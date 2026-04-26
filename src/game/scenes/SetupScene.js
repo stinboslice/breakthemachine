@@ -8,22 +8,46 @@ export class SetupScene extends Phaser.Scene {
     this.loadoutContainer = null;
   }
 
+  getDataStore() {
+    let dataStore = this.registry.get("dataStore");
+
+    if (dataStore?.data?.classes?.length) {
+      return dataStore;
+    }
+
+    dataStore = {
+      data: {
+        classes: this.cache.json.get("classes") || [],
+        weapons: this.cache.json.get("weapons") || [],
+        buffs: this.cache.json.get("buffs") || [],
+        enemies: this.cache.json.get("enemies") || [],
+        levels: this.cache.json.get("levels") || [],
+        dialogue: this.cache.json.get("dialogue") || [],
+        specials: this.cache.json.get("specials") || [],
+        hallways: this.cache.json.get("hallways") || [],
+        roomRewards: this.cache.json.get("room_rewards") || null
+      }
+    };
+
+    this.registry.set("dataStore", dataStore);
+    return dataStore;
+  }
+
   create() {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    const dataStore = this.registry.get("dataStore");
+    const dataStore = this.getDataStore();
+    const classes = dataStore.data.classes;
 
-    if (!dataStore || !dataStore.data || !dataStore.data.classes) {
-      this.add.text(width / 2, height / 2, "DATA STORE NOT FOUND", {
+    if (!classes || classes.length === 0) {
+      this.add.text(width / 2, height / 2, "CLASSES JSON NOT LOADED", {
         fontFamily: "Georgia",
         fontSize: "32px",
         color: "#ff4444"
       }).setOrigin(0.5);
       return;
     }
-
-    const classes = dataStore.data.classes;
 
     this.add.image(width / 2, height / 2, "bg_cutscene_default")
       .setDisplaySize(width, height);
@@ -118,12 +142,6 @@ export class SetupScene extends Phaser.Scene {
       this.scene.start("BattleScene");
     });
 
-    this.loadoutContainer.add([
-      panel,
-      title,
-      classText,
-      statText,
-      startButton
-    ]);
+    this.loadoutContainer.add([panel, title, classText, statText, startButton]);
   }
 }
