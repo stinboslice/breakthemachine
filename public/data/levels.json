@@ -1,0 +1,32 @@
+[
+  {
+    "level": 1,
+    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
+    "hallwaySets": 2,
+    "bossDoor": true
+  },
+  {
+    "level": 2,
+    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
+    "hallwaySets": 2,
+    "bossDoor": true
+  },
+  {
+    "level": 3,
+    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
+    "hallwaySets": 2,
+    "bossDoor": true
+  },
+  {
+    "level": 4,
+    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
+    "hallwaySets": 2,
+    "bossDoor": true
+  },
+  {
+    "level": 5,
+    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
+    "hallwaySets": 2,
+    "bossDoor": true
+  }
+]
