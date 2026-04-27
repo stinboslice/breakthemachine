@@ -10,15 +10,19 @@ const BUFF_ICON_KEYS = {
 };
 
 function fitImage(image, maxWidth, maxHeight) {
-  const scale = Math.min(maxWidth / image.width, maxHeight / image.height);
+  const sourceWidth = image.width || 1;
+  const sourceHeight = image.height || 1;
+  const scale = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight);
   image.setScale(scale);
 }
 
 export class SetupScene extends Phaser.Scene {
   constructor() {
     super("SetupScene");
-    this.selectedClass = null;
-    this.selectedPanel = null;
+    this.selectedClassId = null;
+    this.selectedBuffs = [];
+    this.selectionText = null;
+    this.continueButton = null;
   }
 
   getDataStore() {
@@ -52,6 +56,8 @@ export class SetupScene extends Phaser.Scene {
     const classes = dataStore.data.classes;
     const buffs = dataStore.data.buffs;
 
+    this.selectedBuffs = [];
+
     if (!classes.length) {
       this.add.text(width / 2, height / 2, "CLASSES JSON NOT LOADED", {
         fontFamily: "Georgia",
@@ -64,7 +70,7 @@ export class SetupScene extends Phaser.Scene {
     this.add.image(width / 2, height / 2, "bg_cutscene_default")
       .setDisplaySize(width, height);
 
-    this.add.text(width / 2, 56, "CHOOSE YOUR ELF", {
+    this.add.text(width / 2, 48, "CHOOSE YOUR ELF", {
       fontFamily: "Georgia",
       fontSize: "38px",
       color: "#f4e7c1",
@@ -72,75 +78,96 @@ export class SetupScene extends Phaser.Scene {
       strokeThickness: 6
     }).setOrigin(0.5);
 
+    this.drawClassCards(classes);
+    this.drawBuffShelf(buffs);
+    this.drawBottomStatus();
+  }
+
+  drawClassCards(classes) {
+    const width = this.scale.width;
+    const height = this.scale.height;
+
     classes.forEach((cls, index) => {
       const x = width * 0.25 + index * width * 0.25;
-      const y = height * 0.33;
-      const spriteKey = `player_${cls.id}_idle`;
+      const y = height * 0.35;
 
-      const sprite = this.add.image(x, y, spriteKey)
+      const panel = this.add.image(x, y, "ui_class_panel")
         .setInteractive({ useHandCursor: true });
 
-      fitImage(sprite, 180, 210);
+      fitImage(panel, 235, 310);
 
-      sprite.on("pointerdown", () => {
-        this.registry.set("selectedClassId", cls.id);
-        this.selectedClass = cls.id;
-        this.showLoadoutPanel(cls);
-      });
+      const spriteKey = `player_${cls.id}_idle`;
+      const sprite = this.add.image(x, y + 38, spriteKey)
+        .setInteractive({ useHandCursor: true });
 
-      this.add.text(x, y + 132, cls.name, {
+      fitImage(sprite, 118, 170);
+
+      const name = this.add.text(x, y + 142, cls.name, {
         fontFamily: "Georgia",
-        fontSize: "25px",
+        fontSize: "22px",
         color: "#f4e7c1",
         stroke: "#000000",
         strokeThickness: 4
       }).setOrigin(0.5);
 
-      this.add.text(x, y + 162, `HP ${cls.hp}  ATK ${cls.attackMultiplier}  SPD ${cls.speed}`, {
+      const stats = this.add.text(x, y + 168, `HP ${cls.hp}  ATK ${cls.attackMultiplier}  SPD ${cls.speed}`, {
         fontFamily: "Georgia",
-        fontSize: "15px",
+        fontSize: "13px",
         color: "#c9b56d",
         stroke: "#000000",
         strokeThickness: 3
       }).setOrigin(0.5);
-    });
 
-    this.drawBuffShelf(buffs);
+      const chooseClass = () => {
+        this.selectedClassId = cls.id;
+        this.registry.set("selectedClassId", cls.id);
+        this.updateBottomStatus(cls);
+      };
+
+      panel.on("pointerdown", chooseClass);
+      sprite.on("pointerdown", chooseClass);
+      name.setInteractive({ useHandCursor: true }).on("pointerdown", chooseClass);
+      stats.setInteractive({ useHandCursor: true }).on("pointerdown", chooseClass);
+    });
   }
 
   drawBuffShelf(buffs) {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    this.add.rectangle(width / 2, height * 0.76, width * 0.88, 165, 0x050509, 0.74)
-      .setStrokeStyle(2, 0xc9b56d);
+    const shelf = this.add.image(width / 2, height * 0.74, "ui_buff_shelf");
+    fitImage(shelf, 760, 180);
 
-    this.add.text(width / 2, height * 0.66, "BUFF SHELF", {
+    this.add.text(width / 2, height * 0.625, "BUFF SHELF", {
       fontFamily: "Georgia",
-      fontSize: "25px",
+      fontSize: "24px",
       color: "#f4e7c1",
       stroke: "#000000",
       strokeThickness: 5
     }).setOrigin(0.5);
 
     buffs.forEach((buff, index) => {
-      const spacing = 128;
+      const spacing = 116;
       const startX = width / 2 - ((buffs.length - 1) * spacing) / 2;
       const x = startX + index * spacing;
-      const y = height * 0.76;
+      const y = height * 0.735;
 
       const iconKey = BUFF_ICON_KEYS[buff.id];
 
       if (this.textures.exists(iconKey)) {
-        const icon = this.add.image(x, y - 14, iconKey)
+        const icon = this.add.image(x, y - 20, iconKey)
           .setInteractive({ useHandCursor: true });
 
-        fitImage(icon, 70, 70);
+        fitImage(icon, 62, 62);
+
+        icon.on("pointerdown", () => {
+          this.toggleBuff(buff);
+        });
       }
 
-      this.add.text(x, y + 52, buff.name, {
+      this.add.text(x, y + 44, buff.name, {
         fontFamily: "Georgia",
-        fontSize: "14px",
+        fontSize: "13px",
         color: "#f4e7c1",
         stroke: "#000000",
         strokeThickness: 3
@@ -148,39 +175,54 @@ export class SetupScene extends Phaser.Scene {
     });
   }
 
-  showLoadoutPanel(cls) {
+  toggleBuff(buff) {
+    const exists = this.selectedBuffs.find(item => item.id === buff.id);
+
+    if (exists) {
+      this.selectedBuffs = this.selectedBuffs.filter(item => item.id !== buff.id);
+    } else if (this.selectedBuffs.length < 3) {
+      this.selectedBuffs.push({ id: buff.id, tier: 1 });
+    }
+
+    this.registry.set("selectedBuffs", this.selectedBuffs);
+    this.refreshSelectionText();
+  }
+
+  drawBottomStatus() {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    if (this.selectedPanel) this.selectedPanel.destroy(true);
-
-    this.selectedPanel = this.add.container(0, 0);
-
-    const panel = this.add.rectangle(width / 2, height * 0.54, 520, 96, 0x050509, 0.86)
-      .setStrokeStyle(2, 0xc9b56d);
-
-    const text = this.add.text(width / 2, height * 0.515, `${cls.name} selected`, {
+    this.selectionText = this.add.text(width / 2, height * 0.91, "Select an elf. Choose up to 3 buffs.", {
       fontFamily: "Georgia",
-      fontSize: "23px",
+      fontSize: "20px",
       color: "#f4e7c1",
       stroke: "#000000",
       strokeThickness: 4
     }).setOrigin(0.5);
 
-    const button = this.add.text(width / 2, height * 0.57, "INITIATE SIMULATION", {
-      fontFamily: "Georgia",
-      fontSize: "19px",
-      color: "#ffffff",
-      backgroundColor: "#8b0000",
-      padding: { x: 22, y: 8 }
-    })
-      .setOrigin(0.5)
+    this.continueButton = this.add.image(width / 2, height * 0.965, "button_continue")
       .setInteractive({ useHandCursor: true });
 
-    button.on("pointerdown", () => {
+    fitImage(this.continueButton, 260, 58);
+
+    this.continueButton.on("pointerdown", () => {
+      if (!this.selectedClassId) return;
       this.scene.start("BattleScene");
     });
+  }
 
-    this.selectedPanel.add([panel, text, button]);
+  updateBottomStatus(cls) {
+    this.selectionText.setText(`${cls.name} selected. Buffs ${this.selectedBuffs.length} / 3.`);
+  }
+
+  refreshSelectionText() {
+    const dataStore = this.getDataStore();
+    const cls = dataStore.data.classes.find(item => item.id === this.selectedClassId);
+
+    if (cls) {
+      this.updateBottomStatus(cls);
+    } else {
+      this.selectionText.setText(`Select an elf. Buffs ${this.selectedBuffs.length} / 3.`);
+    }
   }
 }
