@@ -13,6 +13,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   create() {
+    alert("BOOT FORCE VERSION LOADED");
+    
     const dataStore = new DataStore(this);
     dataStore.loadAll();
 
