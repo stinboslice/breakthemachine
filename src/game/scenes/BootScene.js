@@ -16,8 +16,7 @@ export class BootScene extends Phaser.Scene {
     dataStore.loadAll();
 
     this.registry.set("dataStore", dataStore);
-
-    console.log("Loaded classes:", dataStore.data.classes);
+    window.ELF_DATASTORE = dataStore;
 
     const width = this.scale.width;
     const height = this.scale.height;
@@ -33,19 +32,20 @@ export class BootScene extends Phaser.Scene {
       strokeThickness: 6
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, height / 2 + 64, "Boot + Data Loaded | V2", {
-  fontFamily: "Georgia",
-  fontSize: "22px",
-  color: "#b9a66a",
-  stroke: "#000000",
-  strokeThickness: 4
-}).setOrigin(0.5);
+    this.add.text(width / 2, height / 2 + 64, "Tap to begin", {
+      fontFamily: "Georgia",
+      fontSize: "22px",
+      color: "#b9a66a",
+      stroke: "#000000",
+      strokeThickness: 4
+    }).setOrigin(0.5);
 
-this.time.addEvent({
-  delay: 800,
-  callback: () => {
-    this.scene.start("SetupScene");
-  }
-});
+    this.input.once("pointerdown", () => {
+      this.scene.start("SetupScene");
+    });
+
+    this.time.delayedCall(1200, () => {
+      this.scene.start("SetupScene");
+    });
   }
 }
