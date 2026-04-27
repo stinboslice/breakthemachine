@@ -25,7 +25,37 @@ export const IMAGE_ASSETS = [
   ["bg_boss_door_level3", "assets/backgrounds/bg_boss_door_level3.png"],
   ["bg_boss_door_level4", "assets/backgrounds/bg_boss_door_level4.png"],
   ["bg_boss_door_level5", "assets/backgrounds/bg_boss_door_level5.png"],
+// UI PANELS
+["ui_class_panel", "assets/ui/ui_class_panel.png"],
+["ui_buff_shelf", "assets/ui/ui_buff_shelf.png"],
+["ui_buff_detail_panel", "assets/ui/ui_buff_detail_panel.png"],
+["ui_room_result_panel", "assets/ui/ui_room_result_panel.png"],
+["ui_room_reward_panel", "assets/ui/ui_room_reward_panel.png"],
 
+// UI BUTTONS
+["button_buy", "assets/ui/button_buy.png"],
+["button_continue", "assets/ui/button_continue.png"],
+["button_leave", "assets/ui/button_leave.png"],
+["button_scan", "assets/ui/button_scan.png"],
+
+["detail_panel_button_close", "assets/ui/detail_panel_button_close.png"],
+["detail_panel_button_select", "assets/ui/detail_panel_button_select.png"],
+["detail_panel_button_update", "assets/ui/detail_panel_button_update.png"],
+["detail_panel_button_t1", "assets/ui/detail_panel_button_t1.png"],
+["detail_panel_button_t2", "assets/ui/detail_panel_button_t2.png"],
+["detail_panel_button_t3", "assets/ui/detail_panel_button_t3.png"],
+
+// HALLWAY UI
+["ui_hallway_button_left", "assets/ui/ui_hallway_button_left.png"],
+["ui_hallway_button_center", "assets/ui/ui_hallway_button_center.png"],
+["ui_hallway_button_right", "assets/ui/ui_hallway_button_right.png"],
+
+// ROOM LABELS
+["label_corrupt", "assets/ui/label_corrupt.png"],
+["label_enemy", "assets/ui/label_enemy.png"],
+["label_safe", "assets/ui/label_safe.png"],
+["label_trap", "assets/ui/label_trap.png"],
+["label_treasure", "assets/ui/label_treasure.png"],
   // EFFECTS
   ["fx_arc_purple", "assets/effects/fx_arc_purple.png"],
   ["fx_burst_purple", "assets/effects/fx_burst_purple.png"],
