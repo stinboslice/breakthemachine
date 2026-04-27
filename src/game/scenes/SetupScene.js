@@ -11,8 +11,8 @@ const LAUNCH_BUFFS = [
   { id: "damage_boost", name: "Damage Boost", description: "Increases weapon damage dealt during the run." },
   { id: "speed_boost", name: "Speed Boost", description: "Improves initiative and action speed in combat." },
   { id: "crit_boost", name: "Crit Boost", description: "Raises critical strike chance for stronger bursts." },
-  { id: "block", name: "Block", description: "Grants a chance to negate incoming attacks." },
-  { id: "double_strike", name: "Double Strike", description: "Adds a chance to follow up with an extra attack." }
+  { id: "block", name: "Block", description: "Chance to negate incoming attacks." },
+  { id: "double_strike", name: "Double Strike", description: "Chance to perform an extra attack." }
 ];
 
 const BUFF_ICON_KEYS = {
@@ -26,19 +26,30 @@ const BUFF_ICON_KEYS = {
 
 function fitImage(scene, image, maxWidth, maxHeight) {
   const frame = scene.textures.getFrame(image.texture.key);
-  const w = frame?.width || image.width || 1;
-  const h = frame?.height || image.height || 1;
+  const w = frame?.width || 1;
+  const h = frame?.height || 1;
   image.setScale(Math.min(maxWidth / w, maxHeight / h));
 }
 
 export class SetupScene extends Phaser.Scene {
   constructor() {
     super("SetupScene");
+
     this.selectedClass = null;
     this.selectedBuffs = [];
+    this.activeTier = 1;
+
     this.objects = [];
     this.detailObjects = [];
-    this.activeTier = 1;
+  }
+
+  // 🔥 SAFETY LOADER (prevents missing assets on GitHub Pages)
+  preload() {
+    Object.values(BUFF_ICON_KEYS).forEach(key => {
+      if (!this.textures.exists(key)) {
+        this.load.image(key, `assets/icons/${key}.png`);
+      }
+    });
   }
 
   create() {
@@ -46,214 +57,200 @@ export class SetupScene extends Phaser.Scene {
     this.showClassScreen();
   }
 
+  // ---------- UTIL ----------
   addTracked(obj) {
     this.objects.push(obj);
     return obj;
   }
 
   clearTracked() {
-    this.objects.forEach(obj => obj.destroy());
+    this.objects.forEach(o => o.destroy());
     this.objects = [];
     this.closeBuffDetail();
   }
 
+  // ---------- CLASS SCREEN ----------
   showClassScreen() {
     this.clearTracked();
 
-    const width = this.scale.width;
-    const height = this.scale.height;
+    const w = this.scale.width;
+    const h = this.scale.height;
 
-    this.addTracked(this.add.image(width / 2, height / 2, "bg_cutscene_default").setDisplaySize(width, height));
+    this.addTracked(this.add.image(w/2, h/2, "bg_cutscene_default").setDisplaySize(w,h));
 
-    this.addTracked(this.add.text(width / 2, 46, "CHOOSE YOUR ELF", {
+    this.addTracked(this.add.text(w/2, 50, "CHOOSE YOUR ELF", {
       fontFamily: "Georgia",
       fontSize: "38px",
       color: "#f4e7c1",
-      stroke: "#000000",
+      stroke: "#000",
       strokeThickness: 6
     }).setOrigin(0.5));
 
-    LAUNCH_CLASSES.forEach((cls, index) => {
-      const x = width * 0.25 + index * width * 0.25;
-      const y = height * 0.43;
+    LAUNCH_CLASSES.forEach((cls, i) => {
+      const x = w * 0.25 + i * w * 0.25;
+      const y = h * 0.45;
 
-      const panel = this.addTracked(this.add.image(x, y, "ui_class_panel").setInteractive({ useHandCursor: true }));
-      fitImage(this, panel, 285, 390);
+      const panel = this.addTracked(this.add.image(x, y, "ui_class_panel").setInteractive());
+      fitImage(this, panel, 280, 400);
 
-      const sprite = this.addTracked(this.add.image(x, y + 58, `player_${cls.id}_idle`).setInteractive({ useHandCursor: true }));
-      fitImage(this, sprite, 170, 235);
+      const sprite = this.addTracked(this.add.image(x, y + 50, `player_${cls.id}_idle`).setInteractive());
+      fitImage(this, sprite, 180, 260);
 
-      this.addTracked(this.add.text(x, y - 172, cls.characterName, {
-        fontFamily: "Georgia",
-        fontSize: "23px",
+      this.addTracked(this.add.text(x, y - 170, cls.characterName, {
+        fontSize: "22px",
         color: "#f4e7c1",
-        stroke: "#000000",
+        stroke: "#000",
         strokeThickness: 4
       }).setOrigin(0.5));
 
-      this.addTracked(this.add.text(x, y + 182, cls.className, {
-        fontFamily: "Georgia",
-        fontSize: "21px",
-        color: "#f4e7c1",
-        stroke: "#000000",
-        strokeThickness: 4
+      this.addTracked(this.add.text(x, y + 180, cls.className, {
+        fontSize: "20px",
+        color: "#f4e7c1"
       }).setOrigin(0.5));
 
-      this.addTracked(this.add.text(x, y + 207, `HP ${cls.hp} | ATK ${cls.attackMultiplier} | SPD ${cls.speed}`, {
-        fontFamily: "Georgia",
-        fontSize: "13px",
-        color: "#c9b56d",
-        stroke: "#000000",
-        strokeThickness: 3
-      }).setOrigin(0.5));
+      this.addTracked(this.add.text(x, y + 205,
+        `HP ${cls.hp} | ATK ${cls.attackMultiplier} | SPD ${cls.speed}`,
+        { fontSize: "13px", color: "#c9b56d" }
+      ).setOrigin(0.5));
 
-      const selectClass = () => {
+      const select = () => {
         this.selectedClass = cls;
-        this.registry.set("selectedClassId", cls.id);
         this.showBuffScreen();
       };
 
-      panel.on("pointerdown", selectClass);
-      sprite.on("pointerdown", selectClass);
+      panel.on("pointerdown", select);
+      sprite.on("pointerdown", select);
     });
   }
 
+  // ---------- BUFF SCREEN ----------
   showBuffScreen() {
     this.clearTracked();
 
-    const width = this.scale.width;
-    const height = this.scale.height;
+    const w = this.scale.width;
+    const h = this.scale.height;
 
-    this.addTracked(this.add.image(width / 2, height / 2, "bg_cutscene_default").setDisplaySize(width, height));
+    this.addTracked(this.add.image(w/2, h/2, "bg_cutscene_default").setDisplaySize(w,h));
 
-    this.addTracked(this.add.text(width / 2, 42, `${this.selectedClass.characterName} selected`, {
-      fontFamily: "Georgia",
+    this.addTracked(this.add.text(w/2, 50, `${this.selectedClass.characterName} selected`, {
       fontSize: "32px",
       color: "#f4e7c1",
-      stroke: "#000000",
+      stroke: "#000",
       strokeThickness: 6
     }).setOrigin(0.5));
 
-    const shelf = this.addTracked(this.add.image(width / 2, height * 0.43, "ui_buff_shelf"));
-    fitImage(this, shelf, 930, 360);
+    const shelf = this.addTracked(this.add.image(w/2, h*0.45, "ui_buff_shelf"));
+    fitImage(this, shelf, 1000, 420);
 
     const positions = [
-      [-280, -82], [0, -82], [280, -82],
-      [-280, 92], [0, 92], [280, 92]
+      [-300,-100],[0,-100],[300,-100],
+      [-300,100],[0,100],[300,100]
     ];
 
-    this.buffs.forEach((buff, index) => {
-      const [ox, oy] = positions[index];
-      const x = width / 2 + ox;
-      const y = height * 0.43 + oy;
-      const key = BUFF_ICON_KEYS[buff.id];
+    this.buffs.forEach((buff, i) => {
+      const [ox, oy] = positions[i];
+      const icon = this.addTracked(
+        this.add.image(w/2 + ox, h*0.45 + oy, BUFF_ICON_KEYS[buff.id])
+          .setInteractive({ useHandCursor: true })
+      );
 
-      const icon = this.addTracked(this.add.image(x, y, key).setInteractive({ useHandCursor: true }));
-      fitImage(this, icon, 105, 105);
+      fitImage(this, icon, 110,110);
 
       icon.on("pointerdown", () => this.openBuffDetail(buff));
     });
 
-    this.statusText = this.addTracked(this.add.text(width / 2, height * 0.78, "Choose up to 3 buffs", {
-      fontFamily: "Georgia",
-      fontSize: "20px",
-      color: "#f4e7c1",
-      stroke: "#000000",
-      strokeThickness: 4
-    }).setOrigin(0.5));
+    this.statusText = this.addTracked(
+      this.add.text(w/2, h*0.80, "0 / 3 buffs selected", {
+        fontSize: "20px",
+        color: "#f4e7c1"
+      }).setOrigin(0.5)
+    );
 
-    const continueButton = this.addTracked(this.add.image(width / 2, height * 0.89, "button_continue").setInteractive({ useHandCursor: true }));
-    fitImage(this, continueButton, 280, 78);
+    const btn = this.addTracked(
+      this.add.image(w/2, h*0.90, "button_continue").setInteractive()
+    );
+    fitImage(this, btn, 260, 70);
 
-    continueButton.on("pointerdown", () => {
+    btn.on("pointerdown", () => {
       this.registry.set("selectedBuffs", this.selectedBuffs);
       this.scene.start("BattleScene");
     });
   }
 
+  // ---------- DETAIL PANEL ----------
   openBuffDetail(buff) {
     this.closeBuffDetail();
     this.activeTier = 1;
 
-    const width = this.scale.width;
-    const height = this.scale.height;
-    const iconKey = BUFF_ICON_KEYS[buff.id];
+    const w = this.scale.width;
+    const h = this.scale.height;
 
-    const addDetail = obj => {
-      this.detailObjects.push(obj);
-      return obj;
-    };
+    const add = o => (this.detailObjects.push(o), o);
 
-    const panel = addDetail(this.add.image(width / 2, height / 2, "ui_buff_detail_panel"));
-    fitImage(this, panel, 520, 670);
+    const panel = add(this.add.image(w/2, h/2, "ui_buff_detail_panel"));
+    fitImage(this, panel, 520, 700);
 
-    addDetail(this.add.text(width / 2, height * 0.17, buff.name, {
-      fontFamily: "Georgia",
+    add(this.add.text(w/2, h*0.18, buff.name, {
       fontSize: "28px",
-      color: "#f4e7c1",
-      stroke: "#000000",
-      strokeThickness: 5
+      color: "#f4e7c1"
     }).setOrigin(0.5));
 
-    const icon = addDetail(this.add.image(width / 2, height * 0.33, iconKey));
-    fitImage(this, icon, 135, 135);
+    const icon = add(this.add.image(w/2, h*0.33, BUFF_ICON_KEYS[buff.id]));
+    fitImage(this, icon, 130,130);
 
-    addDetail(this.add.text(width / 2, height * 0.47, buff.description, {
-      fontFamily: "Georgia",
+    add(this.add.text(w/2, h*0.47, buff.description, {
       fontSize: "16px",
-      color: "#ffffff",
-      wordWrap: { width: 350 },
+      wordWrap: { width: 360 },
       align: "center"
     }).setOrigin(0.5));
 
-    const tierText = addDetail(this.add.text(width / 2, height * 0.665, "Tier 1 selected | Burn 1", {
-      fontFamily: "Georgia",
-      fontSize: "17px",
-      color: "#f4e7c1",
-      stroke: "#000000",
-      strokeThickness: 3
+    const tierText = add(this.add.text(w/2, h*0.66, "Tier 1 selected", {
+      fontSize: "18px",
+      color: "#f4e7c1"
     }).setOrigin(0.5));
 
-    [1, 2, 3].forEach((tier, index) => {
-      const tierButton = addDetail(this.add.image(width / 2 - 145 + index * 145, height * 0.565, `detail_panel_button_t${tier}`)
-        .setInteractive({ useHandCursor: true }));
-      fitImage(this, tierButton, 130, 58);
+    [1,2,3].forEach((t,i)=>{
+      const btn = add(
+        this.add.image(w/2 - 150 + i*150, h*0.57, `detail_panel_button_t${t}`)
+          .setInteractive()
+      );
+      fitImage(this, btn, 130,60);
 
-      tierButton.on("pointerdown", () => {
-        this.activeTier = tier;
-        tierText.setText(`Tier ${tier} selected | Burn ${tier}`);
+      btn.on("pointerdown", ()=>{
+        this.activeTier = t;
+        tierText.setText(`Tier ${t} selected`);
       });
     });
 
-    const alreadySelected = this.selectedBuffs.some(item => item.id === buff.id);
-    const selectKey = alreadySelected ? "detail_panel_button_update" : "detail_panel_button_select";
+    const exists = this.selectedBuffs.find(b=>b.id===buff.id);
+    const key = exists ? "detail_panel_button_update" : "detail_panel_button_select";
 
-    const selectButton = addDetail(this.add.image(width / 2 - 100, height * 0.80, selectKey)
-      .setInteractive({ useHandCursor: true }));
-    fitImage(this, selectButton, 165, 66);
+    const selectBtn = add(
+      this.add.image(w/2 - 110, h*0.82, key).setInteractive()
+    );
+    fitImage(this, selectBtn, 160,70);
 
-    selectButton.on("pointerdown", () => {
-      const exists = this.selectedBuffs.find(item => item.id === buff.id);
-
+    selectBtn.on("pointerdown", ()=>{
       if (exists) {
-        this.selectedBuffs = this.selectedBuffs.filter(item => item.id !== buff.id);
+        this.selectedBuffs = this.selectedBuffs.filter(b=>b.id!==buff.id);
       } else if (this.selectedBuffs.length < 3) {
         this.selectedBuffs.push({ id: buff.id, tier: this.activeTier });
       }
 
-      this.statusText.setText(`Buffs selected ${this.selectedBuffs.length} / 3`);
+      this.statusText.setText(`${this.selectedBuffs.length} / 3 buffs selected`);
       this.closeBuffDetail();
     });
 
-    const closeButton = addDetail(this.add.image(width / 2 + 100, height * 0.80, "detail_panel_button_close")
-      .setInteractive({ useHandCursor: true }));
-    fitImage(this, closeButton, 165, 66);
+    const closeBtn = add(
+      this.add.image(w/2 + 110, h*0.82, "detail_panel_button_close").setInteractive()
+    );
+    fitImage(this, closeBtn, 160,70);
 
-    closeButton.on("pointerdown", () => this.closeBuffDetail());
+    closeBtn.on("pointerdown", ()=>this.closeBuffDetail());
   }
 
   closeBuffDetail() {
-    this.detailObjects.forEach(obj => obj.destroy());
+    this.detailObjects.forEach(o=>o.destroy());
     this.detailObjects = [];
   }
 }
