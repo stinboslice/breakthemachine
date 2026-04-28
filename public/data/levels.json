@@ -1,32 +1,242 @@
 [
   {
     "level": 1,
-    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
-    "hallwaySets": 2,
-    "bossDoor": true
+    "rewardMultiplier": 1.0,
+    "waves": [
+      {
+        "type": "cutscene",
+        "dialogueId": "level1_launch_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level1_light_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level1_light_enemy",
+          "level1_light_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level1_light_enemy",
+          "level1_light_enemy",
+          "level1_light_enemy"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level1_miniboss_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level1_miniboss"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level1_miniboss_defeat"
+      }
+    ]
   },
   {
     "level": 2,
-    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
-    "hallwaySets": 2,
-    "bossDoor": true
+    "rewardMultiplier": 1.25,
+    "waves": [
+      {
+        "type": "cutscene",
+        "dialogueId": "level2_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level2_light_enemy",
+          "level2_light_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level2_light_enemy",
+          "level2_strong_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level2_light_enemy",
+          "level2_light_enemy",
+          "level2_strong_enemy"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level2_miniboss_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level2_miniboss"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level2_miniboss_defeat"
+      }
+    ]
   },
   {
     "level": 3,
-    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
-    "hallwaySets": 2,
-    "bossDoor": true
+    "rewardMultiplier": 1.5,
+    "waves": [
+      {
+        "type": "cutscene",
+        "dialogueId": "level3_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level3_light_enemy",
+          "level3_light_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level3_light_enemy",
+          "level3_strong_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level3_light_enemy",
+          "level3_light_enemy",
+          "level3_strong_enemy"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level3_miniboss_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level3_miniboss"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level3_miniboss_defeat"
+      }
+    ]
   },
   {
     "level": 4,
-    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
-    "hallwaySets": 2,
-    "bossDoor": true
+    "rewardMultiplier": 1.85,
+    "waves": [
+      {
+        "type": "cutscene",
+        "dialogueId": "level4_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level4_light_enemy",
+          "level4_light_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level4_light_enemy",
+          "level4_strong_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level4_light_enemy",
+          "level4_strong_enemy",
+          "level4_light_enemy"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level4_miniboss_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level4_miniboss_left",
+          "level4_miniboss_right"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level4_miniboss_defeat"
+      }
+    ]
   },
   {
     "level": 5,
-    "choicesPool": ["trap", "corrupt", "treasure", "safe", "enemy"],
-    "hallwaySets": 2,
-    "bossDoor": true
+    "rewardMultiplier": 2.5,
+    "waves": [
+      {
+        "type": "cutscene",
+        "dialogueId": "level5_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level5_light_enemy",
+          "level5_light_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level5_strong_enemy",
+          "level5_strong_enemy"
+        ]
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level5_light_enemy",
+          "level5_light_enemy",
+          "level5_strong_enemy"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level5_boss_intro"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level5_boss_phase1"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level5_boss_evolution"
+      },
+      {
+        "type": "battle",
+        "enemies": [
+          "level5_boss_phase2"
+        ]
+      },
+      {
+        "type": "cutscene",
+        "dialogueId": "level5_boss_destruction"
+      }
+    ]
   }
 ]
