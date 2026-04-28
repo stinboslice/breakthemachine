@@ -1,81 +1,23 @@
-{
-  "treasure": [
-    {
-      "id": "treasure_heal_small",
-      "name": "Patch Kit",
-      "icon": "assets/icons/icon_reward_heal.png",
-      "effectType": "heal_flat",
-      "value": 18,
-      "duration": "until_death",
-      "description": "Restore 18 HP immediately."
-    },
-    {
-      "id": "treasure_damage_minor",
-      "name": "War Sigil",
-      "icon": "assets/icons/icon_reward_damage.png",
-      "effectType": "temp_damage_mult",
-      "value": 1.12,
-      "duration": "until_death",
-      "description": "Gain 12 percent more damage until you die."
-    },
-    {
-      "id": "treasure_crit_minor",
-      "name": "Deadeye Rune",
-      "icon": "assets/icons/icon_reward_crit.png",
-      "effectType": "temp_crit_flat",
-      "value": 8,
-      "duration": "until_death",
-      "description": "Gain 8 percent crit chance until you die."
-    },
-    {
-      "id": "treasure_shield_once",
-      "name": "Guard Crest",
-      "icon": "assets/icons/icon_reward_shield.png",
-      "effectType": "temp_first_hit_block",
-      "value": 1,
-      "duration": "until_death",
-      "description": "Negate the first damaging hit until you die."
-    }
-  ],
-  "corrupt": [
-    {
-      "id": "corrupt_damage_power",
-      "name": "Black Core",
-      "icon": "assets/icons/icon_corrupt_power.png",
-      "effectType": "temp_damage_mult",
-      "value": 1.28,
-      "duration": "until_death",
-      "negativeType": "lose_hp_flat",
-      "negativeValue": 14,
-      "description": "Gain 28 percent more damage until you die. Lose 14 HP immediately."
-    },
-    {
-      "id": "corrupt_crit_power",
-      "name": "Hex Eye",
-      "icon": "assets/icons/icon_corrupt_crit.png",
-      "effectType": "temp_crit_flat",
-      "value": 18,
-      "duration": "until_death",
-      "negativeType": "take_more_trap_damage",
-      "negativeValue": 1,
-      "description": "Gain 18 percent crit chance until you die. Trap pressure increases."
-    }
-  ],
-  "scan": {
-    "burnCost": 1,
-    "usesPerLevel": 1,
-    "rogueFree": true,
-    "description": "Reveal one hallway outcome once per level."
+[
+  {
+    "classId": "vanguard",
+    "name": "Crushing Blow",
+    "multiplier": 1.8,
+    "usesPerLevel": 3,
+    "description": "A heavy single target strike with high burst damage."
   },
-  "trap": {
-    "baseDamageByLevel": {
-      "1": 8,
-      "2": 10,
-      "3": 12,
-      "4": 14,
-      "5": 16
-    },
-    "vanguardReductionMult": 0.65,
-    "description": "Trap rooms apply a minus 10 percent battle start health penalty until death."
+  {
+    "classId": "rogue",
+    "name": "Phantom Flurry",
+    "multiplier": 1.6,
+    "usesPerLevel": 3,
+    "description": "A rapid precision strike built for burst and momentum."
+  },
+  {
+    "classId": "berserker",
+    "name": "Ruin Splitter",
+    "multiplier": 2.0,
+    "usesPerLevel": 3,
+    "description": "A brutal all in strike that hits hardest of all classes."
   }
-}
+]
