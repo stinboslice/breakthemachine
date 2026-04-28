@@ -1,23 +1,21 @@
-[
-  {
-    "classId": "vanguard",
-    "name": "Crushing Blow",
-    "multiplier": 1.8,
-    "usesPerLevel": 3,
-    "description": "A heavy single target strike with high burst damage."
+{
+  "topBarTitle": "EXTRACTION MACHINE",
+  "battleMenu": {
+    "lightAttack": "LIGHT",
+    "specialAttack": "SPECIAL",
+    "info": "INFO"
   },
-  {
-    "classId": "rogue",
-    "name": "Phantom Flurry",
-    "multiplier": 1.6,
-    "usesPerLevel": 3,
-    "description": "A rapid precision strike built for burst and momentum."
+  "extractPanel": {
+    "extract": "EXTRACT",
+    "continue": "CONTINUE"
   },
-  {
-    "classId": "berserker",
-    "name": "Ruin Splitter",
-    "multiplier": 2.0,
-    "usesPerLevel": 3,
-    "description": "A brutal all in strike that hits hardest of all classes."
+  "labels": {
+    "class": "Class",
+    "weapon": "Weapon",
+    "weaponTier": "Weapon Tier",
+    "buffs": "Buffs",
+    "turnOrder": "TURN ORDER",
+    "battleLog": "BATTLE LOG",
+    "startRun": "START RUN"
   }
-]
+}
