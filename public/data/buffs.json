@@ -1,0 +1,32 @@
+[
+  {
+    "id": "hp_boost",
+    "name": "HP Boost",
+    "description": "Raises maximum health before entering the run."
+  },
+  {
+    "id": "damage_boost",
+    "name": "Damage Boost",
+    "description": "Increases weapon damage dealt during the run."
+  },
+  {
+    "id": "speed_boost",
+    "name": "Speed Boost",
+    "description": "Improves initiative and action speed in combat."
+  },
+  {
+    "id": "crit_boost",
+    "name": "Crit Boost",
+    "description": "Raises critical strike chance for stronger bursts."
+  },
+  {
+    "id": "block",
+    "name": "Block",
+    "description": "Grants a chance to negate incoming attacks."
+  },
+  {
+    "id": "double_strike",
+    "name": "Double Strike",
+    "description": "Adds a chance to follow up with an extra attack."
+  }
+]
