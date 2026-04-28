@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 
+import { buildRunState } from "../systems/RunBuilder.js";
+
 const LAUNCH_CLASSES = [
   { id: "vanguard", characterName: "Noah", className: "Vanguard", hp: 130, attackMultiplier: 0.9, speed: 0.8 },
   { id: "berserker", characterName: "Rory", className: "Berserker", hp: 110, attackMultiplier: 1.2, speed: 1.0 },
@@ -208,10 +210,24 @@ export class SetupScene extends Phaser.Scene {
   fitImage(this, this.continueButton, 260, 70);
 
   this.continueButton.on("pointerdown", () => {
-    if (this.detailObjects.length) return;
-    this.registry.set("selectedBuffs", this.selectedBuffs);
-    this.scene.start("BattleScene");
+  if (this.detailObjects.length) return;
+
+  const dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
+
+  const runState = buildRunState({
+    selectedClass: this.selectedClass,
+    selectedBuffs: this.selectedBuffs,
+    weaponTier: "base", // we’ll wire UI later
+    dataStore
   });
+
+  // save everything cleanly
+  this.registry.set("runState", runState);
+  this.registry.set("selectedClassId", this.selectedClass.id);
+  this.registry.set("selectedBuffs", this.selectedBuffs);
+
+  this.scene.start("BattleScene");
+});
 }
 
   // ---------- DETAIL PANEL ----------
