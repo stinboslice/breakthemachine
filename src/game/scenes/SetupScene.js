@@ -226,7 +226,7 @@ export class SetupScene extends Phaser.Scene {
   this.registry.set("selectedClassId", this.selectedClass.id);
   this.registry.set("selectedBuffs", this.selectedBuffs);
 
-  this.scene.start("BattleScene");
+  this.scene.start("RunIntroScene");
 });
 }
 
