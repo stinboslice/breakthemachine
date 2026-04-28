@@ -18,10 +18,14 @@ export class BattleScene extends Phaser.Scene {
 
     const dataStore = this.registry.get("dataStore");
     const runState = this.registry.get("runState");
-const selectedClassId = runState?.player?.classId || this.registry.get("selectedClassId") || "rogue";
 
-const enemy = dataStore?.data?.enemies?.find(e => e.id === "level1_light_enemy");
-const player = runState?.player;
+    const selectedClassId =
+      runState?.player?.classId ||
+      this.registry.get("selectedClassId") ||
+      "rogue";
+
+    const enemy = dataStore?.data?.enemies?.find(e => e.id === "level1_light_enemy");
+    const player = runState?.player;
 
     this.add.image(width / 2, height / 2, "bg_depth_1")
       .setDisplaySize(width, height);
@@ -61,22 +65,23 @@ const player = runState?.player;
       stroke: "#000000",
       strokeThickness: 5
     }).setOrigin(0.5);
-  }
-  if (player) {
-  this.add.text(width * 0.75, height * 0.16, `${player.characterName} | ${player.className}`, {
-    fontFamily: "Georgia",
-    fontSize: "22px",
-    color: "#f4e7c1",
-    stroke: "#000000",
-    strokeThickness: 4
-  }).setOrigin(0.5);
 
-  this.add.text(width * 0.75, height * 0.22, `HP ${player.hp}/${player.maxHp}  ATK ${player.attackMultiplier}  SPD ${player.speed}  CRIT ${player.crit}%`, {
-    fontFamily: "Georgia",
-    fontSize: "16px",
-    color: "#c9b56d",
-    stroke: "#000000",
-    strokeThickness: 3
-  }).setOrigin(0.5);
-}
+    if (player) {
+      this.add.text(width * 0.75, height * 0.16, `${player.characterName} | ${player.className}`, {
+        fontFamily: "Georgia",
+        fontSize: "22px",
+        color: "#f4e7c1",
+        stroke: "#000000",
+        strokeThickness: 4
+      }).setOrigin(0.5);
+
+      this.add.text(width * 0.75, height * 0.22, `HP ${player.hp}/${player.maxHp}  ATK ${player.attackMultiplier}  SPD ${player.speed}  CRIT ${player.crit}%`, {
+        fontFamily: "Georgia",
+        fontSize: "16px",
+        color: "#c9b56d",
+        stroke: "#000000",
+        strokeThickness: 3
+      }).setOrigin(0.5);
+    }
+  }
 }
