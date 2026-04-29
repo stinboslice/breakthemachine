@@ -3,20 +3,33 @@ export function getCurrentLevel(runState, dataStore) {
   return levels[runState.levelIndex || 0] || levels[0] || null;
 }
 
-export function getNextBattleWave(runState, dataStore) {
+export function getWaveAtCurrentIndex(runState, dataStore) {
+  const level = getCurrentLevel(runState, dataStore);
+  if (!level) return null;
+
+  const waves = level.waves || [];
+  return waves[runState.waveIndex || 0] || null;
+}
+
+export function getBossBattleWave(runState, dataStore) {
   const level = getCurrentLevel(runState, dataStore);
   if (!level) return null;
 
   const waves = level.waves || [];
 
-  for (let i = runState.waveIndex || 0; i < waves.length; i++) {
-    if (waves[i].type === "battle") {
-      runState.waveIndex = i;
-      return waves[i];
-    }
-  }
+  const bossIndex = waves.findIndex(wave => {
+    if (wave.type !== "battle") return false;
 
-  return null;
+    return wave.enemies?.some(enemyId =>
+      String(enemyId).includes("miniboss") ||
+      String(enemyId).includes("boss")
+    );
+  });
+
+  if (bossIndex < 0) return null;
+
+  runState.waveIndex = bossIndex;
+  return waves[bossIndex];
 }
 
 export function buildEnemiesForWave(wave, dataStore) {
@@ -35,9 +48,4 @@ export function buildEnemiesForWave(wave, dataStore) {
       };
     })
     .filter(Boolean);
-}
-
-export function advancePastCurrentBattle(runState) {
-  runState.waveIndex = (runState.waveIndex || 0) + 1;
-  return runState;
 }
