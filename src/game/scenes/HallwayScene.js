@@ -98,7 +98,6 @@ export class HallwayScene extends Phaser.Scene {
         const updatedState = this.registry.get("runState");
 
         updatedState.route.currentRoomType = roomType;
-        updatedState.route.setIndex += 1;
 
         this.registry.set("runState", updatedState);
         this.scene.start("RoomResultScene", { roomType });
