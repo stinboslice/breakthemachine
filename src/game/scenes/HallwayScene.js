@@ -8,14 +8,6 @@ const ROOM_ICONS = {
   enemy: "icon_room_enemy"
 };
 
-const ROOM_LABELS = {
-  trap: "label_trap",
-  corrupt: "label_corrupt",
-  treasure: "label_treasure",
-  safe: "label_safe",
-  enemy: "label_enemy"
-};
-
 const HALLWAY_BUTTONS = [
   "ui_hallway_button_left",
   "ui_hallway_button_center",
@@ -45,22 +37,28 @@ export class HallwayScene extends Phaser.Scene {
     const runState = this.registry.get("runState");
     const levelNumber = (runState?.levelIndex || 0) + 1;
 
+    if (!runState.route) runState.route = {};
+    if (typeof runState.route.setIndex !== "number") runState.route.setIndex = 0;
+    if (typeof runState.route.scanUsed !== "boolean") runState.route.scanUsed = false;
+
+    if (runState.route.setIndex >= 2) {
+      this.scene.start("BossDoorScene");
+      return;
+    }
+
     const choices = shuffle(["trap", "corrupt", "treasure", "safe", "enemy"]).slice(0, 3);
 
-    if (runState) {
-      runState.route.currentChoices = choices.map((roomType, index) => ({
-        id: `${levelNumber}_${Date.now()}_${index}_${roomType}`,
-        roomType,
-        revealed: false
-      }));
+    runState.route.currentChoices = choices.map((roomType, index) => ({
+      id: `${levelNumber}_${Date.now()}_${index}_${roomType}`,
+      roomType,
+      revealed: false
+    }));
 
-      this.registry.set("runState", runState);
-    }
+    this.registry.set("runState", runState);
 
     const bgKey = `bg_hallway_${levelNumber}`;
 
-    this.add.image(w / 2, h / 2, bgKey)
-      .setDisplaySize(w, h);
+    this.add.image(w / 2, h / 2, bgKey).setDisplaySize(w, h);
 
     this.add.text(w / 2, 48, `LEVEL ${levelNumber} ROUTE`, {
       fontFamily: "Georgia",
@@ -79,6 +77,7 @@ export class HallwayScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const xPositions = [w * 0.24, w * 0.5, w * 0.76];
+    const iconObjects = [];
 
     choices.forEach((roomType, index) => {
       const x = xPositions[index];
@@ -89,20 +88,19 @@ export class HallwayScene extends Phaser.Scene {
 
       fitImage(this, button, 275, 360);
 
-      const icon = this.add.image(x, y - 5, ROOM_ICONS[roomType]);
+      const icon = this.add.image(x, y, ROOM_ICONS[roomType]);
       fitImage(this, icon, 92, 92);
+      icon.setVisible(false);
 
-      const label = this.add.image(x, y + 118, ROOM_LABELS[roomType]);
-      fitImage(this, label, 150, 48);
-      label.setVisible(false);
+      iconObjects.push(icon);
 
       button.on("pointerdown", () => {
         const updatedState = this.registry.get("runState");
-        if (updatedState) {
-          updatedState.route.currentRoomType = roomType;
-          this.registry.set("runState", updatedState);
-        }
 
+        updatedState.route.currentRoomType = roomType;
+        updatedState.route.setIndex += 1;
+
+        this.registry.set("runState", updatedState);
         this.scene.start("RoomResultScene", { roomType });
       });
     });
@@ -113,15 +111,17 @@ export class HallwayScene extends Phaser.Scene {
     fitImage(this, scanButton, 230, 62);
 
     scanButton.on("pointerdown", () => {
-      const runState = this.registry.get("runState");
-      const isRogue = runState?.player?.classId === "rogue";
+      const state = this.registry.get("runState");
+      const isRogue = state?.player?.classId === "rogue";
 
-      if (!isRogue || runState.route.scanUsed) return;
+      if (!isRogue || state.route.scanUsed) return;
 
-      runState.route.scanUsed = true;
-      this.registry.set("runState", runState);
+      state.route.scanUsed = true;
 
-      this.scene.restart();
+      const revealIndex = Math.floor(Math.random() * iconObjects.length);
+      iconObjects[revealIndex].setVisible(true);
+
+      this.registry.set("runState", state);
     });
   }
 }
