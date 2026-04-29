@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import { playerAttack, enemyAttack } from "../systems/CombatSystem.js";
+import { getNextBattleWave, buildEnemiesForWave, advancePastCurrentBattle } from "../systems/WaveSystem.js";
+
 
 function getPlayerSpriteBase(classId) {
   if (classId === "rogue") return "player_rogue";
@@ -37,7 +39,7 @@ this.enemy = enemies[0];
 if (!this.enemy) {
   this.scene.start("HallwayScene");
   return;
-};
+}
 
     this.add.image(width / 2, height / 2, "bg_depth_1").setDisplaySize(width, height);
 
