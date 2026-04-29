@@ -1,5 +1,10 @@
 import Phaser from "phaser";
 import { resolveRoom } from "../systems/RoomResolver.js";
+import {
+  advanceHallwaySet,
+  startBattleBlockForCurrentSet,
+  shouldShowBossDoor
+} from "../systems/RouteSystem.js";
 
 
 const ROOM_TITLES = {
@@ -70,16 +75,25 @@ export class RoomResultScene extends Phaser.Scene {
 
     button.on("pointerdown", () => {
   let runState = this.registry.get("runState");
+  const dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
 
   runState = resolveRoom(runState, roomType);
 
-  this.registry.set("runState", runState);
-
   if (roomType === "safe") {
+    runState = advanceHallwaySet(runState);
+    this.registry.set("runState", runState);
+
+    if (shouldShowBossDoor(runState, dataStore)) {
+      this.scene.start("BossDoorScene");
+      return;
+    }
+
     this.scene.start("HallwayScene");
     return;
   }
 
+  runState = startBattleBlockForCurrentSet(runState);
+  this.registry.set("runState", runState);
   this.scene.start("BattleScene");
 });
   }
