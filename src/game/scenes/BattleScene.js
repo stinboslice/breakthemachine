@@ -1,7 +1,8 @@
 import Phaser from "phaser";
 import { playerAttack, enemyAttack } from "../systems/CombatSystem.js";
 import {
-  getNextBattleWave,
+  getWaveAtCurrentIndex,
+  getBossBattleWave,
   buildEnemiesForWave
 } from "../systems/WaveSystem.js";
 import {
@@ -41,8 +42,11 @@ export class BattleScene extends Phaser.Scene {
     const player = this.runState?.player;
     const selectedClassId = player?.classId || "rogue";
 
-    const wave = getNextBattleWave(this.runState, dataStore);
-    this.enemies = buildEnemiesForWave(wave, dataStore);
+    const wave = this.runState.forceBoss
+  ? getBossBattleWave(this.runState, dataStore)
+  : getWaveAtCurrentIndex(this.runState, dataStore);
+
+this.enemies = buildEnemiesForWave(wave, dataStore);
 
     if (!this.enemies.length) {
       this.scene.start("HallwayScene");
@@ -249,6 +253,20 @@ export class BattleScene extends Phaser.Scene {
   }
 
   handleVictory() {
+if (this.runState.forceBoss) {
+  this.runState.forceBoss = false;
+  this.runState.bossCleared = true;
+
+  this.registry.set("runState", this.runState);
+
+  this.logText.setText("Boss cleared.");
+
+  this.time.delayedCall(800, () => {
+    this.scene.start("LevelCompleteScene");
+  });
+
+  return;
+}
   this.logText.setText("Wave cleared.");
 
   this.time.delayedCall(800, () => {
