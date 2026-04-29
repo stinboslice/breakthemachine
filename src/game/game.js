@@ -4,6 +4,7 @@ import { SetupScene } from "./scenes/SetupScene.js";
 import { BattleScene } from "./scenes/BattleScene.js";
 import { RunIntroScene } from "./scenes/RunIntroScene.js";
 import { HallwayScene } from "./scenes/HallwayScene.js";
+import { RoomResultScene } from "./scenes/RoomResultScene.js";
 
 
 export function createGame() {
@@ -15,7 +16,7 @@ export function createGame() {
     backgroundColor: "#08080c",
     pixelArt: true,
     roundPixels: true,
-    scene: [BootScene, SetupScene, RunIntroScene, HallwayScene, BattleScene],
+    scene: [BootScene, SetupScene, RunIntroScene, HallwayScene, RoomResultScene, BattleScene],
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH
