@@ -2,9 +2,12 @@ import Phaser from "phaser";
 import { playerAttack, enemyAttack } from "../systems/CombatSystem.js";
 import {
   getNextBattleWave,
-  buildEnemiesForWave,
-  advancePastCurrentBattle
+  buildEnemiesForWave
 } from "../systems/WaveSystem.js";
+import {
+  finishBattleWave,
+  shouldShowBossDoor
+} from "../systems/RouteSystem.js";
 
 function getPlayerSpriteBase(classId) {
   if (classId === "rogue") return "player_rogue";
@@ -246,12 +249,22 @@ export class BattleScene extends Phaser.Scene {
   }
 
   handleVictory() {
-    this.logText.setText("Wave cleared.");
+  this.logText.setText("Wave cleared.");
 
-    this.time.delayedCall(800, () => {
-      advancePastCurrentBattle(this.runState);
-      this.registry.set("runState", this.runState);
-      this.scene.start("HallwayScene");
-    });
-  }
+  this.time.delayedCall(800, () => {
+    const dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
+
+    const result = finishBattleWave(this.runState);
+    this.runState = result.runState;
+
+    this.registry.set("runState", this.runState);
+
+    if (result.nextScene === "HallwayScene" && shouldShowBossDoor(this.runState, dataStore)) {
+      this.scene.start("BossDoorScene");
+      return;
+    }
+
+    this.scene.start(result.nextScene);
+  });
+}
 }
