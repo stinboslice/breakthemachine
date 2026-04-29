@@ -73,6 +73,7 @@ export class SetupScene extends Phaser.Scene {
     this.selectedClass = null;
     this.selectedBuffs = [];
     this.activeTier = 1;
+this.selectedWeaponTier = "base";
 
     this.objects = [];
     this.detailObjects = [];
@@ -165,6 +166,8 @@ export class SetupScene extends Phaser.Scene {
   const w = this.scale.width;
   const h = this.scale.height;
 
+  this.selectedWeaponTier = this.selectedWeaponTier || "base";
+
   this.addTracked(this.add.image(w / 2, h / 2, "bg_cutscene_default").setDisplaySize(w, h));
 
   this.addTracked(this.add.text(w / 2, 42, `${this.selectedClass.characterName} selected`, {
@@ -174,7 +177,7 @@ export class SetupScene extends Phaser.Scene {
     strokeThickness: 6
   }).setOrigin(0.5));
 
-  const shelf = this.addTracked(this.add.image(w / 2, h * 0.44, "ui_buff_shelf"));
+  const shelf = this.addTracked(this.add.image(w / 2, h * 0.41, "ui_buff_shelf"));
   fitImage(this, shelf, 980, 380);
 
   const positions = [
@@ -185,17 +188,16 @@ export class SetupScene extends Phaser.Scene {
   this.buffs.forEach((buff, i) => {
     const [ox, oy] = positions[i];
     const icon = this.addTracked(
-      this.add.image(w / 2 + ox, h * 0.44 + oy, BUFF_ICON_KEYS[buff.id])
+      this.add.image(w / 2 + ox, h * 0.41 + oy, BUFF_ICON_KEYS[buff.id])
         .setInteractive({ useHandCursor: true })
     );
 
     fitImage(this, icon, 96, 96);
-
     icon.on("pointerdown", () => this.openBuffDetail(buff));
   });
 
   this.statusText = this.addTracked(
-    this.add.text(w / 2, h * 0.80, `${this.selectedBuffs.length} / 3 buffs selected`, {
+    this.add.text(w / 2, h * 0.705, `${this.selectedBuffs.length} / 3 buffs selected`, {
       fontSize: "20px",
       color: "#f4e7c1",
       stroke: "#000",
@@ -203,31 +205,62 @@ export class SetupScene extends Phaser.Scene {
     }).setOrigin(0.5)
   );
 
+  this.weaponTierText = this.addTracked(
+    this.add.text(w / 2, h * 0.755, "Weapon Tier: BASE", {
+      fontSize: "18px",
+      color: "#f4e7c1",
+      stroke: "#000",
+      strokeThickness: 4
+    }).setOrigin(0.5)
+  );
+
+  const tierLabels = [
+    { label: "BASE", value: "base" },
+    { label: "TIER 1", value: "tier1" },
+    { label: "TIER 2", value: "tier2" },
+    { label: "TIER 3", value: "tier3" }
+  ];
+
+  tierLabels.forEach((tier, index) => {
+    const tierButton = this.addTracked(
+      this.add.text(w / 2 - 210 + index * 140, h * 0.805, tier.label, {
+        fontSize: "16px",
+        color: "#ffffff",
+        backgroundColor: tier.value === this.selectedWeaponTier ? "#7b1113" : "#222222",
+        padding: { x: 14, y: 8 }
+      }).setOrigin(0.5).setInteractive({ useHandCursor: true })
+    );
+
+    tierButton.on("pointerdown", () => {
+      this.selectedWeaponTier = tier.value;
+      this.weaponTierText.setText(`Weapon Tier: ${tier.label}`);
+    });
+  });
+
   this.continueButton = this.addTracked(
-    this.add.image(w / 2, h * 0.90, "button_continue").setInteractive({ useHandCursor: true })
+    this.add.image(w / 2, h * 0.91, "button_continue").setInteractive({ useHandCursor: true })
   );
 
   fitImage(this, this.continueButton, 260, 70);
 
   this.continueButton.on("pointerdown", () => {
-  if (this.detailObjects.length) return;
+    if (this.detailObjects.length) return;
 
-  const dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
+    const dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
 
-  const runState = buildRunState({
-    selectedClass: this.selectedClass,
-    selectedBuffs: this.selectedBuffs,
-    weaponTier: "base", // we’ll wire UI later
-    dataStore
+    const runState = buildRunState({
+      selectedClass: this.selectedClass,
+      selectedBuffs: this.selectedBuffs,
+      weaponTier: this.selectedWeaponTier,
+      dataStore
+    });
+
+    this.registry.set("runState", runState);
+    this.registry.set("selectedClassId", this.selectedClass.id);
+    this.registry.set("selectedBuffs", this.selectedBuffs);
+
+    this.scene.start("RunIntroScene");
   });
-
-  // save everything cleanly
-  this.registry.set("runState", runState);
-  this.registry.set("selectedClassId", this.selectedClass.id);
-  this.registry.set("selectedBuffs", this.selectedBuffs);
-
-  this.scene.start("RunIntroScene");
-});
 }
 
   // ---------- DETAIL PANEL ----------
