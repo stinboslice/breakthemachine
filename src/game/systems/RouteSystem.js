@@ -11,12 +11,9 @@ export function getRequiredHallwaySets(runState, dataStore) {
 
 export function getRoomPool(runState, dataStore) {
   const config = getHallwayConfig(runState, dataStore);
-
-  if (Array.isArray(config?.choicesPool)) {
-    return config.choicesPool;
-  }
-
-  return ["trap", "corrupt", "treasure", "safe", "enemy"];
+  return Array.isArray(config?.choicesPool)
+    ? config.choicesPool
+    : ["trap", "corrupt", "treasure", "safe", "enemy"];
 }
 
 export function shuffleArray(list) {
@@ -43,14 +40,8 @@ export function buildHallwayChoices(runState, dataStore) {
 }
 
 export function getBattleBlockForSet(setIndex) {
-  if (setIndex === 0) {
-    return { startWaveIndex: 1, endWaveIndex: 2 };
-  }
-
-  if (setIndex === 1) {
-    return { startWaveIndex: 3, endWaveIndex: 3 };
-  }
-
+  if (setIndex === 0) return { startWaveIndex: 1, endWaveIndex: 2 };
+  if (setIndex === 1) return { startWaveIndex: 3, endWaveIndex: 3 };
   return null;
 }
 
@@ -58,6 +49,7 @@ export function advanceHallwaySet(runState) {
   if (!runState.route) runState.route = {};
 
   runState.route.setIndex = (runState.route.setIndex || 0) + 1;
+  runState.route.activeSetIndex = null;
   runState.route.currentRoomType = null;
   runState.route.scannedChoiceIndex = null;
   runState.route.scanUsed = false;
@@ -71,9 +63,14 @@ export function shouldShowBossDoor(runState, dataStore) {
 }
 
 export function startBattleBlockForCurrentSet(runState) {
-  const setIndex = runState.route?.setIndex || 0;
-  const block = getBattleBlockForSet(setIndex);
+  if (!runState.route) runState.route = {};
 
+  const activeSetIndex =
+    typeof runState.route.activeSetIndex === "number"
+      ? runState.route.activeSetIndex
+      : runState.route.setIndex || 0;
+
+  const block = getBattleBlockForSet(activeSetIndex);
   if (!block) return runState;
 
   runState.waveIndex = block.startWaveIndex;
