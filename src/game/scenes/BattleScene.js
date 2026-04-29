@@ -29,12 +29,15 @@ export class BattleScene extends Phaser.Scene {
     const player = this.runState?.player;
     const selectedClassId = player?.classId || "rogue";
 
-    const baseEnemy = dataStore?.data?.enemies?.find(e => e.id === "level1_light_enemy");
+    const wave = getNextBattleWave(this.runState, dataStore);
+const enemies = buildEnemiesForWave(wave, dataStore);
 
-    this.enemy = {
-      ...baseEnemy,
-      currentHp: baseEnemy?.hp || 30
-    };
+this.enemy = enemies[0];
+
+if (!this.enemy) {
+  this.scene.start("HallwayScene");
+  return;
+};
 
     this.add.image(width / 2, height / 2, "bg_depth_1").setDisplaySize(width, height);
 
@@ -133,9 +136,10 @@ export class BattleScene extends Phaser.Scene {
       this.refreshHud();
 
       this.time.delayedCall(900, () => {
-        this.registry.set("runState", this.runState);
-        this.scene.start("HallwayScene");
-      });
+  advancePastCurrentBattle(this.runState);
+  this.registry.set("runState", this.runState);
+  this.scene.start("HallwayScene");
+});
 
       return;
     }
