@@ -1,4 +1,6 @@
 import Phaser from "phaser";
+import { resolveRoom } from "../systems/RoomResolver.js";
+
 
 const ROOM_TITLES = {
   safe: "SAFE PASSAGE",
@@ -67,13 +69,19 @@ export class RoomResultScene extends Phaser.Scene {
     fitImage(this, button, 250, 68);
 
     button.on("pointerdown", () => {
-      if (roomType === "safe") {
-        this.scene.start("HallwayScene");
-        return;
-      }
+  let runState = this.registry.get("runState");
 
-      this.scene.start("BattleScene");
-    });
+  runState = resolveRoom(runState, roomType);
+
+  this.registry.set("runState", runState);
+
+  if (roomType === "safe") {
+    this.scene.start("HallwayScene");
+    return;
+  }
+
+  this.scene.start("BattleScene");
+});
   }
 
   getRoomBody(roomType) {
