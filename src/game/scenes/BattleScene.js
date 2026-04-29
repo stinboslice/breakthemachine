@@ -1,7 +1,10 @@
 import Phaser from "phaser";
 import { playerAttack, enemyAttack } from "../systems/CombatSystem.js";
-import { getNextBattleWave, buildEnemiesForWave, advancePastCurrentBattle } from "../systems/WaveSystem.js";
-
+import {
+  getNextBattleWave,
+  buildEnemiesForWave,
+  advancePastCurrentBattle
+} from "../systems/WaveSystem.js";
 
 function getPlayerSpriteBase(classId) {
   if (classId === "rogue") return "player_rogue";
@@ -15,10 +18,14 @@ export class BattleScene extends Phaser.Scene {
     super("BattleScene");
 
     this.runState = null;
-    this.enemy = null;
+    this.enemies = [];
+    this.enemySprites = [];
     this.playerHpText = null;
     this.enemyHpText = null;
     this.logText = null;
+    this.turnQueue = [];
+    this.turnIndex = 0;
+    this.round = 1;
   }
 
   create() {
@@ -32,14 +39,12 @@ export class BattleScene extends Phaser.Scene {
     const selectedClassId = player?.classId || "rogue";
 
     const wave = getNextBattleWave(this.runState, dataStore);
-const enemies = buildEnemiesForWave(wave, dataStore);
+    this.enemies = buildEnemiesForWave(wave, dataStore);
 
-this.enemy = enemies[0];
-
-if (!this.enemy) {
-  this.scene.start("HallwayScene");
-  return;
-}
+    if (!this.enemies.length) {
+      this.scene.start("HallwayScene");
+      return;
+    }
 
     this.add.image(width / 2, height / 2, "bg_depth_1").setDisplaySize(width, height);
 
@@ -49,11 +54,7 @@ if (!this.enemy) {
     this.playerSprite.setOrigin(0.5, 1);
     this.playerSprite.setScale(2);
 
-    this.enemySprite = this.add.image(width * 0.28, height * 0.82, `${this.enemy.spritePrefix}_idle`);
-    this.enemySprite.setOrigin(0.5, 1);
-    this.enemySprite.setScale(1.7);
-
-    this.add.text(width / 2, 44, "LEVEL 1  WAVE 1", {
+    this.add.text(width / 2, 44, `LEVEL ${(this.runState.levelIndex || 0) + 1}  ROUND ${this.round}`, {
       fontFamily: "Georgia",
       fontSize: "28px",
       color: "#f4e7c1",
@@ -61,21 +62,7 @@ if (!this.enemy) {
       strokeThickness: 5
     }).setOrigin(0.5);
 
-    this.add.text(width * 0.28, height * 0.17, this.enemy.name, {
-      fontFamily: "Georgia",
-      fontSize: "25px",
-      color: "#f4e7c1",
-      stroke: "#000000",
-      strokeThickness: 5
-    }).setOrigin(0.5);
-
-    this.enemyHpText = this.add.text(width * 0.28, height * 0.23, "", {
-      fontFamily: "Georgia",
-      fontSize: "18px",
-      color: "#c9b56d",
-      stroke: "#000000",
-      strokeThickness: 4
-    }).setOrigin(0.5);
+    this.drawEnemies(width, height);
 
     this.add.text(width * 0.75, height * 0.15, `${player.characterName} | ${player.className}`, {
       fontFamily: "Georgia",
@@ -103,7 +90,7 @@ if (!this.enemy) {
 
     attackButton.on("pointerdown", () => this.handlePlayerAttack());
 
-    this.logText = this.add.text(width / 2, height * 0.92, "Battle started. Your turn.", {
+    this.logText = this.add.text(width / 2, height * 0.92, "Battle started.", {
       fontFamily: "Georgia",
       fontSize: "18px",
       color: "#ffffff",
@@ -114,6 +101,42 @@ if (!this.enemy) {
     }).setOrigin(0.5);
 
     this.refreshHud();
+    this.buildTurnQueue();
+    this.processTurn();
+  }
+
+  drawEnemies(width, height) {
+    this.enemySprites = [];
+
+    const startX = width * 0.20;
+    const spacing = 145;
+
+    this.enemies.forEach((enemy, index) => {
+      const x = startX + index * spacing;
+      const y = height * 0.82;
+
+      const sprite = this.add.image(x, y, `${enemy.spritePrefix}_idle`);
+      sprite.setOrigin(0.5, 1);
+      sprite.setScale(enemy.role === "miniboss" ? 1.55 : 1.35);
+
+      const nameText = this.add.text(x, height * 0.16, enemy.name, {
+        fontFamily: "Georgia",
+        fontSize: "20px",
+        color: "#f4e7c1",
+        stroke: "#000000",
+        strokeThickness: 4
+      }).setOrigin(0.5);
+
+      const hpText = this.add.text(x, height * 0.21, "", {
+        fontFamily: "Georgia",
+        fontSize: "15px",
+        color: "#c9b56d",
+        stroke: "#000000",
+        strokeThickness: 3
+      }).setOrigin(0.5);
+
+      this.enemySprites.push({ enemy, sprite, nameText, hpText });
+    });
   }
 
   refreshHud() {
@@ -123,43 +146,112 @@ if (!this.enemy) {
       `HP ${player.hp}/${player.maxHp}  ATK ${player.attackMultiplier}  SPD ${player.speed}  CRIT ${player.crit}%`
     );
 
-    this.enemyHpText.setText(`HP ${this.enemy.currentHp}/${this.enemy.hp}`);
+    this.enemySprites.forEach(group => {
+      group.hpText.setText(`HP ${group.enemy.currentHp}/${group.enemy.hp}`);
+      group.sprite.setAlpha(group.enemy.currentHp > 0 ? 1 : 0.45);
+    });
+
+    this.registry.set("runState", this.runState);
+  }
+
+  buildTurnQueue() {
+    const player = this.runState.player;
+    const livingEnemies = this.enemies.filter(enemy => enemy.currentHp > 0);
+
+    this.turnQueue = [
+      {
+        type: "player",
+        initiative: this.rollInitiative(player.speed)
+      },
+      ...livingEnemies.map(enemy => ({
+        type: "enemy",
+        enemy,
+        initiative: this.rollInitiative(enemy.speed)
+      }))
+    ];
+
+    this.turnQueue.sort((a, b) => b.initiative - a.initiative);
+    this.turnIndex = 0;
+  }
+
+  rollInitiative(speed) {
+    return speed * (0.85 + Math.random() * 0.3);
+  }
+
+  processTurn() {
+    if (this.runState.player.hp <= 0) {
+      this.logText.setText("You died.");
+      this.refreshHud();
+      return;
+    }
+
+    const livingEnemies = this.enemies.filter(enemy => enemy.currentHp > 0);
+
+    if (!livingEnemies.length) {
+      this.handleVictory();
+      return;
+    }
+
+    const unit = this.turnQueue[this.turnIndex];
+
+    if (!unit) return;
+
+    if (unit.type === "player") {
+      this.logText.setText("Your turn.");
+      this.refreshHud();
+      return;
+    }
+
+    const result = enemyAttack(this.runState, unit.enemy);
+
+    this.logText.setText(`${unit.enemy.name} hits you for ${result.damage}.`);
+    this.refreshHud();
+
+    this.time.delayedCall(650, () => {
+      this.nextTurn();
+    });
   }
 
   handlePlayerAttack() {
-    if (!this.enemy || this.enemy.currentHp <= 0) return;
-    if (!this.runState?.player || this.runState.player.hp <= 0) return;
+    const unit = this.turnQueue[this.turnIndex];
 
-    const playerResult = playerAttack(this.runState, this.enemy);
+    if (!unit || unit.type !== "player") return;
 
-    if (playerResult.enemyDefeated) {
-      this.enemySprite.setAlpha(0.45);
-      this.logText.setText(`You dealt ${playerResult.damage}. ${this.enemy.name} defeated.`);
-      this.refreshHud();
+    const target = this.enemies.find(enemy => enemy.currentHp > 0);
+    if (!target) return;
 
-      this.time.delayedCall(900, () => {
-  advancePastCurrentBattle(this.runState);
-  this.registry.set("runState", this.runState);
-  this.scene.start("HallwayScene");
-});
+    const result = playerAttack(this.runState, target);
 
-      return;
-    }
-
-    const enemyResult = enemyAttack(this.runState, this.enemy);
-
-    if (enemyResult.playerDefeated) {
-      this.playerSprite.setAlpha(0.45);
-      this.logText.setText(`You dealt ${playerResult.damage}. ${this.enemy.name} hit you for ${enemyResult.damage}. You fell.`);
-      this.refreshHud();
-      return;
-    }
-
-    this.logText.setText(
-      `You dealt ${playerResult.damage}. ${this.enemy.name} hit you for ${enemyResult.damage}.`
-    );
-
-    this.registry.set("runState", this.runState);
+    this.logText.setText(`You hit ${target.name} for ${result.damage}.`);
     this.refreshHud();
+
+    if (result.enemyDefeated) {
+      this.logText.setText(`You dealt ${result.damage}. ${target.name} defeated.`);
+    }
+
+    this.time.delayedCall(450, () => {
+      this.nextTurn();
+    });
+  }
+
+  nextTurn() {
+    this.turnIndex += 1;
+
+    if (this.turnIndex >= this.turnQueue.length) {
+      this.round += 1;
+      this.buildTurnQueue();
+    }
+
+    this.processTurn();
+  }
+
+  handleVictory() {
+    this.logText.setText("Wave cleared.");
+
+    this.time.delayedCall(800, () => {
+      advancePastCurrentBattle(this.runState);
+      this.registry.set("runState", this.runState);
+      this.scene.start("HallwayScene");
+    });
   }
 }
