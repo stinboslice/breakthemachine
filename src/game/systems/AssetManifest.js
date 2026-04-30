@@ -4,9 +4,13 @@ export const IMAGE_ASSETS = [
   ["player_vanguard_idle", "assets/sprites/player_vanguard_idle.png"],
   ["player_rogue_idle", "assets/sprites/player_rogue_idle.png"],
   ["player_berserker_idle", "assets/sprites/player_berserker_idle.png"],
-  ["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
- 
+ ["player_vanguard_down", "assets/sprites/player_vanguard_down.png"],
+["player_rogue_down", "assets/sprites/player_rogue_down.png"],
+["player_berserker_down", "assets/sprites/player_berserker_down.png"],
+    
+
   // LIGHT VARIANTS
+    ["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
 ["enemy_light2_idle", "assets/sprites/enemy_light2_idle.png"],
 ["enemy_light3_idle", "assets/sprites/enemy_light3_idle.png"],
 ["enemy_light4_idle", "assets/sprites/enemy_light4_idle.png"],
