@@ -7,7 +7,7 @@ import { HallwayScene } from "./scenes/HallwayScene.js";
 import { RoomResultScene } from "./scenes/RoomResultScene.js";
 import { BossDoorScene } from "./scenes/BossDoorScene.js";
 import { LevelCompleteScene } from "./scenes/LevelCompleteScene.js";
-import { LevelCompleteScene } from "./scenes/LevelCompleteScene.js";
+
 
 
 export function createGame() {
