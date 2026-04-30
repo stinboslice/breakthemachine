@@ -35,7 +35,24 @@ export const IMAGE_ASSETS = [
 // FINAL BOSS
 ["final_boss_idle", "assets/sprites/final_boss_neutral.png"],
 ["final_boss2_idle", "assets/sprites/final_boss2_idle.png"],
-   
+
+    // ENEMY DOWN FRAMES
+["enemy_light_down", "assets/sprites/enemy_light_down.png"],
+["enemy_light2_down", "assets/sprites/enemy_light2_down.png"],
+["enemy_light3_down", "assets/sprites/enemy_light3_down.png"],
+["enemy_light4_down", "assets/sprites/enemy_light4_down.png"],
+
+["enemy_strong_down", "assets/sprites/enemy_strong_down.png"],
+["enemy_strong2_down", "assets/sprites/enemy_strong2_down.png"],
+["enemy_strong3_down", "assets/sprites/enemy_strong3_down.png"],
+["enemy_strong4_down", "assets/sprites/enemy_strong4_down.png"],
+
+["miniboss_doge_down", "assets/sprites/miniboss_doge_down.png"],
+["miniboss_pepe_down", "assets/sprites/miniboss_pepe_down.png"],
+["miniboss_bonk_down", "assets/sprites/miniboss_bonk_down.png"],
+["miniboss_purple_down", "assets/sprites/miniboss_purple_down.png"],
+
+["final_boss2_down", "assets/sprites/final_boss2_down.png"],
     
     // BACKGROUNDS
   ["bg_cutscene_default", "assets/backgrounds/bg_cutscene_default.png"],
