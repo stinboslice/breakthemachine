@@ -7,6 +7,7 @@ import { HallwayScene } from "./scenes/HallwayScene.js";
 import { RoomResultScene } from "./scenes/RoomResultScene.js";
 import { BossDoorScene } from "./scenes/BossDoorScene.js";
 import { LevelCompleteScene } from "./scenes/LevelCompleteScene.js";
+import { GameOverScene } from "./scenes/GameOverScene.js";
 
 
 
@@ -27,8 +28,9 @@ export function createGame() {
   RoomResultScene,
   BossDoorScene,
   BattleScene,
-  LevelCompleteScene
-],
+  LevelCompleteScene,
+  GameOverScene
+]
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH
