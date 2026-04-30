@@ -22,7 +22,9 @@ export class GameOverScene extends Phaser.Scene {
 
     const button = this.add.image(w / 2, h * 0.75, "button_continue")
       .setInteractive({ useHandCursor: true });
-
+    
+button.setScale(0.45);
+    
     button.on("pointerdown", () => {
       this.scene.start("SetupScene"); // restart run
     });
