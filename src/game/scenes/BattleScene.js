@@ -186,11 +186,10 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
   }
 
   processTurn() {
-    if (this.runState.player.hp <= 0) {
-      this.logText.setText("You died.");
-      this.refreshHud();
-      return;
-    }
+  if (this.runState.player.hp <= 0) {
+    this.handlePlayerDeath();
+    return;
+  }
 
     const livingEnemies = this.enemies.filter(enemy => enemy.currentHp > 0);
 
@@ -218,7 +217,33 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
       this.nextTurn();
     });
   }
+handlePlayerDeath() {
+  if (this.deathHandled) return;
+  this.deathHandled = true;
 
+  this.logText.setText("You were destroyed.");
+
+  // disable input
+  this.input.enabled = false;
+
+  // swap sprite to down state
+  const classId = this.runState.player.classId;
+  this.playerSprite.setTexture(`player_${classId}_down`);
+
+  // slow motion effect
+  this.time.timeScale = 0.35;
+
+  // screen shake
+  this.cameras.main.shake(600, 0.01);
+
+  // slight delay then go to game over
+  this.time.delayedCall(1200, () => {
+    this.time.timeScale = 1;
+    this.scene.start("GameOverScene");
+  });
+}
+
+  
   handlePlayerAttack() {
     const unit = this.turnQueue[this.turnIndex];
 
