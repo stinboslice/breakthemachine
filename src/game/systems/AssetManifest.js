@@ -14,10 +14,14 @@ export const IMAGE_ASSETS = [
 // STRONG
 ["enemy_strong_idle", "assets/sprites/enemy_strong_idle.png"],
 ["enemy_strong2_idle", "assets/sprites/enemy_strong2_idle.png"],
+["enemy_strong3_idle", "assets/sprites/enemy_strong3_idle.png"],
 ["enemy_strong4_idle", "assets/sprites/enemy_strong4_idle.png"],
 ["enemy_strong5_idle", "assets/sprites/enemy_strong5_idle.png"],
 
 // MINIBOSS
+["miniboss_doge_idle", "assets/sprites/miniboss_doge_idle.png"],
+["miniboss_pepe_idle", "assets/sprites/miniboss_pepe_idle.png"],
+["miniboss_bonk_idle", "assets/sprites/miniboss_bonk_idle.png"],
 ["miniboss_purple_idle", "assets/sprites/miniboss_purple_idle.png"],
 
 // FINAL BOSS
