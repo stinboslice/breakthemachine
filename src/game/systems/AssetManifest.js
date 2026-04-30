@@ -5,33 +5,24 @@ export const IMAGE_ASSETS = [
   ["player_rogue_idle", "assets/sprites/player_rogue_idle.png"],
   ["player_berserker_idle", "assets/sprites/player_berserker_idle.png"],
   ["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
- {
-  "id": "level1_light_enemy",
-  "name": "Rust Drone",
-  "spritePrefix": "enemy_light"
-},
-{
-  "id": "level1_light_enemy_alt",
-  "name": "Rust Drone",
-  "spritePrefix": "enemy_light2"
-},
-{
-  "id": "level2_strong_enemy",
-  "name": "Doge Protocol",
-  "spritePrefix": "enemy_strong"
-},
-{
-  "id": "level3_strong_enemy",
-  "name": "Execution Frame",
-  "spritePrefix": "enemy_strong4"
-},
-{
-  "id": "level1_miniboss",
-  "name": "Purple Sentinel",
-  "spritePrefix": "miniboss_purple",
-  "role": "miniboss"
-}
-    
+ 
+  // LIGHT VARIANTS
+["enemy_light2_idle", "assets/sprites/enemy_light2_idle.png"],
+["enemy_light3_idle", "assets/sprites/enemy_light3_idle.png"],
+["enemy_light4_idle", "assets/sprites/enemy_light4_idle.png"],
+
+// STRONG
+["enemy_strong_idle", "assets/sprites/enemy_strong_idle.png"],
+["enemy_strong2_idle", "assets/sprites/enemy_strong2_idle.png"],
+["enemy_strong4_idle", "assets/sprites/enemy_strong4_idle.png"],
+["enemy_strong5_idle", "assets/sprites/enemy_strong5_idle.png"],
+
+// MINIBOSS
+["miniboss_purple_idle", "assets/sprites/miniboss_purple_idle.png"],
+
+// FINAL BOSS
+["final_boss_idle", "assets/sprites/final_boss_neutral.png"],
+["final_boss2_idle", "assets/sprites/final_boss2_idle.png"],
     // BACKGROUNDS
   ["bg_cutscene_default", "assets/backgrounds/bg_cutscene_default.png"],
 
