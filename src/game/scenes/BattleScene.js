@@ -279,6 +279,16 @@ handlePlayerDeath() {
   });
 }
 
+getEnemyFrameKey(enemy, frame) {
+  const key = `${enemy.spritePrefix}_${frame}`;
+
+  if (this.textures.exists(key)) {
+    return key;
+  }
+
+  return `${enemy.spritePrefix}_idle`;
+}
+
 getSelectedTarget() {
   const livingEnemies = this.enemies.filter(enemy => enemy.currentHp > 0);
 
@@ -325,6 +335,22 @@ if (!target) return;
     this.refreshHud();
 
     if (result.enemyDefeated) {
+  const targetGroup = this.enemySprites.find(group => group.enemy === target);
+
+  if (targetGroup) {
+    targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
+    targetGroup.sprite.clearTint();
+
+    this.cameras.main.shake(220, 0.006);
+
+    this.tweens.add({
+      targets: targetGroup.sprite,
+      alpha: 0,
+      duration: 650,
+      delay: 450
+    });
+  }
+
   this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
   this.logText.setText(`You dealt ${result.damage}. ${target.name} defeated.`);
 }
@@ -389,9 +415,25 @@ handleSpecialAttack() {
       this.logText.setText(`SPECIAL hit ${target.name} for ${result.damage}.`);
 
       if (result.enemyDefeated) {
-        this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
-        this.logText.setText(`SPECIAL dealt ${result.damage}. ${target.name} defeated.`);
-      }
+  const targetGroup = this.enemySprites.find(group => group.enemy === target);
+
+  if (targetGroup) {
+    targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
+    targetGroup.sprite.clearTint();
+
+    this.cameras.main.shake(300, 0.01);
+
+    this.tweens.add({
+      targets: targetGroup.sprite,
+      alpha: 0,
+      duration: 700,
+      delay: 500
+    });
+  }
+
+  this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
+  this.logText.setText(`SPECIAL dealt ${result.damage}. ${target.name} defeated.`);
+}
 
       this.refreshHud();
 
