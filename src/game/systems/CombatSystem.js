@@ -49,7 +49,7 @@ export function rollWeaponDamage(player) {
   return randomInt(4, 8);
 }
 
-export function playerAttack(runState, enemy) {
+export function playerAttack(runState, enemy, options = {}) {
   const player = runState.player;
 
   let rawDamage = rollWeaponDamage(player);
@@ -58,11 +58,15 @@ export function playerAttack(runState, enemy) {
     rawDamage = Math.floor(rawDamage * 1.1);
   }
 
-  const finalDamage = Math.floor(
-    rawDamage *
-    player.attackMultiplier *
-    (runState.route.rewardDamageMult || 1)
-  );
+  let finalDamage = Math.floor(
+  rawDamage *
+  player.attackMultiplier *
+  (runState.route.rewardDamageMult || 1)
+);
+
+if (options.isSpecial) {
+  finalDamage = Math.floor(finalDamage * 1.75);
+}
 
   enemy.currentHp -= finalDamage;
   if (enemy.currentHp < 0) enemy.currentHp = 0;
