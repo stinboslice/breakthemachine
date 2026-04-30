@@ -61,7 +61,7 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
     this.playerSprite.setOrigin(0.5, 1);
     this.playerSprite.setScale(2);
 
-    this.add.text(width / 2, 44, `LEVEL ${(this.runState.levelIndex || 0) + 1}  ROUND ${this.round}`, {
+    this.add.text(width / 2, 44, `LEVEL ${(this.runState.levelIndex || 0) + 1}  BATTLE`, {
       fontFamily: "Georgia",
       fontSize: "28px",
       color: "#f4e7c1",
