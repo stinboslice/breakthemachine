@@ -7,7 +7,11 @@ export const IMAGE_ASSETS = [
  ["player_vanguard_down", "assets/sprites/player_vanguard_down.png"],
 ["player_rogue_down", "assets/sprites/player_rogue_down.png"],
 ["player_berserker_down", "assets/sprites/player_berserker_down.png"],
-    
+
+    // PLAYER SPECIALS
+["player_rogue_special", "assets/sprites/player_rogue_special.png"],
+["player_vanguard_special", "assets/sprites/player_vanguard_special.png"],
+["player_berserker_special", "assets/sprites/player_berserker_special.png"],
 
   // LIGHT VARIANTS
     ["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
