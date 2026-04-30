@@ -27,6 +27,8 @@ export const IMAGE_ASSETS = [
 // FINAL BOSS
 ["final_boss_idle", "assets/sprites/final_boss_neutral.png"],
 ["final_boss2_idle", "assets/sprites/final_boss2_idle.png"],
+   
+    
     // BACKGROUNDS
   ["bg_cutscene_default", "assets/backgrounds/bg_cutscene_default.png"],
 
@@ -47,6 +49,7 @@ export const IMAGE_ASSETS = [
   ["bg_boss_door_level3", "assets/backgrounds/bg_boss_door_level3.png"],
   ["bg_boss_door_level4", "assets/backgrounds/bg_boss_door_level4.png"],
   ["bg_boss_door_level5", "assets/backgrounds/bg_boss_door_level5.png"],
+    ["bg_game_over", "assets/backgrounds/bg_game_over.png"],
 // UI PANELS
 ["ui_class_panel", "assets/ui/ui_class_panel.png"],
 ["ui_buff_shelf", "assets/ui/ui_buff_shelf.png"],
