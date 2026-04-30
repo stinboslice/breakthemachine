@@ -76,13 +76,15 @@ export class LevelCompleteScene extends Phaser.Scene {
     });
 
     extractButton.on("pointerdown", () => {
-      this.add.text(w / 2, h * 0.82, "Run extracted successfully.", {
-        fontFamily: "Georgia",
-        fontSize: "20px",
-        color: "#f4e7c1",
-        stroke: "#000",
-        strokeThickness: 4
-      }).setOrigin(0.5);
-    });
+  const runState = this.registry.get("runState");
+
+  runState.runEnded = true;
+  runState.extracted = true;
+  runState.completed = false;
+
+  this.registry.set("runState", runState);
+
+  this.scene.start("ExtractScene");
+});
   }
 }
