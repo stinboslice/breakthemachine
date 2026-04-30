@@ -28,8 +28,11 @@ export class BattleScene extends Phaser.Scene {
     this.enemyHpText = null;
     this.logText = null;
     this.turnQueue = [];
-    this.turnIndex = 0;
-    this.round = 1;
+this.turnIndex = 0;
+this.round = 1;
+this.selectedEnemyIndex = 0;
+this.targetText = null;
+this.specialButton = null;
   }
 
   create() {
@@ -97,7 +100,25 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
 
     attackButton.on("pointerdown", () => this.handlePlayerAttack());
 
-    this.logText = this.add.text(width / 2, height * 0.92, "Battle started.", {
+this.specialButton = this.add.text(width / 2, height * 0.89, "SPECIAL", {
+  fontFamily: "Georgia",
+  fontSize: "20px",
+  color: "#ffffff",
+  backgroundColor: "#1b3a5a",
+  padding: { x: 28, y: 10 }
+}).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+this.specialButton.on("pointerdown", () => this.handleSpecialAttack());
+
+this.targetText = this.add.text(width / 2, height * 0.955, "TARGET: AUTO", {
+  fontFamily: "Georgia",
+  fontSize: "15px",
+  color: "#c9b56d",
+  stroke: "#000000",
+  strokeThickness: 3
+}).setOrigin(0.5);
+
+    this.logText = this.add.text(width / 2, height * 0.835, "Battle started.", {
       fontFamily: "Georgia",
       fontSize: "18px",
       color: "#ffffff",
@@ -123,8 +144,15 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
       const y = height * 0.82;
 
       const sprite = this.add.image(x, y, `${enemy.spritePrefix}_idle`);
-      sprite.setOrigin(0.5, 1);
-      sprite.setScale(enemy.role === "miniboss" ? 1.55 : 1.35);
+sprite.setOrigin(0.5, 1);
+sprite.setScale(enemy.role === "miniboss" ? 1.55 : 1.35);
+sprite.setInteractive({ useHandCursor: true });
+
+sprite.on("pointerdown", () => {
+  if (enemy.currentHp <= 0) return;
+  this.selectedEnemyIndex = index;
+  this.updateTargetSelection();
+});
 
       const nameText = this.add.text(x, height * 0.16, enemy.name, {
         fontFamily: "Georgia",
@@ -154,11 +182,19 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
     );
 
     this.enemySprites.forEach(group => {
-      group.hpText.setText(`HP ${group.enemy.currentHp}/${group.enemy.hp}`);
-      group.sprite.setAlpha(group.enemy.currentHp > 0 ? 1 : 0.45);
-    });
+  group.hpText.setText(`HP ${group.enemy.currentHp}/${group.enemy.hp}`);
+  group.sprite.setAlpha(group.enemy.currentHp > 0 ? 1 : 0.45);
+});
 
-    this.registry.set("runState", this.runState);
+this.updateTargetSelection();
+
+if (this.specialButton) {
+  const uses = this.runState.player.specialUsesRemaining || 0;
+  this.specialButton.setText(`SPECIAL ${uses}`);
+  this.specialButton.setAlpha(uses > 0 ? 1 : 0.45);
+}
+
+this.registry.set("runState", this.runState);
   }
 
   buildTurnQueue() {
@@ -243,14 +279,45 @@ handlePlayerDeath() {
   });
 }
 
+getSelectedTarget() {
+  const livingEnemies = this.enemies.filter(enemy => enemy.currentHp > 0);
+
+  if (!livingEnemies.length) return null;
+
+  const selected = this.enemies[this.selectedEnemyIndex];
+
+  if (selected && selected.currentHp > 0) {
+    return selected;
+  }
+
+  this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
+  return this.enemies[this.selectedEnemyIndex] || livingEnemies[0];
+}
+
+updateTargetSelection() {
+  this.enemySprites.forEach((group, index) => {
+    const isSelected =
+      index === this.selectedEnemyIndex &&
+      group.enemy.currentHp > 0;
+
+    group.sprite.setTint(isSelected ? 0xfff0a8 : 0xffffff);
+    group.nameText.setColor(isSelected ? "#fff0a8" : "#f4e7c1");
+  });
+
+  const target = this.getSelectedTarget();
+
+  if (this.targetText) {
+    this.targetText.setText(target ? `TARGET: ${target.name}` : "TARGET: NONE");
+  }
+}
   
   handlePlayerAttack() {
     const unit = this.turnQueue[this.turnIndex];
 
     if (!unit || unit.type !== "player") return;
 
-    const target = this.enemies.find(enemy => enemy.currentHp > 0);
-    if (!target) return;
+    const target = this.getSelectedTarget();
+if (!target) return;
 
     const result = playerAttack(this.runState, target);
 
@@ -258,13 +325,87 @@ handlePlayerDeath() {
     this.refreshHud();
 
     if (result.enemyDefeated) {
-      this.logText.setText(`You dealt ${result.damage}. ${target.name} defeated.`);
-    }
+  this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
+  this.logText.setText(`You dealt ${result.damage}. ${target.name} defeated.`);
+}
 
     this.time.delayedCall(450, () => {
       this.nextTurn();
     });
   }
+
+handleSpecialAttack() {
+  const unit = this.turnQueue[this.turnIndex];
+
+  if (!unit || unit.type !== "player") return;
+
+  const player = this.runState.player;
+
+  if (!player.specialUsesRemaining || player.specialUsesRemaining <= 0) {
+    this.logText.setText("No special uses remaining.");
+    return;
+  }
+
+  const target = this.getSelectedTarget();
+  if (!target) return;
+
+  player.specialUsesRemaining -= 1;
+
+  const originalX = this.playerSprite.x;
+  const originalY = this.playerSprite.y;
+  const targetGroup = this.enemySprites.find(group => group.enemy === target);
+
+  this.tweens.add({
+    targets: this.playerSprite,
+    x: originalX - 140,
+    duration: 120,
+    onComplete: () => {
+      this.playerSprite.setTexture(`player_${player.classId}_special`);
+
+      this.cameras.main.shake(250, 0.012);
+      this.cameras.main.flash(140, 255, 255, 255);
+
+      if (targetGroup) {
+        const fx = this.add.image(
+          targetGroup.sprite.x,
+          targetGroup.sprite.y - 80,
+          "fx_burst_purple"
+        );
+
+        fx.setScale(1.15);
+        fx.setDepth(50);
+
+        this.tweens.add({
+          targets: fx,
+          alpha: 0,
+          scale: 1.7,
+          duration: 300,
+          onComplete: () => fx.destroy()
+        });
+      }
+
+      const result = playerAttack(this.runState, target, { isSpecial: true });
+
+      this.logText.setText(`SPECIAL hit ${target.name} for ${result.damage}.`);
+
+      if (result.enemyDefeated) {
+        this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
+        this.logText.setText(`SPECIAL dealt ${result.damage}. ${target.name} defeated.`);
+      }
+
+      this.refreshHud();
+
+      this.time.delayedCall(180, () => {
+        this.playerSprite.setTexture(`${getPlayerSpriteBase(player.classId)}_idle`);
+        this.playerSprite.setPosition(originalX, originalY);
+      });
+
+      this.time.delayedCall(460, () => {
+        this.nextTurn();
+      });
+    }
+  });
+}
 
   nextTurn() {
     this.turnIndex += 1;
