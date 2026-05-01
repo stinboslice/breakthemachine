@@ -569,10 +569,18 @@ if (!enemyGroup || enemy.currentHp <= 0) {
   // DASH
   enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "dash"));
 
-  this.tweens.add({
-    targets: enemyGroup.sprite,
-    x: this.playerSprite.x - 130,
-duration: enemy.role === "miniboss" ? 360 : 260,
+  const originalY = enemyGroup.sprite.y;
+
+const attackY =
+  enemy.id === "level3_miniboss"
+    ? this.playerSprite.y - 120
+    : originalY;
+
+this.tweens.add({
+  targets: enemyGroup.sprite,
+  x: this.playerSprite.x - 130,
+  y: attackY,
+  duration: enemy.role === "miniboss" ? 360 : 260,
 
     onComplete: () => {
 
@@ -619,7 +627,8 @@ if (result.playerDefeated) {
 // RETURN
 this.time.delayedCall(enemy.role === "miniboss" ? 420 : 180, () => {
   enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "idle"));
-  enemyGroup.sprite.x = originalX;
+enemyGroup.sprite.x = originalX;
+enemyGroup.sprite.y = originalY;
 
   this.playerSprite.setTexture(`${playerBase}_idle`);
 });
