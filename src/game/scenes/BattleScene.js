@@ -33,6 +33,7 @@ this.round = 1;
 this.selectedEnemyIndex = 0;
 this.targetText = null;
 this.specialButton = null;
+this.actionLocked = false;
   }
 
   create() {
@@ -238,7 +239,12 @@ this.registry.set("runState", this.runState);
 
     if (!unit) return;
 
-    if (unit.type === "player") {
+if (unit.type === "enemy" && (!unit.enemy || unit.enemy.currentHp <= 0)) {
+  this.nextTurn();
+  return;
+}
+
+if (unit.type === "player") {
       this.logText.setText("Your turn.");
       this.refreshHud();
       return;
@@ -315,57 +321,21 @@ updateTargetSelection() {
   }
 }
   
-animatePlayerBasicAttack(target, onImpact) {
-  const player = this.runState.player;
-  const originalX = this.playerSprite.x;
-  const originalY = this.playerSprite.y;
-  const targetGroup = this.enemySprites.find(group => group.enemy === target);
-
-  if (!targetGroup) {
-    onImpact();
-    return;
-  }
-
-  this.tweens.add({
-    targets: this.playerSprite,
-    x: originalX - 95,
-    duration: 110,
-    onComplete: () => {
-      this.cameras.main.shake(160, 0.006);
-
-      const fx = this.add.image(
-        targetGroup.sprite.x,
-        targetGroup.sprite.y - 70,
-        "fx_slash_purple"
-      );
-
-      fx.setScale(0.9);
-      fx.setDepth(50);
-
-      this.tweens.add({
-        targets: fx,
-        alpha: 0,
-        scale: 1.25,
-        duration: 220,
-        onComplete: () => fx.destroy()
-      });
-
-      onImpact();
-
-      this.time.delayedCall(140, () => {
-        this.playerSprite.setPosition(originalX, originalY);
-        this.playerSprite.setTexture(`${getPlayerSpriteBase(player.classId)}_idle`);
-      });
-    }
-  });
-}
 
   handlePlayerAttack() {
-  const unit = this.turnQueue[this.turnIndex];
-  if (!unit || unit.type !== "player") return;
+  if (this.actionLocked) return;
+this.actionLocked = true;
 
+const unit = this.turnQueue[this.turnIndex];
+  if (!unit || unit.type !== "player") {
+  this.actionLocked = false;
+  return;
+}
   const target = this.getSelectedTarget();
-  if (!target) return;
+  if (!target) {
+  this.actionLocked = false;
+  return;
+}
 
   const player = this.runState.player;
   const base = getPlayerSpriteBase(player.classId);
@@ -448,27 +418,39 @@ animatePlayerBasicAttack(target, onImpact) {
 
         // NEXT TURN
         this.time.delayedCall(700, () => {
-          this.nextTurn();
-        });
+  this.actionLocked = false;
+  this.nextTurn();
+});
       });
     }
   });
 }
 
 handleSpecialAttack() {
+  if (this.actionLocked) return;
+  this.actionLocked = true;
+
   const unit = this.turnQueue[this.turnIndex];
 
-  if (!unit || unit.type !== "player") return;
+  if (!unit || unit.type !== "player") {
+    this.actionLocked = false;
+    return;
+  }
 
   const player = this.runState.player;
 
   if (!player.specialUsesRemaining || player.specialUsesRemaining <= 0) {
+    this.actionLocked = false;
     this.logText.setText("No special uses remaining.");
     return;
   }
 
   const target = this.getSelectedTarget();
-  if (!target) return;
+
+  if (!target) {
+    this.actionLocked = false;
+    return;
+  }
 
   player.specialUsesRemaining -= 1;
 
@@ -476,31 +458,35 @@ handleSpecialAttack() {
   const originalY = this.playerSprite.y;
   const targetGroup = this.enemySprites.find(group => group.enemy === target);
 
+  this.playerSprite.setTexture(`player_${player.classId}_dash`);
+
   this.tweens.add({
     targets: this.playerSprite,
     x: originalX - 140,
-    duration: 120,
+    duration: 275,
     onComplete: () => {
       this.playerSprite.setTexture(`player_${player.classId}_special`);
 
-      this.cameras.main.shake(250, 0.012);
-      this.cameras.main.flash(140, 255, 255, 255);
+      this.cameras.main.shake(350, 0.016);
+      this.cameras.main.flash(220, 255, 255, 255);
 
       if (targetGroup) {
+        targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "hit"));
+
         const fx = this.add.image(
           targetGroup.sprite.x,
           targetGroup.sprite.y - 80,
           "fx_burst_purple"
         );
 
-        fx.setScale(1.15);
+        fx.setScale(1.2);
         fx.setDepth(50);
 
         this.tweens.add({
           targets: fx,
           alpha: 0,
-          scale: 1.7,
-          duration: 300,
+          scale: 1.9,
+          duration: 520,
           onComplete: () => fx.destroy()
         });
       }
@@ -509,35 +495,29 @@ handleSpecialAttack() {
 
       this.logText.setText(`SPECIAL hit ${target.name} for ${result.damage}.`);
 
-      if (result.enemyDefeated) {
-  const targetGroup = this.enemySprites.find(group => group.enemy === target);
+      if (result.enemyDefeated && targetGroup) {
+        targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
+        targetGroup.sprite.clearTint();
 
-  if (targetGroup) {
-    targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
-    targetGroup.sprite.clearTint();
+        this.tweens.add({
+          targets: targetGroup.sprite,
+          alpha: 0,
+          duration: 700,
+          delay: 500
+        });
 
-    this.cameras.main.shake(300, 0.01);
-
-    this.tweens.add({
-      targets: targetGroup.sprite,
-      alpha: 0,
-      duration: 700,
-      delay: 500
-    });
-  }
-
-  this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
-  this.logText.setText(`SPECIAL dealt ${result.damage}. ${target.name} defeated.`);
-}
+        this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
+      }
 
       this.refreshHud();
 
-      this.time.delayedCall(180, () => {
+      this.time.delayedCall(620, () => {
         this.playerSprite.setTexture(`${getPlayerSpriteBase(player.classId)}_idle`);
         this.playerSprite.setPosition(originalX, originalY);
       });
 
-      this.time.delayedCall(460, () => {
+      this.time.delayedCall(1250, () => {
+        this.actionLocked = false;
         this.nextTurn();
       });
     }
@@ -549,7 +529,11 @@ animateEnemyAttack(enemy) {
   const playerBase = getPlayerSpriteBase(player.classId);
 
   const enemyGroup = this.enemySprites.find(g => g.enemy === enemy);
-  if (!enemyGroup) return;
+
+if (!enemyGroup || enemy.currentHp <= 0) {
+  this.nextTurn();
+  return;
+}
 
   const originalX = enemyGroup.sprite.x;
 
@@ -594,13 +578,22 @@ enemyGroup.sprite.setTexture(strikeKey);
 
         this.refreshHud();
 
-        // RETURN
-        this.time.delayedCall(200, () => {
-          enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "idle"));
-          enemyGroup.sprite.x = originalX;
+if (result.playerDefeated) {
+  this.time.delayedCall(250, () => {
+    enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "idle"));
+    enemyGroup.sprite.x = originalX;
+    this.handlePlayerDeath();
+  });
+  return;
+}
 
-          this.playerSprite.setTexture(`${playerBase}_idle`);
-        });
+// RETURN
+this.time.delayedCall(200, () => {
+  enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "idle"));
+  enemyGroup.sprite.x = originalX;
+
+  this.playerSprite.setTexture(`${playerBase}_idle`);
+});
 
         this.time.delayedCall(650, () => {
           this.nextTurn();
