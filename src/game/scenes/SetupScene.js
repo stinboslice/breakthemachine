@@ -89,9 +89,20 @@ this.selectedWeaponTier = "base";
   }
 
   create() {
-    this.buffs = LAUNCH_BUFFS;
-    this.showClassScreen();
-  }
+  this.selectedClass = null;
+  this.selectedBuffs = [];
+  this.activeTier = 1;
+  this.selectedWeaponTier = "base";
+  this.objects = [];
+  this.detailObjects = [];
+
+  this.registry.remove("runState");
+  this.registry.remove("selectedClassId");
+  this.registry.remove("selectedBuffs");
+
+  this.buffs = LAUNCH_BUFFS;
+  this.showClassScreen();
+}
 
   // ---------- UTIL ----------
   addTracked(obj) {
