@@ -7,8 +7,11 @@ export class RunIntroScene extends Phaser.Scene {
   }
 
   create() {
-    const w = this.scale.width;
-    const h = this.scale.height;
+  this.hasStarted = false;
+  this.input.enabled = true;
+
+  const w = this.scale.width;
+  const h = this.scale.height;
 
     const runState = this.registry.get("runState");
     const player = runState?.player;
@@ -57,6 +60,7 @@ export class RunIntroScene extends Phaser.Scene {
       this.scene.start("HallwayScene");
     };
 
-    this.input.once("pointerdown", start);
+    this.input.off("pointerdown");
+this.input.once("pointerdown", start);
   }
 }
