@@ -34,6 +34,8 @@ this.selectedEnemyIndex = 0;
 this.targetText = null;
 this.specialButton = null;
 this.actionLocked = false;
+this.playerBobTween = null;
+this.playerGroundY = 0;
   }
 
   create() {
@@ -62,8 +64,20 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
     const playerBase = getPlayerSpriteBase(selectedClassId);
 
     this.playerSprite = this.add.image(width * 0.75, height * 0.82, `${playerBase}_idle`);
-    this.playerSprite.setOrigin(0.5, 1);
-    this.playerSprite.setScale(1);
+this.playerSprite.setOrigin(0.5, 1);
+this.playerSprite.setScale(1.15);
+
+// store base ground position
+this.playerGroundY = this.playerSprite.y;
+
+// store tween reference so we can stop it later
+this.playerBobTween = this.tweens.add({
+  targets: this.playerSprite,
+  y: this.playerGroundY - 8,
+  duration: 900,
+  yoyo: true,
+  repeat: -1
+});
 
     this.add.text(width / 2, 44, `LEVEL ${(this.runState.levelIndex || 0) + 1}  BATTLE`, {
       fontFamily: "Georgia",
@@ -146,8 +160,16 @@ this.targetText = this.add.text(width / 2, height * 0.955, "TARGET: AUTO", {
 
       const sprite = this.add.image(x, y, `${enemy.spritePrefix}_idle`);
 sprite.setOrigin(0.5, 1);
-sprite.setScale(enemy.role === "miniboss" ? 1.0 : 0.80);
+sprite.setScale(enemy.role === "miniboss" ? 1.05 : 0.85);
 sprite.setInteractive({ useHandCursor: true });
+
+this.tweens.add({
+  targets: sprite,
+  y: sprite.y - 6,
+  duration: 850 + index * 120,
+  yoyo: true,
+  repeat: -1
+});
 
 sprite.on("pointerdown", () => {
   if (enemy.currentHp <= 0) return;
@@ -264,8 +286,12 @@ handlePlayerDeath() {
 
   // swap sprite to down state
   const classId = this.runState.player.classId;
-  this.playerSprite.setTexture(`player_${classId}_down`);
+  if (this.playerBobTween) {
+  this.playerBobTween.stop();
+}
 
+this.playerSprite.setTexture(`player_${classId}_down`);
+this.playerSprite.y = this.playerGroundY + 90;
   // slow motion effect
   this.time.timeScale = 0.35;
 
@@ -348,8 +374,8 @@ const unit = this.turnQueue[this.turnIndex];
 
   this.tweens.add({
     targets: this.playerSprite,
-    x: originalX - 90,
-    duration: 140,
+    x: targetGroup ? targetGroup.sprite.x + 115 : originalX - 180,
+duration: 260,
 
     onComplete: () => {
 
@@ -411,7 +437,10 @@ const unit = this.turnQueue[this.turnIndex];
         this.refreshHud();
 
         // RETURN TO IDLE
-        this.time.delayedCall(220, () => {
+        this.time.delayedCall(140, () => {
+if (targetGroup && target.currentHp > 0) {
+  targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "idle"));
+}
           this.playerSprite.setTexture(`${base}_idle`);
           this.playerSprite.x = originalX;
         });
@@ -462,8 +491,8 @@ handleSpecialAttack() {
 
   this.tweens.add({
     targets: this.playerSprite,
-    x: originalX - 140,
-    duration: 275,
+    x: targetGroup ? targetGroup.sprite.x + 130 : originalX - 220,
+duration: 360,
     onComplete: () => {
       this.playerSprite.setTexture(`player_${player.classId}_special`);
 
@@ -542,8 +571,8 @@ if (!enemyGroup || enemy.currentHp <= 0) {
 
   this.tweens.add({
     targets: enemyGroup.sprite,
-    x: originalX + 60,
-    duration: 140,
+    x: this.playerSprite.x - 130,
+duration: enemy.role === "miniboss" ? 360 : 260,
 
     onComplete: () => {
 
@@ -553,7 +582,7 @@ if (!enemyGroup || enemy.currentHp <= 0) {
         enemyGroup.sprite.setTexture(windupKey);
       }
 
-      this.time.delayedCall(120, () => {
+      this.time.delayedCall(enemy.role === "miniboss" ? 320 : 120, () => {
 
         // STRIKE
         let strikeKey = `${enemy.spritePrefix}_attack`;
@@ -588,7 +617,7 @@ if (result.playerDefeated) {
 }
 
 // RETURN
-this.time.delayedCall(200, () => {
+this.time.delayedCall(enemy.role === "miniboss" ? 420 : 180, () => {
   enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "idle"));
   enemyGroup.sprite.x = originalX;
 
