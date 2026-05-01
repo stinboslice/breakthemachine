@@ -1,59 +1,129 @@
 export const IMAGE_ASSETS = [
 
     // PLAYER SPRITES
-  ["player_vanguard_idle", "assets/sprites/player_vanguard_idle.png"],
-  ["player_rogue_idle", "assets/sprites/player_rogue_idle.png"],
-  ["player_berserker_idle", "assets/sprites/player_berserker_idle.png"],
- ["player_vanguard_down", "assets/sprites/player_vanguard_down.png"],
+["player_vanguard_idle", "assets/sprites/player_vanguard_idle.png"],
+["player_rogue_idle", "assets/sprites/player_rogue_idle.png"],
+["player_berserker_idle", "assets/sprites/player_berserker_idle.png"],
+
+["player_vanguard_down", "assets/sprites/player_vanguard_down.png"],
 ["player_rogue_down", "assets/sprites/player_rogue_down.png"],
 ["player_berserker_down", "assets/sprites/player_berserker_down.png"],
 
-    // PLAYER SPECIALS
-["player_rogue_special", "assets/sprites/player_rogue_special.png"],
+["player_vanguard_dash", "assets/sprites/player_vanguard_dash.png"],
+["player_rogue_dash", "assets/sprites/player_rogue_dash.png"],
+["player_berserker_dash", "assets/sprites/player_berserker_dash.png"],
+
+["player_vanguard_hit", "assets/sprites/player_vanguard_hit.png"],
+["player_rogue_hit", "assets/sprites/player_rogue_hit.png"],
+["player_berserker_hit", "assets/sprites/player_berserker_hit.png"],
+
+["player_vanguard_windup", "assets/sprites/player_vanguard_windup.png"],
+["player_rogue_windup", "assets/sprites/player_rogue_windup.png"],
+["player_berserker_windup", "assets/sprites/player_berserker_windup.png"],
+
+["player_vanguard_light", "assets/sprites/player_vanguard_light.png"],
+["player_rogue_light", "assets/sprites/player_rogue_light.png"],
+["player_berserker_light", "assets/sprites/player_berserker_light.png"],
+
 ["player_vanguard_special", "assets/sprites/player_vanguard_special.png"],
+["player_rogue_special", "assets/sprites/player_rogue_special.png"],
 ["player_berserker_special", "assets/sprites/player_berserker_special.png"],
 
-  // LIGHT VARIANTS
-    ["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
+// ENEMY LIGHT
+["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
+["enemy_light_dash", "assets/sprites/enemy_light_dash.png"],
+["enemy_light_attack", "assets/sprites/enemy_light_attack.png"],
+["enemy_light_hit", "assets/sprites/enemy_light_hit.png"],
+["enemy_light_down", "assets/sprites/enemy_light_down.png"],
+
 ["enemy_light2_idle", "assets/sprites/enemy_light2_idle.png"],
+["enemy_light2_dash", "assets/sprites/enemy_light2_dash.png"],
+["enemy_light2_hit", "assets/sprites/enemy_light2_hit.png"],
+["enemy_light2_down", "assets/sprites/enemy_light2_down.png"],
+
 ["enemy_light3_idle", "assets/sprites/enemy_light3_idle.png"],
+["enemy_light3_dash", "assets/sprites/enemy_light3_dash.png"],
+["enemy_light3_attack", "assets/sprites/enemy_light3_attack.png"],
+["enemy_light3_hit", "assets/sprites/enemy_light3_hit.png"],
+["enemy_light3_down", "assets/sprites/enemy_light3_down.png"],
+
 ["enemy_light4_idle", "assets/sprites/enemy_light4_idle.png"],
+["enemy_light4_dash", "assets/sprites/enemy_light4_dash.png"],
+["enemy_light4_hit", "assets/sprites/enemy_light4_hit.png"],
+["enemy_light4_down", "assets/sprites/enemy_light4_down.png"],
 
-// STRONG
+// ENEMY STRONG
 ["enemy_strong_idle", "assets/sprites/enemy_strong_idle.png"],
-["enemy_strong2_idle", "assets/sprites/enemy_strong2_idle.png"],
-["enemy_strong3_idle", "assets/sprites/enemy_strong3_idle.png"],
-["enemy_strong4_idle", "assets/sprites/enemy_strong4_idle.png"],
-["enemy_strong5_idle", "assets/sprites/enemy_strong5_idle.png"],
+["enemy_strong_dash", "assets/sprites/enemy_strong_dash.png"],
+["enemy_strong_hit", "assets/sprites/enemy_strong_hit.png"],
+["enemy_strong_down", "assets/sprites/enemy_strong_down.png"],
 
-// MINIBOSS
+["enemy_strong2_idle", "assets/sprites/enemy_strong2_idle.png"],
+["enemy_strong2_dash", "assets/sprites/enemy_strong2_dash.png"],
+["enemy_strong2_hit", "assets/sprites/enemy_strong2_hit.png"],
+["enemy_strong2_down", "assets/sprites/enemy_strong2_down.png"],
+
+["enemy_strong3_idle", "assets/sprites/enemy_strong3_idle.png"],
+["enemy_strong3_dash", "assets/sprites/enemy_strong3_dash.png"],
+["enemy_strong3_hit", "assets/sprites/enemy_strong3_hit.png"],
+["enemy_strong3_down", "assets/sprites/enemy_strong3_down.png"],
+
+["enemy_strong4_idle", "assets/sprites/enemy_strong4_idle.png"],
+["enemy_strong4_dash", "assets/sprites/enemy_strong4_dash.png"],
+["enemy_strong4_hit", "assets/sprites/enemy_strong4_hit.png"],
+["enemy_strong4_down", "assets/sprites/enemy_strong4_down.png"],
+
+["enemy_strong5_idle", "assets/sprites/enemy_strong5_idle.png"],
+["enemy_strong5_dash", "assets/sprites/enemy_strong5_dash.png"],
+["enemy_strong5_hit", "assets/sprites/enemy_strong5_hit.png"],
+["enemy_strong5_down", "assets/sprites/enemy_strong5_down.png"],
+["enemy_strong5_windup", "assets/sprites/enemy_strong5_windup.png"],
+["enemy_strong5_attack", "assets/sprites/enemy_strong5_attack.png"],
+
+// MINIBOSSES
 ["miniboss_doge_idle", "assets/sprites/miniboss_doge_idle.png"],
+["miniboss_doge_dash", "assets/sprites/miniboss_doge_dash.png"],
+["miniboss_doge_hit", "assets/sprites/miniboss_doge_hit.png"],
+["miniboss_doge_windup", "assets/sprites/miniboss_doge_windup.png"],
+["miniboss_doge_strike", "assets/sprites/miniboss_doge_strike.png"],
+["miniboss_doge_down", "assets/sprites/miniboss_doge_down.png"],
+
 ["miniboss_pepe_idle", "assets/sprites/miniboss_pepe_idle.png"],
+["miniboss_pepe_dash", "assets/sprites/miniboss_pepe_dash.png"],
+["miniboss_pepe_hit", "assets/sprites/miniboss_pepe_hit.png"],
+["miniboss_pepe_windup", "assets/sprites/miniboss_pepe_windup.png"],
+["miniboss_pepe_strike", "assets/sprites/miniboss_pepe_strike.png"],
+["miniboss_pepe_down", "assets/sprites/miniboss_pepe_down.png"],
+
 ["miniboss_bonk_idle", "assets/sprites/miniboss_bonk_idle.png"],
+["miniboss_bonk_dash", "assets/sprites/miniboss_bonk_dash.png"],
+["miniboss_bonk_hit", "assets/sprites/miniboss_bonk_hit.png"],
+["miniboss_bonk_windup", "assets/sprites/miniboss_bonk_windup.png"],
+["miniboss_bonk_strike", "assets/sprites/miniboss_bonk_strike.png"],
+["miniboss_bonk_down", "assets/sprites/miniboss_bonk_down.png"],
+
 ["miniboss_purple_idle", "assets/sprites/miniboss_purple_idle.png"],
+["miniboss_purple_dash", "assets/sprites/miniboss_purple_dash.png"],
+["miniboss_purple_hit", "assets/sprites/miniboss_purple_hit.png"],
+["miniboss_purple_windup", "assets/sprites/miniboss_purple_windup.png"],
+["miniboss_purple_strike", "assets/sprites/miniboss_purple_strike.png"],
+["miniboss_purple_down", "assets/sprites/miniboss_purple_down.png"],
 
 // FINAL BOSS
 ["final_boss_idle", "assets/sprites/final_boss_neutral.png"],
+["final_boss_dash", "assets/sprites/final_boss_dash.png"],
+["final_boss_hit", "assets/sprites/final_boss_hit.png"],
+["final_boss_hurt", "assets/sprites/final_boss_hurt.png"],
+["final_boss_windup", "assets/sprites/final_boss_windup.png"],
+["final_boss_evolve", "assets/sprites/final_boss_evolve.png"],
+
 ["final_boss2_idle", "assets/sprites/final_boss2_idle.png"],
-
-    // ENEMY DOWN FRAMES
-["enemy_light_down", "assets/sprites/enemy_light_down.png"],
-["enemy_light2_down", "assets/sprites/enemy_light2_down.png"],
-["enemy_light3_down", "assets/sprites/enemy_light3_down.png"],
-["enemy_light4_down", "assets/sprites/enemy_light4_down.png"],
-
-["enemy_strong_down", "assets/sprites/enemy_strong_down.png"],
-["enemy_strong2_down", "assets/sprites/enemy_strong2_down.png"],
-["enemy_strong3_down", "assets/sprites/enemy_strong3_down.png"],
-["enemy_strong4_down", "assets/sprites/enemy_strong4_down.png"],
-
-["miniboss_doge_down", "assets/sprites/miniboss_doge_down.png"],
-["miniboss_pepe_down", "assets/sprites/miniboss_pepe_down.png"],
-["miniboss_bonk_down", "assets/sprites/miniboss_bonk_down.png"],
-["miniboss_purple_down", "assets/sprites/miniboss_purple_down.png"],
-
-["final_boss2_down", "assets/sprites/final_boss2_down.png"],
-    
+["final_boss2_dash", "assets/sprites/final_boss2_dash.png"],
+["final_boss2_hit", "assets/sprites/final_boss2_hit.png"],
+["final_boss2_hurt", "assets/sprites/final_boss2_hurt.png"],
+["final_boss2_strike", "assets/sprites/final_boss2_strike.png"],
+["final_boss2_special", "assets/sprites/final_boss2_special.png"],
+["final_boss2_down", "assets/sprites/final_boss2_down.png"],  
     // BACKGROUNDS
   ["bg_cutscene_default", "assets/backgrounds/bg_cutscene_default.png"],
 
