@@ -244,14 +244,8 @@ this.registry.set("runState", this.runState);
       return;
     }
 
-    const result = enemyAttack(this.runState, unit.enemy);
+    this.animateEnemyAttack(unit.enemy);
 
-    this.logText.setText(`${unit.enemy.name} hits you for ${result.damage}.`);
-    this.refreshHud();
-
-    this.time.delayedCall(650, () => {
-      this.nextTurn();
-    });
   }
 handlePlayerDeath() {
   if (this.deathHandled) return;
@@ -321,44 +315,145 @@ updateTargetSelection() {
   }
 }
   
-  handlePlayerAttack() {
-    const unit = this.turnQueue[this.turnIndex];
-
-    if (!unit || unit.type !== "player") return;
-
-    const target = this.getSelectedTarget();
-if (!target) return;
-
-    const result = playerAttack(this.runState, target);
-
-    this.logText.setText(`You hit ${target.name} for ${result.damage}.`);
-    this.refreshHud();
-
-    if (result.enemyDefeated) {
+animatePlayerBasicAttack(target, onImpact) {
+  const player = this.runState.player;
+  const originalX = this.playerSprite.x;
+  const originalY = this.playerSprite.y;
   const targetGroup = this.enemySprites.find(group => group.enemy === target);
 
-  if (targetGroup) {
-    targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
-    targetGroup.sprite.clearTint();
-
-    this.cameras.main.shake(220, 0.006);
-
-    this.tweens.add({
-      targets: targetGroup.sprite,
-      alpha: 0,
-      duration: 650,
-      delay: 450
-    });
+  if (!targetGroup) {
+    onImpact();
+    return;
   }
 
-  this.selectedEnemyIndex = this.enemies.findIndex(enemy => enemy.currentHp > 0);
-  this.logText.setText(`You dealt ${result.damage}. ${target.name} defeated.`);
+  this.tweens.add({
+    targets: this.playerSprite,
+    x: originalX - 95,
+    duration: 110,
+    onComplete: () => {
+      this.cameras.main.shake(160, 0.006);
+
+      const fx = this.add.image(
+        targetGroup.sprite.x,
+        targetGroup.sprite.y - 70,
+        "fx_slash_purple"
+      );
+
+      fx.setScale(0.9);
+      fx.setDepth(50);
+
+      this.tweens.add({
+        targets: fx,
+        alpha: 0,
+        scale: 1.25,
+        duration: 220,
+        onComplete: () => fx.destroy()
+      });
+
+      onImpact();
+
+      this.time.delayedCall(140, () => {
+        this.playerSprite.setPosition(originalX, originalY);
+        this.playerSprite.setTexture(`${getPlayerSpriteBase(player.classId)}_idle`);
+      });
+    }
+  });
 }
 
-    this.time.delayedCall(450, () => {
-      this.nextTurn();
-    });
-  }
+  handlePlayerAttack() {
+  const unit = this.turnQueue[this.turnIndex];
+  if (!unit || unit.type !== "player") return;
+
+  const target = this.getSelectedTarget();
+  if (!target) return;
+
+  const player = this.runState.player;
+  const base = getPlayerSpriteBase(player.classId);
+
+  const originalX = this.playerSprite.x;
+  const targetGroup = this.enemySprites.find(g => g.enemy === target);
+
+  // DASH IN
+  this.playerSprite.setTexture(`${base}_dash`);
+
+  this.tweens.add({
+    targets: this.playerSprite,
+    x: originalX - 90,
+    duration: 140,
+
+    onComplete: () => {
+
+      // WINDUP if exists
+      const windupKey = `${base}_windup`;
+      if (this.textures.exists(windupKey)) {
+        this.playerSprite.setTexture(windupKey);
+      }
+
+      this.time.delayedCall(120, () => {
+
+        // STRIKE FRAME
+        this.playerSprite.setTexture(`${base}_light`);
+
+        this.cameras.main.shake(180, 0.006);
+
+        if (targetGroup) {
+          targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "hit"));
+
+          const fx = this.add.image(
+            targetGroup.sprite.x,
+            targetGroup.sprite.y - 70,
+            "fx_slash_purple"
+          );
+
+          fx.setScale(1.0);
+          fx.setDepth(50);
+
+          this.tweens.add({
+            targets: fx,
+            alpha: 0,
+            scale: 1.3,
+            duration: 250,
+            onComplete: () => fx.destroy()
+          });
+        }
+
+        // APPLY DAMAGE HERE ONLY
+        const result = playerAttack(this.runState, target);
+
+        this.logText.setText(`You hit ${target.name} for ${result.damage}.`);
+
+        // DEATH HANDLING
+        if (result.enemyDefeated) {
+          if (targetGroup) {
+            targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
+
+            this.tweens.add({
+              targets: targetGroup.sprite,
+              alpha: 0,
+              duration: 700,
+              delay: 300
+            });
+          }
+
+          this.selectedEnemyIndex = this.enemies.findIndex(e => e.currentHp > 0);
+        }
+
+        this.refreshHud();
+
+        // RETURN TO IDLE
+        this.time.delayedCall(220, () => {
+          this.playerSprite.setTexture(`${base}_idle`);
+          this.playerSprite.x = originalX;
+        });
+
+        // NEXT TURN
+        this.time.delayedCall(700, () => {
+          this.nextTurn();
+        });
+      });
+    }
+  });
+}
 
 handleSpecialAttack() {
   const unit = this.turnQueue[this.turnIndex];
@@ -444,6 +539,72 @@ handleSpecialAttack() {
 
       this.time.delayedCall(460, () => {
         this.nextTurn();
+      });
+    }
+  });
+}
+
+animateEnemyAttack(enemy) {
+  const player = this.runState.player;
+  const playerBase = getPlayerSpriteBase(player.classId);
+
+  const enemyGroup = this.enemySprites.find(g => g.enemy === enemy);
+  if (!enemyGroup) return;
+
+  const originalX = enemyGroup.sprite.x;
+
+  // DASH
+  enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "dash"));
+
+  this.tweens.add({
+    targets: enemyGroup.sprite,
+    x: originalX + 60,
+    duration: 140,
+
+    onComplete: () => {
+
+      // WINDUP if exists
+      const windupKey = this.getEnemyFrameKey(enemy, "windup");
+      if (this.textures.exists(windupKey)) {
+        enemyGroup.sprite.setTexture(windupKey);
+      }
+
+      this.time.delayedCall(120, () => {
+
+        // STRIKE
+        let strikeKey = `${enemy.spritePrefix}_attack`;
+
+if (!this.textures.exists(strikeKey)) {
+  strikeKey = `${enemy.spritePrefix}_strike`;
+}
+
+if (!this.textures.exists(strikeKey)) {
+  strikeKey = `${enemy.spritePrefix}_dash`;
+}
+
+enemyGroup.sprite.setTexture(strikeKey);
+
+        this.cameras.main.shake(180, 0.006);
+
+        this.playerSprite.setTexture(`${playerBase}_hit`);
+
+        const result = enemyAttack(this.runState, enemy);
+
+        this.logText.setText(`${enemy.name} hits you for ${result.damage}.`);
+
+        this.refreshHud();
+
+        // RETURN
+        this.time.delayedCall(200, () => {
+          enemyGroup.sprite.setTexture(this.getEnemyFrameKey(enemy, "idle"));
+          enemyGroup.sprite.x = originalX;
+
+          this.playerSprite.setTexture(`${playerBase}_idle`);
+        });
+
+        this.time.delayedCall(650, () => {
+          this.nextTurn();
+        });
       });
     }
   });
