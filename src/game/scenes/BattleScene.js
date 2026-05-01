@@ -40,7 +40,14 @@ this.playerGroundY = 0;
 
   create() {
     const width = this.scale.width;
-    const height = this.scale.height;
+const height = this.scale.height;
+
+this.deathHandled = false;
+this.actionLocked = false;
+this.input.enabled = true;
+this.time.timeScale = 1;
+this.playerBobTween = null;
+this.playerGroundY = 0;
 
     const dataStore = this.registry.get("dataStore");
     this.runState = this.registry.get("runState");
@@ -300,9 +307,10 @@ this.playerSprite.y = this.playerGroundY + 90;
 
   // slight delay then go to game over
   this.time.delayedCall(1200, () => {
-    this.time.timeScale = 1;
-    this.scene.start("GameOverScene");
-  });
+  this.time.timeScale = 1;
+  this.input.enabled = true;
+  this.scene.start("GameOverScene");
+});
 }
 
 getEnemyFrameKey(enemy, frame) {
