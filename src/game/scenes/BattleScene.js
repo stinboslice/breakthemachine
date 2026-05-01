@@ -62,7 +62,7 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
 
     this.playerSprite = this.add.image(width * 0.75, height * 0.82, `${playerBase}_idle`);
     this.playerSprite.setOrigin(0.5, 1);
-    this.playerSprite.setScale(2);
+    this.playerSprite.setScale(1.15);
 
     this.add.text(width / 2, 44, `LEVEL ${(this.runState.levelIndex || 0) + 1}  BATTLE`, {
       fontFamily: "Georgia",
@@ -145,7 +145,7 @@ this.targetText = this.add.text(width / 2, height * 0.955, "TARGET: AUTO", {
 
       const sprite = this.add.image(x, y, `${enemy.spritePrefix}_idle`);
 sprite.setOrigin(0.5, 1);
-sprite.setScale(enemy.role === "miniboss" ? 1.55 : 1.35);
+sprite.setScale(enemy.role === "miniboss" ? 1.05 : 0.85);
 sprite.setInteractive({ useHandCursor: true });
 
 sprite.on("pointerdown", () => {
