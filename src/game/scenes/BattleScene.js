@@ -70,9 +70,9 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
 
     const playerBase = getPlayerSpriteBase(selectedClassId);
 
-    this.playerSprite = this.add.image(width * 0.75, height * 0.82, `${playerBase}_idle`);
+    this.playerSprite = this.add.image(width * 0.75, height * 0.9, `${playerBase}_idle`);
 this.playerSprite.setOrigin(0.5, 1);
-this.playerSprite.setScale(1.15);
+this.playerSprite.setScale(1);
 
 // store base ground position
 this.playerGroundY = this.playerSprite.y;
@@ -112,27 +112,27 @@ this.playerBobTween = this.tweens.add({
       strokeThickness: 3
     }).setOrigin(0.5);
 
-    const attackButton = this.add.text(width / 2, height * 0.82, "ATTACK", {
-      fontFamily: "Georgia",
-      fontSize: "24px",
-      color: "#ffffff",
-      backgroundColor: "#7b1113",
-      padding: { x: 32, y: 12 }
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-    attackButton.on("pointerdown", () => this.handlePlayerAttack());
-
-this.specialButton = this.add.text(width / 2, height * 0.89, "SPECIAL", {
+    const attackButton = this.add.text(width / 2 - 95, height * 0.88, "ATTACK", {
   fontFamily: "Georgia",
-  fontSize: "20px",
+  fontSize: "22px",
+  color: "#ffffff",
+  backgroundColor: "#7b1113",
+  padding: { x: 30, y: 10 }
+}).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+attackButton.on("pointerdown", () => this.handlePlayerAttack());
+
+this.specialButton = this.add.text(width / 2 + 95, height * 0.88, "SPECIAL", {
+  fontFamily: "Georgia",
+  fontSize: "22px",
   color: "#ffffff",
   backgroundColor: "#1b3a5a",
-  padding: { x: 28, y: 10 }
+  padding: { x: 30, y: 10 }
 }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
 this.specialButton.on("pointerdown", () => this.handleSpecialAttack());
 
-this.targetText = this.add.text(width / 2, height * 0.955, "TARGET: AUTO", {
+this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
   fontFamily: "Georgia",
   fontSize: "15px",
   color: "#c9b56d",
@@ -140,15 +140,15 @@ this.targetText = this.add.text(width / 2, height * 0.955, "TARGET: AUTO", {
   strokeThickness: 3
 }).setOrigin(0.5);
 
-    this.logText = this.add.text(width / 2, height * 0.835, "Battle started.", {
-      fontFamily: "Georgia",
-      fontSize: "18px",
-      color: "#ffffff",
-      stroke: "#000000",
-      strokeThickness: 3,
-      wordWrap: { width: 860 },
-      align: "center"
-    }).setOrigin(0.5);
+    this.logText = this.add.text(width / 2, height * 0.80, "Battle started.", {
+  fontFamily: "Georgia",
+  fontSize: "17px",
+  color: "#ffffff",
+  stroke: "#000000",
+  strokeThickness: 3,
+  wordWrap: { width: 760 },
+  align: "center"
+}).setOrigin(0.5);
 
     this.refreshHud();
     this.buildTurnQueue();
