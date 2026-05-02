@@ -122,8 +122,7 @@ this.playerBobTween = this.tweens.add({
   color: "#ffffff",
   backgroundColor: "#7b1113",
   padding: { x: 30, y: 10 }
-}).setOrigin(0.5).setInteractive({ useHandCursor: true });
-.setDepth(21);
+}).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(21);
 
 attackButton.on("pointerdown", () => this.handlePlayerAttack());
 
@@ -133,8 +132,7 @@ this.specialButton = this.add.text(width / 2 + 95, height * 0.88, "SPECIAL", {
   color: "#ffffff",
   backgroundColor: "#1b3a5a",
   padding: { x: 30, y: 10 }
-}).setOrigin(0.5).setInteractive({ useHandCursor: true });
-.setDepth(21);
+}).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(21);
 
 this.specialButton.on("pointerdown", () => this.handleSpecialAttack());
 
@@ -144,8 +142,7 @@ this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
   color: "#c9b56d",
   stroke: "#000000",
   strokeThickness: 3
-}).setOrigin(0.5);
-.setDepth(21);
+}).setOrigin(0.5).setDepth(21);
 
     this.logText = this.add.text(width / 2, height * 0.80, "Battle started.", {
   fontFamily: "Georgia",
@@ -155,8 +152,7 @@ this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
   strokeThickness: 3,
   wordWrap: { width: 760 },
   align: "center"
-}).setOrigin(0.5);
-.setDepth(21);
+}).setOrigin(0.5).setDepth(21);
 
     this.refreshHud();
     this.buildTurnQueue();
