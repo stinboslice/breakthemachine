@@ -68,6 +68,10 @@ this.enemies = buildEnemiesForWave(wave, dataStore);
 
     this.add.image(width / 2, height / 2, "bg_depth_1").setDisplaySize(width, height);
 
+this.add.rectangle(width / 2, height * 0.885, 560, 130, 0x050508, 0.62)
+  .setStrokeStyle(2, 0xc9b56d, 0.45)
+  .setDepth(20);
+
     const playerBase = getPlayerSpriteBase(selectedClassId);
 
     this.playerSprite = this.add.image(width * 0.75, height * 0.9, `${playerBase}_idle`);
@@ -119,6 +123,7 @@ this.playerBobTween = this.tweens.add({
   backgroundColor: "#7b1113",
   padding: { x: 30, y: 10 }
 }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+.setDepth(21);
 
 attackButton.on("pointerdown", () => this.handlePlayerAttack());
 
@@ -129,6 +134,7 @@ this.specialButton = this.add.text(width / 2 + 95, height * 0.88, "SPECIAL", {
   backgroundColor: "#1b3a5a",
   padding: { x: 30, y: 10 }
 }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+.setDepth(21);
 
 this.specialButton.on("pointerdown", () => this.handleSpecialAttack());
 
@@ -139,6 +145,7 @@ this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
   stroke: "#000000",
   strokeThickness: 3
 }).setOrigin(0.5);
+.setDepth(21);
 
     this.logText = this.add.text(width / 2, height * 0.80, "Battle started.", {
   fontFamily: "Georgia",
@@ -149,6 +156,7 @@ this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
   wordWrap: { width: 760 },
   align: "center"
 }).setOrigin(0.5);
+.setDepth(21);
 
     this.refreshHud();
     this.buildTurnQueue();
