@@ -161,7 +161,7 @@
     "hit": "enemy_strong2_hit.png",
     "down": "enemy_strong2_down.png"
   }
-} ./,
+},
   {
     {
   "id": "level4_strong_enemy",
