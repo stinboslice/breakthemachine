@@ -110,17 +110,25 @@ export class HallwayScene extends Phaser.Scene {
     fitImage(this, scanButton, 230, 62);
 
     scanButton.on("pointerdown", () => {
-      const state = this.registry.get("runState");
-      const isRogue = state?.player?.classId === "rogue";
+  const state = this.registry.get("runState");
+  const isRogue = state?.player?.classId === "rogue";
 
-      if (!isRogue || state.route.scanUsed) return;
+  if (!isRogue) {
+    return;
+  }
 
-      state.route.scanUsed = true;
+  if (state.route.scanUsed) {
+    return;
+  }
 
-      const revealIndex = Math.floor(Math.random() * iconObjects.length);
-      iconObjects[revealIndex].setVisible(true);
+  state.route.scanUsed = true;
 
-      this.registry.set("runState", state);
-    });
+  const revealIndex = Math.floor(Math.random() * iconObjects.length);
+  state.route.scannedChoiceIndex = revealIndex;
+
+  iconObjects[revealIndex].setVisible(true);
+
+  this.registry.set("runState", state);
+});
   }
 }
