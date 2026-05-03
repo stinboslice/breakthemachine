@@ -54,7 +54,8 @@ export class LevelCompleteScene extends Phaser.Scene {
       runState.waveIndex = 0;
       runState.forceBoss = false;
       runState.bossCleared = false;
-
+      runState.scanUsed = false;
+      
       runState.route = {
         ...runState.route,
         level: runState.levelIndex + 1,
