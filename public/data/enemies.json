@@ -123,32 +123,31 @@
     }
   },
   {
-    "id": "level2_strong_enemy",
-    "name": "Execution Frame",
-    "level": 2,
-    "role": "strong",
-    "spritePrefix": "enemy_strong",
-    "hp": 50,
-    "damageMin": 4,
-    "damageMax": 6,
-    "speed": 0.97,
-    "abilities": ["overload"],
-    "attackPattern": "dash_only",
-    "attackEffect": "fx_burst_purple.png",
-    "animations": {
-      "idle": "enemy_strong2_idle.png",
-      "dash": "enemy_strong2_dash.png",
-      "down": "enemy_strong2_down.png",
-      "hit": "enemy_strong2_hit.png",
-    }
-  },
-  {
-    {
+  "id": "level2_strong_enemy",
+  "name": "Execution Frame",
+  "level": 2,
+  "role": "strong",
+  "spritePrefix": "enemy_strong2",
+  "hp": 50,
+  "damageMin": 4,
+  "damageMax": 6,
+  "speed": 0.97,
+  "abilities": ["overload"],
+  "attackPattern": "dash_only",
+  "attackEffect": "fx_burst_purple.png",
+  "animations": {
+    "idle": "enemy_strong2_idle.png",
+    "dash": "enemy_strong2_dash.png",
+    "hit": "enemy_strong2_hit.png",
+    "down": "enemy_stron2g_down.png"
+  }
+},
+{
   "id": "level3_strong_enemy",
   "name": "Core Reaper",
   "level": 3,
   "role": "strong",
-  "spritePrefix": "enemy_strong2",
+  "spritePrefix": "enemy_strong3",
   "hp": 53,
   "damageMin": 5,
   "damageMax": 7,
@@ -163,8 +162,7 @@
     "down": "enemy_strong3_down.png"
   }
 },
-  {
-    {
+{
   "id": "level4_strong_enemy",
   "name": "Protocol Crusher",
   "level": 4,
@@ -184,27 +182,27 @@
     "down": "enemy_strong4_down.png"
   }
 },
-  {
-    "id": "level5_strong_enemy",
-    "name": "Titan Shell",
-    "level": 5,
-    "role": "strong",
-    "spritePrefix": "enemy_strong4",
-    "hp": 65,
-    "damageMin": 8,
-    "damageMax": 13,
-    "speed": 1.22,
-    "abilities": ["overload"],
-    "attackPattern": "dash_strike",
-    "attackEffect": "fx_wave_dual.png",
-    "animations": {
-      "idle": "enemy_strong5_idle.png",
-      "dash": "enemy_strong5_dash.png",
-      "strike": "enemy_strong5_strike.png",
-      "hit": "enemy_strong5_hit.png",
-      "down": "enemy_strong5_down.png"
-    }
-  },
+{
+  "id": "level5_strong_enemy",
+  "name": "Titan Shell",
+  "level": 5,
+  "role": "strong",
+  "spritePrefix": "enemy_strong5",
+  "hp": 65,
+  "damageMin": 8,
+  "damageMax": 13,
+  "speed": 1.22,
+  "abilities": ["overload"],
+  "attackPattern": "dash_strike",
+  "attackEffect": "fx_wave_dual.png",
+  "animations": {
+    "idle": "enemy_strong5_idle.png",
+    "dash": "enemy_strong5_dash.png",
+    "strike": "enemy_strong5_attack.png",
+    "hit": "enemy_strong5_hit.png",
+    "down": "enemy_strong5_down.png"
+  }
+},
 
   {
     "id": "level2_miniboss",
