@@ -142,44 +142,47 @@
     }
   },
   {
-    "id": "level3_strong_enemy",
-    "name": "Core Reaper",
-    "level": 3,
-    "role": "strong",
-    "spritePrefix": "enemy_strong2",
-    "hp": 53,
-    "damageMin": 5,
-    "damageMax": 7,
-    "speed": 1.05,
-    "abilities": ["overload"],
-    "attackPattern": "dash_only",
-    "attackEffect": "fx_burst_purple.png",
-    "animations": {
-      "idle": "enemy_strong2_idle.png",
-      "dash": "enemy_strong2_dash.png",
-      "down": "enemy_strong2_down.png"
-    }
-  },
+    {
+  "id": "level3_strong_enemy",
+  "name": "Core Reaper",
+  "level": 3,
+  "role": "strong",
+  "spritePrefix": "enemy_strong2",
+  "hp": 53,
+  "damageMin": 5,
+  "damageMax": 7,
+  "speed": 1.05,
+  "abilities": ["overload"],
+  "attackPattern": "dash_only",
+  "attackEffect": "fx_burst_purple.png",
+  "animations": {
+    "idle": "enemy_strong2_idle.png",
+    "dash": "enemy_strong2_dash.png",
+    "hit": "enemy_strong2_hit.png",
+    "down": "enemy_strong2_down.png"
+  }
+} ./,
   {
-    "id": "level4_strong_enemy",
-    "name": "Protocol Crusher",
-    "level": 4,
-    "role": "strong",
-    "spritePrefix": "enemy_strong3",
-    "hp": 56,
-    "damageMin": 6,
-    "damageMax": 9,
-    "speed": 1.13,
-    "abilities": ["overload"],
-    "attackPattern": "dash_only",
-    "attackEffect": "fx_arc_purple.png",
-    "animations": {
-      "idle": "enemy_strong3_idle.png",
-      "dash": "enemy_strong3_dash.png",
-      "hit": "enemy_strong3_hit.png",
-      "down": "enemy_strong3_down.png"
-    }
-  },
+    {
+  "id": "level4_strong_enemy",
+  "name": "Protocol Crusher",
+  "level": 4,
+  "role": "strong",
+  "spritePrefix": "enemy_strong4",
+  "hp": 56,
+  "damageMin": 6,
+  "damageMax": 9,
+  "speed": 1.13,
+  "abilities": ["overload"],
+  "attackPattern": "dash_only",
+  "attackEffect": "fx_arc_purple.png",
+  "animations": {
+    "idle": "enemy_strong4_idle.png",
+    "dash": "enemy_strong4_dash.png",
+    "hit": "enemy_strong4_hit.png",
+    "down": "enemy_strong4_down.png"
+  }
+},
   {
     "id": "level5_strong_enemy",
     "name": "Titan Shell",
