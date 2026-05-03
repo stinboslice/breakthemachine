@@ -39,7 +39,7 @@ export class HallwayScene extends Phaser.Scene {
 
     if (!runState.route) runState.route = {};
     if (typeof runState.route.setIndex !== "number") runState.route.setIndex = 0;
-    if (typeof runState.route.scanUsed !== "boolean") runState.route.scanUsed = false;
+    if (typeof runState.scanUsed !== "boolean") runState.scanUsed = false;
 
     if (runState.route.setIndex >= 2) {
       this.scene.start("BossDoorScene");
@@ -117,11 +117,11 @@ export class HallwayScene extends Phaser.Scene {
     return;
   }
 
-  if (state.route.scanUsed) {
-    return;
-  }
+  if (state.scanUsed) {
+  return;
+}
 
-  state.route.scanUsed = true;
+state.scanUsed = true;
 
   const revealIndex = Math.floor(Math.random() * iconObjects.length);
   state.route.scannedChoiceIndex = revealIndex;
