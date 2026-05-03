@@ -136,9 +136,10 @@
     "attackPattern": "dash_only",
     "attackEffect": "fx_burst_purple.png",
     "animations": {
-      "idle": "enemy_strong_idle.png",
-      "dash": "enemy_strong_dash.png",
-      "down": "enemy_strong_down.png"
+      "idle": "enemy_strong2_idle.png",
+      "dash": "enemy_strong2_dash.png",
+      "down": "enemy_strong2_down.png",
+      "hit": "enemy_strong2_hit.png",
     }
   },
   {
@@ -156,10 +157,10 @@
   "attackPattern": "dash_only",
   "attackEffect": "fx_burst_purple.png",
   "animations": {
-    "idle": "enemy_strong2_idle.png",
-    "dash": "enemy_strong2_dash.png",
-    "hit": "enemy_strong2_hit.png",
-    "down": "enemy_strong2_down.png"
+    "idle": "enemy_strong3_idle.png",
+    "dash": "enemy_strong3_dash.png",
+    "hit": "enemy_strong3_hit.png",
+    "down": "enemy_strong3_down.png"
   }
 },
   {
@@ -197,11 +198,11 @@
     "attackPattern": "dash_strike",
     "attackEffect": "fx_wave_dual.png",
     "animations": {
-      "idle": "enemy_strong4_idle.png",
-      "dash": "enemy_strong4_dash.png",
-      "strike": "enemy_strong4_strike.png",
-      "hit": "enemy_strong4_hit.png",
-      "down": "enemy_strong4_down.png"
+      "idle": "enemy_strong5_idle.png",
+      "dash": "enemy_strong5_dash.png",
+      "strike": "enemy_strong5_strike.png",
+      "hit": "enemy_strong5_hit.png",
+      "down": "enemy_strong5_down.png"
     }
   },
 
