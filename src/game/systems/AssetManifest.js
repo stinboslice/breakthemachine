@@ -194,7 +194,8 @@ export const IMAGE_ASSETS = [
 ["ui_buff_detail_panel", "assets/ui/ui_buff_detail_panel.png"],
 ["ui_room_result_panel", "assets/ui/ui_room_result_panel.png"],
 ["ui_room_reward_panel", "assets/ui/ui_room_reward_panel.png"],
-
+["ui_dialogue_panel", "assets/ui/ui_dialogue_panel.png"],
+    
 // UI BUTTONS
 ["button_buy", "assets/ui/button_buy.png"],
 ["button_continue", "assets/ui/button_continue.png"],
