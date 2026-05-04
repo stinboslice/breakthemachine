@@ -29,6 +29,49 @@ export const IMAGE_ASSETS = [
 ["player_rogue_special", "assets/sprites/player_rogue_special.png"],
 ["player_berserker_special", "assets/sprites/player_berserker_special.png"],
 
+    // PORTRAITS
+
+// Narrator
+["portrait_narrator_neutral", "assets/portraits/portrait_narrator_neutral.png"],
+
+// Doge
+["portrait_doge_neutral", "assets/portraits/portrait_doge_neutral.png"],
+["portrait_doge_angry", "assets/portraits/portrait_doge_angry.png"],
+["portrait_doge_smirk", "assets/portraits/portrait_doge_smirk.png"],
+
+// Pepe
+["portrait_pepe_neutral", "assets/portraits/portrait_pepe_neutral.png"],
+["portrait_pepe_angry", "assets/portraits/portrait_pepe_angry.png"],
+["portrait_pepe_smirk", "assets/portraits/portrait_pepe_smirk.png"],
+["portrait_pepe_down", "assets/portraits/portrait_pepe_down.png"],
+
+// Purple (Twin Protocol)
+["portrait_purple_neutral", "assets/portraits/portrait_purple_neutral.png"],
+["portrait_purple_angry", "assets/portraits/portrait_purple_angry.png"],
+["portrait_purple_smirk", "assets/portraits/portrait_purple_smirk.png"],
+
+// Rogue
+["portrait_rogue_neutral", "assets/portraits/portrait_rogue_neutral.png"],
+["portrait_rogue_angry", "assets/portraits/portrait_rogue_angry.png"],
+["portrait_rogue_smirk", "assets/portraits/portrait_rogue_smirk.png"],
+["portrait_rogue_surprised", "assets/portraits/portrait_rogue_surprised.png"],
+
+// Vanguard
+["portrait_vanguard_neutral", "assets/portraits/portrait_vanguard_neutral.png"],
+["portrait_vanguard_angry", "assets/portraits/portrait_vanguard_angry.png"],
+
+// Berserker
+["portrait_berserker_neutral", "assets/portraits/portrait_berserker_neutral.png"],
+["portrait_berserker_angry", "assets/portraits/portrait_berserker_angry.png"],
+["portrait_berserker_smirk", "assets/portraits/portrait_berserker_smirk.png"],
+["portrait_berserker_surprised", "assets/portraits/portrait_berserker_surprised.png"],
+
+// Final Boss
+["portrait_boss_neutral", "assets/portraits/portrait_boss_neutral.png"],
+["portrait_boss_angry", "assets/portraits/portrait_boss_angry.png"],
+["portrait_boss_smirk", "assets/portraits/portrait_boss_smirk.png"],
+["portrait_boss_evolve", "assets/portraits/portrait_boss_evolve.png"],
+    
 // ENEMY LIGHT
 ["enemy_light_idle", "assets/sprites/enemy_light_idle.png"],
 ["enemy_light_dash", "assets/sprites/enemy_light_dash.png"],
