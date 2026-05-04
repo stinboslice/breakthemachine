@@ -40,8 +40,9 @@ export class DialogueScene extends Phaser.Scene {
 
     this.add.image(w / 2, h / 2, "bg_cutscene_default").setDisplaySize(w, h);
 
-    this.add.rectangle(w / 2, h * 0.72, w * 0.84, h * 0.28, 0x050508, 0.78)
-      .setStrokeStyle(2, 0xc9b56d, 0.65);
+    const panel = this.add.image(w / 2, h * 0.72, "ui_dialogue_panel");
+panel.setDisplaySize(w * 0.84, h * 0.28);
+panel.setAlpha(0.95);
 
     this.speakerText = this.add.text(w * 0.12, h * 0.61, this.dialogue.speaker || "Narration", {
       fontFamily: "Georgia",
