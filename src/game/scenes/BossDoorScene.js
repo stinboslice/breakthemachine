@@ -44,10 +44,16 @@ export class BossDoorScene extends Phaser.Scene {
     fitImage(this, button, 260, 70);
 
     button.on("pointerdown", () => {
-      const state = this.registry.get("runState");
-      state.forceBoss = true;
-      this.registry.set("runState", state);
-      this.scene.start("BattleScene");
-    });
+  const state = this.registry.get("runState");
+  const levelNumber = (state?.levelIndex || 0) + 1;
+
+  state.forceBoss = true;
+  this.registry.set("runState", state);
+
+  this.scene.start("DialogueScene", {
+    dialogueId: levelNumber === 5 ? "level5_boss_intro" : `level${levelNumber}_miniboss_intro`,
+    returnScene: "BattleScene"
+  });
+});
   }
 }
