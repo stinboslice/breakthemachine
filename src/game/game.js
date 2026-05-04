@@ -9,7 +9,7 @@ import { BossDoorScene } from "./scenes/BossDoorScene.js";
 import { LevelCompleteScene } from "./scenes/LevelCompleteScene.js";
 import { GameOverScene } from "./scenes/GameOverScene.js";
 import { ExtractScene } from "./scenes/ExtractScene.js";
-
+import { DialogueScene } from "./scenes/DialogueScene.js";
 
 export function createGame() {
   return new Phaser.Game({
@@ -23,6 +23,7 @@ export function createGame() {
     scene: [
   BootScene,
   SetupScene,
+  DialogueScene,
   RunIntroScene,
   HallwayScene,
   RoomResultScene,
