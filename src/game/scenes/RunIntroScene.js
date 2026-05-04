@@ -57,7 +57,14 @@ export class RunIntroScene extends Phaser.Scene {
       if (this.hasStarted) return;
       this.hasStarted = true;
 
-      this.scene.start("HallwayScene");
+      this.scene.start("DialogueScene", {
+  dialogueId: "run_start",
+  returnScene: "DialogueScene",
+  returnData: {
+    dialogueId: `level${(runState?.levelIndex || 0) + 1}_intro`,
+    returnScene: "HallwayScene"
+  }
+});
     };
 
     this.input.off("pointerdown");
