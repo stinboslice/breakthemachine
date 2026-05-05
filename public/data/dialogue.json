@@ -12,6 +12,72 @@
     ]
   },
   {
+  "id": "run_start_hero_response",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "I know how this works.",
+    "It rewards belief until belief becomes liquidity."
+  ]
+},
+{
+  "id": "level1_hero_intro",
+  "speaker": "Hero",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Low resistance. Easy wins.",
+    "That is how the machine gets people comfortable."
+  ]
+},
+{
+  "id": "level2_hero_intro",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "The pattern is changing.",
+    "It is not adapting to protect me."
+  ]
+},
+{
+  "id": "level3_hero_intro",
+  "speaker": "Hero",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Narratives. Communities. Conviction.",
+    "This is not culture. It is funnel design."
+  ]
+},
+{
+  "id": "level4_hero_intro",
+  "speaker": "Hero",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "The system is not hiding anymore.",
+    "It expects me to stay because I came this far."
+  ]
+},
+{
+  "id": "level5_hero_intro",
+  "speaker": "Hero",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "I am not here to outtrade it.",
+    "I am here to understand it."
+  ]
+},
+  {
     "id": "level1_intro",
     "speaker": "Narration",
     "portrait": "narrator",
