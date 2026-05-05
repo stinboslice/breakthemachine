@@ -57,12 +57,22 @@ export class RunIntroScene extends Phaser.Scene {
       if (this.hasStarted) return;
       this.hasStarted = true;
 
-      this.scene.start("DialogueScene", {
+      const levelNumber = (runState?.levelIndex || 0) + 1;
+
+this.scene.start("DialogueScene", {
   dialogueId: "run_start",
   returnScene: "DialogueScene",
   returnData: {
-    dialogueId: `level${(runState?.levelIndex || 0) + 1}_intro`,
-    returnScene: "HallwayScene"
+    dialogueId: "run_start_hero_response",
+    returnScene: "DialogueScene",
+    returnData: {
+      dialogueId: `level${levelNumber}_intro`,
+      returnScene: "DialogueScene",
+      returnData: {
+        dialogueId: `level${levelNumber}_hero_intro`,
+        returnScene: "HallwayScene"
+      }
+    }
   }
 });
     };
