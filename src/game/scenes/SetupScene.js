@@ -292,7 +292,7 @@ this.selectedWeaponTier = "base";
   const panel = add(this.add.image(w / 2, h / 2, "ui_buff_detail_panel").setDepth(1001));
   fitImage(this, panel, 500, 660);
 
-  add(this.add.text(w / 2, h * 0.120, buff.name, {
+  add(this.add.text(w / 2, h * 0.1, buff.name, {
     fontSize: "28px",
     color: "#f4e7c1",
     stroke: "#000",
