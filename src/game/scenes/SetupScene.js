@@ -324,7 +324,7 @@ this.selectedWeaponTier = "base";
 
   // Move Tier 1 slightly RIGHT
   if (tier === 1) {
-    x += 12;
+    x += 10;
   }
 
   // Move Tier 3 slightly LEFT
