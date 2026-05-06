@@ -318,20 +318,34 @@ this.selectedWeaponTier = "base";
     align: "center"
   }).setOrigin(0.5).setDepth(1002));
 
-  [1, 2, 3].forEach((tier, i) => {
-    const btn = add(
-      this.add.image(w / 2 - 145 + i * 145, h * 0.63, `detail_panel_button_t${tier}`)
-        .setInteractive({ useHandCursor: true })
-        .setDepth(1002)
-    );
+[1, 2, 3].forEach((tier, i) => {
 
-    fitImage(this, btn, 130, 58);
+  let x = w / 2 - 145 + i * 145;
 
-    btn.on("pointerdown", () => {
-      this.activeTier = tier;
-      tierText.setText(BUFF_TIER_DETAILS[buff.id][tier]);
-    });
+  // Move Tier 1 slightly RIGHT
+  if (tier === 1) {
+    x += 12;
+  }
+
+  // Move Tier 3 slightly LEFT
+  if (tier === 3) {
+    x -= 12;
+  }
+
+  const btn = add(
+    this.add.image(x, h * 0.63, `detail_panel_button_t${tier}`)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(1002)
+  );
+
+  fitImage(this, btn, 130, 58);
+
+  btn.on("pointerdown", () => {
+    this.activeTier = tier;
+    tierText.setText(BUFF_TIER_DETAILS[buff.id][tier]);
   });
+
+});
 
   const alreadySelected = this.selectedBuffs.some(b => b.id === buff.id);
   const selectKey = alreadySelected ? "detail_panel_button_update" : "detail_panel_button_select";
