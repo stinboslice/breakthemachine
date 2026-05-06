@@ -337,7 +337,7 @@ this.selectedWeaponTier = "base";
   const selectKey = alreadySelected ? "detail_panel_button_update" : "detail_panel_button_select";
 
   const selectBtn = add(
-    this.add.image(w / 2 - 105, h * 1, selectKey)
+    this.add.image(w / 2 - 105, h * .805, selectKey)
       .setInteractive({ useHandCursor: true })
       .setDepth(1002)
   );
