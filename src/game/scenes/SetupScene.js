@@ -292,7 +292,7 @@ this.selectedWeaponTier = "base";
   const panel = add(this.add.image(w / 2, h / 2, "ui_buff_detail_panel").setDepth(1001));
   fitImage(this, panel, 500, 660);
 
-  add(this.add.text(w / 2, h * 0.95, buff.name, {
+  add(this.add.text(w / 2, h * 0.145, buff.name, {
     fontSize: "28px",
     color: "#f4e7c1",
     stroke: "#000",
@@ -302,14 +302,14 @@ this.selectedWeaponTier = "base";
   const icon = add(this.add.image(w / 2, h * 0.295, BUFF_ICON_KEYS[buff.id]).setDepth(1002));
   fitImage(this, icon, 128, 128);
 
-  add(this.add.text(w / 2, h * 0.5, buff.description, {
+  add(this.add.text(w / 2, h * 0.295, buff.description, {
     fontSize: "16px",
     color: "#ffffff",
     wordWrap: { width: 330 },
     align: "center"
   }).setOrigin(0.5).setDepth(1002));
 
-  const tierText = add(this.add.text(w / 2, h * 0.9, BUFF_TIER_DETAILS[buff.id][1], {
+  const tierText = add(this.add.text(w / 2, h * 0.655, BUFF_TIER_DETAILS[buff.id][1], {
     fontSize: "17px",
     color: "#f4e7c1",
     stroke: "#000",
