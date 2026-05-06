@@ -192,8 +192,8 @@ this.selectedWeaponTier = "base";
   fitImage(this, shelf, 980, 380);
 
   const positions = [
-    [-285, -82], [0, -82], [285, -82],
-    [-285, 92], [0, 92], [285, 92]
+    [-285, -82], [0, -72], [285, -82],
+    [-285, 92], [0, 82], [285, 92]
   ];
 
   this.buffs.forEach((buff, i) => {
