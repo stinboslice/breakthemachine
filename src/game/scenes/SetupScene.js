@@ -292,7 +292,7 @@ this.selectedWeaponTier = "base";
   const panel = add(this.add.image(w / 2, h / 2, "ui_buff_detail_panel").setDepth(1001));
   fitImage(this, panel, 500, 660);
 
-  add(this.add.text(w / 2, h * 0.1, buff.name, {
+  add(this.add.text(w / 2, h * 0.95, buff.name, {
     fontSize: "28px",
     color: "#f4e7c1",
     stroke: "#000",
@@ -309,7 +309,7 @@ this.selectedWeaponTier = "base";
     align: "center"
   }).setOrigin(0.5).setDepth(1002));
 
-  const tierText = add(this.add.text(w / 2, h * 0.7, BUFF_TIER_DETAILS[buff.id][1], {
+  const tierText = add(this.add.text(w / 2, h * 0.9, BUFF_TIER_DETAILS[buff.id][1], {
     fontSize: "17px",
     color: "#f4e7c1",
     stroke: "#000",
@@ -320,7 +320,7 @@ this.selectedWeaponTier = "base";
 
   [1, 2, 3].forEach((tier, i) => {
     const btn = add(
-      this.add.image(w / 2 - 145 + i * 145, h * 0.545, `detail_panel_button_t${tier}`)
+      this.add.image(w / 2 - 145 + i * 145, h * 0.65, `detail_panel_button_t${tier}`)
         .setInteractive({ useHandCursor: true })
         .setDepth(1002)
     );
@@ -337,7 +337,7 @@ this.selectedWeaponTier = "base";
   const selectKey = alreadySelected ? "detail_panel_button_update" : "detail_panel_button_select";
 
   const selectBtn = add(
-    this.add.image(w / 2 - 105, h * 0.805, selectKey)
+    this.add.image(w / 2 - 105, h * 1, selectKey)
       .setInteractive({ useHandCursor: true })
       .setDepth(1002)
   );
@@ -358,7 +358,7 @@ this.selectedWeaponTier = "base";
   });
 
   const closeBtn = add(
-    this.add.image(w / 2 + 105, h * 0.805, "detail_panel_button_close")
+    this.add.image(w / 2 + 105, h * 1, "detail_panel_button_close")
       .setInteractive({ useHandCursor: true })
       .setDepth(1002)
   );
