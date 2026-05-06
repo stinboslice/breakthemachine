@@ -358,7 +358,7 @@ this.selectedWeaponTier = "base";
   });
 
   const closeBtn = add(
-    this.add.image(w / 2 + 96, h * .88, "detail_panel_button_close")
+    this.add.image(w / 2 + 96, h * .87, "detail_panel_button_close")
       .setInteractive({ useHandCursor: true })
       .setDepth(1002)
   );
