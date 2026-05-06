@@ -324,12 +324,12 @@ this.selectedWeaponTier = "base";
 
   // Move Tier 1 slightly RIGHT
   if (tier === 1) {
-    x += 10;
+    x += 9.5;
   }
 
   // Move Tier 3 slightly LEFT
   if (tier === 3) {
-    x -= 12;
+    x -= 9.5;
   }
 
   const btn = add(
