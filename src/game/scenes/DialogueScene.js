@@ -38,18 +38,28 @@ export class DialogueScene extends Phaser.Scene {
   constructor() {
     super("DialogueScene");
 
-    this.dialogueId = null;
+    this.dialogueIds = [];
+    this.dialogueIndex = 0;
     this.returnScene = null;
     this.returnData = {};
     this.dialogue = null;
     this.lineIndex = 0;
     this.lineText = null;
     this.speakerText = null;
+    this.portrait = null;
     this.hasAdvanced = false;
   }
 
   init(data) {
-    this.dialogueId = data?.dialogueId || "run_start";
+    if (Array.isArray(data?.dialogueIds)) {
+      this.dialogueIds = data.dialogueIds;
+    } else if (data?.dialogueId) {
+      this.dialogueIds = [data.dialogueId];
+    } else {
+      this.dialogueIds = ["run_start"];
+    }
+
+    this.dialogueIndex = 0;
     this.returnScene = data?.returnScene || "HallwayScene";
     this.returnData = data?.returnData || {};
     this.lineIndex = 0;
@@ -60,41 +70,23 @@ export class DialogueScene extends Phaser.Scene {
     const w = this.scale.width;
     const h = this.scale.height;
 
-    const dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
-const runState = this.registry.get("runState");
-    const dialogueList = dataStore?.data?.dialogue || [];
-
-    this.dialogue =
-      dialogueList.find(item => item.id === this.dialogueId) ||
-      dialogueList.find(item => item.id === "run_start");
-
-    if (!this.dialogue) {
-      this.scene.start(this.returnScene, this.returnData);
-      return;
-    }
+    this.dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
+    this.runState = this.registry.get("runState");
+    this.dialogueList = this.dataStore?.data?.dialogue || [];
 
     this.add.image(w / 2, h / 2, "bg_cutscene_default").setDisplaySize(w, h);
 
-const portraitKey = getPortraitKey(this, this.dialogue, runState);
-
-if (portraitKey && this.textures.exists(portraitKey)) {
-  const portrait = this.add.image(w / 2, h * 0.48, portraitKey);
-  portrait.setOrigin(0.5, 1);
-  portrait.setDepth(5);
-
-  const frame = this.textures.getFrame(portraitKey);
-  const frameW = frame?.width || 1;
-  const frameH = frame?.height || 1;
-
-  portrait.setScale(Math.min(320 / frameW, 320 / frameH));
-}
+    this.portrait = this.add.image(w / 2, h * 0.48, "portrait_narrator_neutral");
+    this.portrait.setOrigin(0.5, 1);
+    this.portrait.setDepth(5);
+    this.portrait.setVisible(false);
 
     const panel = this.add.image(w / 2, h * 0.72, "ui_dialogue_panel");
-panel.setDisplaySize(w * 0.84, h * 0.28);
-panel.setAlpha(0.95);
-panel.setDepth(10);
+    panel.setDisplaySize(w * 0.84, h * 0.28);
+    panel.setAlpha(0.95);
+    panel.setDepth(10);
 
-this.speakerText = this.add.text(w * 0.12, h * 0.61, this.dialogue.speaker || "Narration", {
+    this.speakerText = this.add.text(w * 0.12, h * 0.61, "", {
       fontFamily: "Georgia",
       fontSize: "26px",
       color: "#f4e7c1",
@@ -120,15 +112,53 @@ this.speakerText = this.add.text(w * 0.12, h * 0.61, this.dialogue.speaker || "N
       strokeThickness: 3
     }).setOrigin(0.5).setDepth(11);
 
-    this.showLine();
+    this.loadCurrentDialogue();
+    this.bindAdvance();
+  }
 
-    this.input.once("pointerdown", () => this.advance());
-    this.input.keyboard?.once("keydown", () => this.advance());
+  loadCurrentDialogue() {
+    const currentId = this.dialogueIds[this.dialogueIndex];
+
+    this.dialogue =
+      this.dialogueList.find(item => item.id === currentId) ||
+      this.dialogueList.find(item => item.id === "run_start");
+
+    if (!this.dialogue) {
+      this.scene.start(this.returnScene, this.returnData);
+      return;
+    }
+
+    this.lineIndex = 0;
+    this.hasAdvanced = false;
+
+    this.speakerText.setText(this.dialogue.speaker || "Narration");
+
+    const portraitKey = getPortraitKey(this, this.dialogue, this.runState);
+
+    if (portraitKey && this.textures.exists(portraitKey)) {
+      this.portrait.setTexture(portraitKey);
+      this.portrait.setVisible(true);
+
+      const frame = this.textures.getFrame(portraitKey);
+      const frameW = frame?.width || 1;
+      const frameH = frame?.height || 1;
+
+      this.portrait.setScale(Math.min(420 / frameW, 420 / frameH));
+    } else {
+      this.portrait.setVisible(false);
+    }
+
+    this.showLine();
   }
 
   showLine() {
     const lines = this.dialogue?.lines || [];
     this.lineText.setText(lines[this.lineIndex] || "");
+  }
+
+  bindAdvance() {
+    this.input.once("pointerdown", () => this.advance());
+    this.input.keyboard?.once("keydown", () => this.advance());
   }
 
   advance() {
@@ -140,11 +170,15 @@ this.speakerText = this.add.text(w * 0.12, h * 0.61, this.dialogue.speaker || "N
       this.lineIndex += 1;
       this.showLine();
 
-      this.time.delayedCall(120, () => {
-        this.input.once("pointerdown", () => this.advance());
-        this.input.keyboard?.once("keydown", () => this.advance());
-      });
+      this.time.delayedCall(120, () => this.bindAdvance());
+      return;
+    }
 
+    if (this.dialogueIndex < this.dialogueIds.length - 1) {
+      this.dialogueIndex += 1;
+      this.loadCurrentDialogue();
+
+      this.time.delayedCall(120, () => this.bindAdvance());
       return;
     }
 
