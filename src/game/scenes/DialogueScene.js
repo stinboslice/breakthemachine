@@ -76,7 +76,7 @@ export class DialogueScene extends Phaser.Scene {
 
     this.add.image(w / 2, h / 2, "bg_cutscene_default").setDisplaySize(w, h);
 
-    this.portrait = this.add.image(w / 2, h * 0.48, "portrait_narrator_neutral");
+    this.portrait = this.add.image(w / 2, h * 0.60, "portrait_narrator_neutral");
     this.portrait.setOrigin(0.5, 1);
     this.portrait.setDepth(5);
     this.portrait.setVisible(false);
@@ -143,7 +143,7 @@ export class DialogueScene extends Phaser.Scene {
       const frameW = frame?.width || 1;
       const frameH = frame?.height || 1;
 
-      this.portrait.setScale(Math.min(420 / frameW, 420 / frameH));
+      this.portrait.setScale(Math.min(360 / frameW, 360 / frameH));
     } else {
       this.portrait.setVisible(false);
     }
