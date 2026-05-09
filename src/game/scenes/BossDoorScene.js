@@ -50,10 +50,18 @@ export class BossDoorScene extends Phaser.Scene {
   state.forceBoss = true;
   this.registry.set("runState", state);
 
-  this.scene.start("DialogueScene", {
-    dialogueId: levelNumber === 5 ? "level5_boss_intro" : `level${levelNumber}_miniboss_intro`,
-    returnScene: "BattleScene"
-  });
+  const dialogueChains = {
+  1: ["level1_miniboss_intro", "level1_hero_response_2"],
+  2: ["level2_miniboss_intro", "level2_hero_response_2"],
+  3: ["level3_miniboss_intro", "level3_hero_response_2"],
+  4: ["level4_miniboss_intro", "level4_hero_response_2"],
+  5: ["level5_boss_intro", "level5_hero_response_2"]
+};
+
+this.scene.start("DialogueScene", {
+  dialogueIds: dialogueChains[levelNumber] || [`level${levelNumber}_miniboss_intro`],
+  returnScene: "BattleScene"
+});
 });
   }
 }
