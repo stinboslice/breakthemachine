@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-
+import { logEvent, exportRunLogCsv } from "../systems/EventLogger.js";
 export class LevelCompleteScene extends Phaser.Scene {
   constructor() {
     super("LevelCompleteScene");
@@ -49,7 +49,18 @@ export class LevelCompleteScene extends Phaser.Scene {
 
     continueButton.on("pointerdown", () => {
       if (!runState) return;
+const exportButton = this.add.text(w / 2, h * 0.82, "EXPORT RUN LOG", {
+  fontFamily: "Georgia",
+  fontSize: "20px",
+  color: "#f4e7c1",
+  backgroundColor: "#111111",
+  padding: { x: 24, y: 10 }
+}).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
+exportButton.on("pointerdown", () => {
+  const state = this.registry.get("runState");
+  exportRunLogCsv(state);
+});
       runState.levelIndex = (runState.levelIndex || 0) + 1;
       runState.waveIndex = 0;
       runState.forceBoss = false;
@@ -71,7 +82,11 @@ export class LevelCompleteScene extends Phaser.Scene {
 
       runState.player.hp = runState.player.maxHp;
       runState.player.specialUsesRemaining = runState.player.specialUsesMax;
-
+logEvent(runState, "continue_to_next_level", {
+  nextLevel: (runState.levelIndex || 0) + 1,
+  playerHpResetTo: runState.player?.maxHp,
+  specialUsesResetTo: runState.player?.specialUsesMax
+});
       this.registry.set("runState", runState);
       const nextLevelNumber = (runState.levelIndex || 0) + 1;
 
@@ -95,7 +110,11 @@ this.scene.start("DialogueScene", {
   runState.runEnded = true;
   runState.extracted = true;
   runState.completed = false;
-
+logEvent(runState, "run_extracted", {
+  level: levelNumber,
+  playerHp: runState.player?.hp,
+  completed: false
+});
   this.registry.set("runState", runState);
 
   const extractChains = {
