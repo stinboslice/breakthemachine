@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-function getPortraitKey(dialogue, runState) {
+function getPortraitKey(scene, dialogue, runState) {
   if (!dialogue) return null;
 
   let portraitId = dialogue.portrait || null;
@@ -10,9 +10,28 @@ function getPortraitKey(dialogue, runState) {
     portraitId = runState.player.classId;
   }
 
+  if (!portraitId) {
+    const speaker = String(dialogue.speaker || "").toLowerCase();
+
+    if (speaker.includes("doge")) portraitId = "doge";
+    else if (speaker.includes("pepe")) portraitId = "pepe";
+    else if (speaker.includes("twin")) portraitId = "purple";
+    else if (speaker.includes("purple")) portraitId = "purple";
+    else if (speaker.includes("extraction")) portraitId = "boss";
+    else if (speaker.includes("protocol")) portraitId = "doge";
+    else if (speaker.includes("narration")) portraitId = "narrator";
+  }
+
   if (!portraitId) return null;
 
-  return `portrait_${portraitId}_${mood}`;
+  const preferredKey = `portrait_${portraitId}_${mood}`;
+  const fallbackKey = `portrait_${portraitId}_neutral`;
+
+  if (scene.textures.exists(preferredKey)) return preferredKey;
+  if (scene.textures.exists(fallbackKey)) return fallbackKey;
+
+  console.warn("Missing portrait:", preferredKey, fallbackKey);
+  return null;
 }
 
 export class DialogueScene extends Phaser.Scene {
@@ -56,7 +75,7 @@ const runState = this.registry.get("runState");
 
     this.add.image(w / 2, h / 2, "bg_cutscene_default").setDisplaySize(w, h);
 
-const portraitKey = getPortraitKey(this.dialogue, runState);
+const portraitKey = getPortraitKey(this, this.dialogue, runState);
 
 if (portraitKey && this.textures.exists(portraitKey)) {
   const portrait = this.add.image(w / 2, h * 0.48, portraitKey);
