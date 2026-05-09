@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 
+import { logEvent } from "../systems/EventLogger.js";
+
 function fitImage(scene, image, maxWidth, maxHeight) {
   const frame = scene.textures.getFrame(image.texture.key);
   const w = frame?.width || 1;
@@ -48,6 +50,10 @@ export class BossDoorScene extends Phaser.Scene {
   const levelNumber = (state?.levelIndex || 0) + 1;
 
   state.forceBoss = true;
+      logEvent(state, "boss_door_entered", {
+  level: levelNumber,
+  forceBoss: true
+});
   this.registry.set("runState", state);
 
   const dialogueChains = {
