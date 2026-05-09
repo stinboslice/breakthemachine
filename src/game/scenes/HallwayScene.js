@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 
+import { logEvent } from "../systems/EventLogger.js";
+
 const ROOM_ICONS = {
   trap: "icon_room_trap",
   corrupt: "icon_room_corrupt",
@@ -54,6 +56,16 @@ export class HallwayScene extends Phaser.Scene {
       revealed: false
     }));
 
+    logEvent(runState, "hallway_choices_generated", {
+  level: levelNumber,
+  setIndex: runState.route.setIndex,
+  choices: runState.route.currentChoices.map(choice => ({
+    id: choice.id,
+    roomType: choice.roomType,
+    revealed: choice.revealed
+  }))
+});
+
     this.registry.set("runState", runState);
 
     const bgKey = `bg_hallway_${levelNumber}`;
@@ -99,6 +111,15 @@ export class HallwayScene extends Phaser.Scene {
 
         updatedState.route.currentRoomType = roomType;
 
+       logEvent(updatedState, "hallway_choice_selected", {
+  level: levelNumber,
+  setIndex: updatedState.route.setIndex,
+  selectedIndex: index,
+  roomType,
+  choiceId: updatedState.route.currentChoices?.[index]?.id || null,
+  availableChoices: updatedState.route.currentChoices || []
+});
+        
         this.registry.set("runState", updatedState);
         this.scene.start("RoomResultScene", { roomType });
       });
@@ -126,6 +147,14 @@ state.scanUsed = true;
   const revealIndex = Math.floor(Math.random() * iconObjects.length);
   state.route.scannedChoiceIndex = revealIndex;
 
+logEvent(state, "rogue_scan_used", {
+  level: levelNumber,
+  setIndex: state.route.setIndex,
+  revealedIndex: revealIndex,
+  revealedRoomType: state.route.currentChoices?.[revealIndex]?.roomType || null,
+  choices: state.route.currentChoices || []
+});
+      
   iconObjects[revealIndex].setVisible(true);
 
   this.registry.set("runState", state);
