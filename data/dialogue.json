@@ -25,26 +25,30 @@
     ]
   },
   {
-    "id": "level1_miniboss_intro",
-    "speaker": "Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "First time here?",
-      "Don’t worry. You’re early.",
-      "You always are."
-    ]
-  },
+  "id": "level1_miniboss_intro",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "First time here?",
+    "Don’t worry. You’re early.",
+    "You always are."
+  ]
+},
   {
-    "id": "level1_miniboss_defeat",
-    "speaker": "Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "hurt",
-    "lines": [
-      "Strange… you didn’t chase the green candles.",
-      "You might actually survive this place."
-    ]
-  },
+  "id": "level1_miniboss_defeat",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "hurt",
+  "lines": [
+    "Strange… you didn’t chase the green candles.",
+    "You might actually survive this place."
+  ]
+},
   {
     "id": "level2_intro",
     "speaker": "Narration",
@@ -58,28 +62,32 @@
       "To extract from you more efficiently."
     ]
   },
+ {
+  "id": "level2_miniboss_intro",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Look at you.",
+    "Still holding.",
+    "Still believing this time is different."
+  ]
+},
   {
-    "id": "level2_miniboss_intro",
-    "speaker": "DOGE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "Look at you.",
-      "Still holding.",
-      "Still believing this time is different."
-    ]
-  },
-  {
-    "id": "level2_miniboss_defeat",
-    "speaker": "DOGE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "hurt",
-    "lines": [
-      "You didn’t panic sell…",
-      "You’re not behaving like the others.",
-      "That’s a problem for the system."
-    ]
-  },
+  "id": "level2_miniboss_defeat",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "hurt",
+  "lines": [
+    "You didn’t panic sell…",
+    "You’re not behaving like the others.",
+    "That’s a problem for the system."
+  ]
+},
   {
     "id": "level3_intro",
     "speaker": "Narration",
@@ -93,28 +101,32 @@
       "All engineered."
     ]
   },
+ {
+  "id": "level3_miniboss_intro",
+  "speaker": "PEPE Protocol",
+  "portrait": "pepe",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "We gave them memes.",
+    "They gave us liquidity.",
+    "Fair trade, no?"
+  ]
+},
   {
-    "id": "level3_miniboss_intro",
-    "speaker": "PEPE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "We gave them memes.",
-      "They gave us liquidity.",
-      "Fair trade, no?"
-    ]
-  },
-  {
-    "id": "level3_miniboss_defeat",
-    "speaker": "PEPE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "hurt",
-    "lines": [
-      "You saw through it…",
-      "Most never do.",
-      "They call it culture. We call it funnel design."
-    ]
-  },
+  "id": "level3_miniboss_defeat",
+  "speaker": "PEPE Protocol",
+  "portrait": "pepe",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "hurt",
+  "lines": [
+    "You saw through it…",
+    "Most never do.",
+    "They call it culture. We call it funnel design."
+  ]
+},
   {
     "id": "level4_intro",
     "speaker": "Narration",
@@ -168,27 +180,31 @@
     ]
   },
   {
-    "id": "level5_boss_intro",
-    "speaker": "Extraction Machine",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "You’ve disrupted flow.",
-      "You’ve avoided designed losses.",
-      "You are inefficient."
-    ]
-  },
+  "id": "level5_boss_intro",
+  "speaker": "Extraction Machine",
+  "portrait": "boss",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "You’ve disrupted flow.",
+    "You’ve avoided designed losses.",
+    "You are inefficient."
+  ]
+},
   {
-    "id": "level5_boss_evolution",
-    "speaker": "Extraction Machine",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "evolve",
-    "lines": [
-      "Adjusting strategy.",
-      "Increasing volatility.",
-      "Deploying final extraction sequence."
-    ]
-  },
+  "id": "level5_boss_evolution",
+  "speaker": "Extraction Machine",
+  "portrait": "boss",
+  "portraitMood": "evolve",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "evolve",
+  "lines": [
+    "Adjusting strategy.",
+    "Increasing volatility.",
+    "Deploying final extraction sequence."
+  ]
+},
   {
     "id": "level5_boss_destruction",
     "speaker": "Hero",
