@@ -2,6 +2,8 @@ import Phaser from "phaser";
 
 import { buildRunState } from "../systems/RunBuilder.js";
 
+import { logEvent } from "../systems/EventLogger.js";
+
 const LAUNCH_CLASSES = [
   { id: "vanguard", characterName: "Noah", className: "Vanguard", hp: 130, attackMultiplier: 0.9, speed: 0.8 },
   { id: "berserker", characterName: "Rory", className: "Berserker", hp: 110, attackMultiplier: 1.2, speed: 1.0 },
@@ -161,9 +163,23 @@ this.selectedWeaponTier = "base";
       ).setOrigin(0.5));
 
       const select = () => {
-        this.selectedClass = cls;
-        this.showBuffScreen();
-      };
+  this.selectedClass = cls;
+
+  window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
+  window.ELF_PENDING_SETUP_LOG.push({
+    type: "class_selected",
+    payload: {
+      classId: cls.id,
+      characterName: cls.characterName,
+      className: cls.className,
+      hp: cls.hp,
+      attackMultiplier: cls.attackMultiplier,
+      speed: cls.speed
+    }
+  });
+
+  this.showBuffScreen();
+};
 
       panel.on("pointerdown", select);
       sprite.on("pointerdown", select);
@@ -244,7 +260,16 @@ this.selectedWeaponTier = "base";
 
     tierButton.on("pointerdown", () => {
       this.selectedWeaponTier = tier.value;
-      this.weaponTierText.setText(`Weapon Tier: ${tier.label}`);
+this.weaponTierText.setText(`Weapon Tier: ${tier.label}`);
+
+window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
+window.ELF_PENDING_SETUP_LOG.push({
+  type: "weapon_tier_selected",
+  payload: {
+    weaponTier: tier.value,
+    label: tier.label
+  }
+});
     });
   });
 
@@ -266,6 +291,20 @@ this.selectedWeaponTier = "base";
       dataStore
     });
 
+const pendingLogs = window.ELF_PENDING_SETUP_LOG || [];
+
+pendingLogs.forEach(entry => {
+  logEvent(runState, entry.type, entry.payload);
+});
+
+logEvent(runState, "setup_completed", {
+  selectedClassId: this.selectedClass.id,
+  selectedBuffs: this.selectedBuffs,
+  weaponTier: this.selectedWeaponTier
+});
+
+window.ELF_PENDING_SETUP_LOG = [];
+    
     this.registry.set("runState", runState);
     this.registry.set("selectedClassId", this.selectedClass.id);
     this.registry.set("selectedBuffs", this.selectedBuffs);
@@ -362,10 +401,30 @@ this.selectedWeaponTier = "base";
     const exists = this.selectedBuffs.find(b => b.id === buff.id);
 
     if (exists) {
-      this.selectedBuffs = this.selectedBuffs.filter(b => b.id !== buff.id);
-    } else if (this.selectedBuffs.length < 3) {
-      this.selectedBuffs.push({ id: buff.id, tier: this.activeTier });
+  this.selectedBuffs = this.selectedBuffs.filter(b => b.id !== buff.id);
+
+  window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
+  window.ELF_PENDING_SETUP_LOG.push({
+    type: "buff_removed",
+    payload: {
+      buffId: buff.id,
+      buffName: buff.name
     }
+  });
+} else if (this.selectedBuffs.length < 3) {
+  this.selectedBuffs.push({ id: buff.id, tier: this.activeTier });
+
+  window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
+  window.ELF_PENDING_SETUP_LOG.push({
+    type: "buff_selected",
+    payload: {
+      buffId: buff.id,
+      buffName: buff.name,
+      tier: this.activeTier,
+      tierDetails: BUFF_TIER_DETAILS[buff.id]?.[this.activeTier] || null
+    }
+  });
+}
 
     this.statusText.setText(`${this.selectedBuffs.length} / 3 buffs selected`);
     this.closeBuffDetail();
