@@ -1,3 +1,5 @@
+import { ensureRunLog, logEvent } from "./EventLogger.js";
+
 export function getBuffTierBurnCost(tier) {
   if (tier === 1) return 1;
   if (tier === 2) return 2;
@@ -86,7 +88,7 @@ export function buildRunState({ selectedClass, selectedBuffs, weaponTier = "base
       return sum + getBuffTierBurnCost(buff.tier || 1);
     }, 0);
 
-  return {
+  const runState = {
     levelIndex: 0,
     waveIndex: 0,
     roundNumber: 1,
@@ -135,5 +137,26 @@ export function buildRunState({ selectedClass, selectedBuffs, weaponTier = "base
     currentTurnQueue: [],
     currentTurnIndex: 0,
     runEnded: false
-  };
+    };
+
+ensureRunLog(runState);
+
+logEvent(runState, "run_created", {
+  selectedClassId: selectedClass.id,
+  selectedClassName: selectedClass.className,
+  characterName: selectedClass.characterName,
+  selectedBuffs,
+  weaponTier,
+  totalBurn,
+  playerStats: {
+    maxHp: runState.player.maxHp,
+    attackMultiplier: runState.player.attackMultiplier,
+    speed: runState.player.speed,
+    crit: runState.player.crit,
+    blockChance: runState.player.blockChance,
+    doubleStrikeChance: runState.player.doubleStrikeChance
+  }
+});
+
+return runState;
 }
