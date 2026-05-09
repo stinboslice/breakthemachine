@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-
+import { exportRunLogCsv } from "../systems/EventLogger.js";
 export class ExtractScene extends Phaser.Scene {
   constructor() {
     super("ExtractScene");
@@ -29,7 +29,18 @@ export class ExtractScene extends Phaser.Scene {
       stroke: "#000",
       strokeThickness: 4
     }).setOrigin(0.5);
+const exportButton = this.add.text(w / 2, h * 0.60, "EXPORT RUN LOG", {
+  fontFamily: "Georgia",
+  fontSize: "22px",
+  color: "#f4e7c1",
+  backgroundColor: "#111111",
+  padding: { x: 24, y: 10 }
+}).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
+exportButton.on("pointerdown", () => {
+  const runState = this.registry.get("runState");
+  exportRunLogCsv(runState);
+});
     const button = this.add.image(w / 2, h * 0.72, "button_continue")
       .setInteractive({ useHandCursor: true });
 
