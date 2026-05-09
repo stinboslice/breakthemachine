@@ -313,7 +313,13 @@ this.playerSprite.y = this.playerGroundY + 90;
   this.time.delayedCall(1200, () => {
   this.time.timeScale = 1;
   this.input.enabled = true;
-  this.scene.start("GameOverScene");
+  this.scene.start("DialogueScene", {
+
+  dialogueIds: ["death_generic", "death_hero_response"],
+
+  returnScene: "GameOverScene"
+
+});
 });
 }
 
@@ -666,6 +672,8 @@ enemyGroup.sprite.y = originalY;
 
   handleVictory() {
 if (this.runState.forceBoss) {
+  const levelNumber = (this.runState.levelIndex || 0) + 1;
+
   this.runState.forceBoss = false;
   this.runState.bossCleared = true;
 
@@ -673,8 +681,19 @@ if (this.runState.forceBoss) {
 
   this.logText.setText("Boss cleared.");
 
+  const defeatChains = {
+    1: ["level1_miniboss_defeat", "level1_post_boss_reflection"],
+    2: ["level2_miniboss_defeat", "level2_post_boss_reflection"],
+    3: ["level3_miniboss_defeat", "level3_post_boss_reflection"],
+    4: ["level4_miniboss_defeat", "level4_post_boss_reflection"],
+    5: ["victory_final", "victory_hero_final"]
+  };
+
   this.time.delayedCall(800, () => {
-    this.scene.start("LevelCompleteScene");
+    this.scene.start("DialogueScene", {
+      dialogueIds: defeatChains[levelNumber] || ["victory_final", "victory_hero_final"],
+      returnScene: levelNumber >= 5 ? "ExtractScene" : "LevelCompleteScene"
+    });
   });
 
   return;
