@@ -140,7 +140,7 @@ this.selectedWeaponTier = "base";
       const panel = this.addTracked(this.add.image(x, y, "ui_class_panel").setInteractive());
       fitImage(this, panel, 280, 400);
 
-      const sprite = this.addTracked(this.add.image(x, y + 20, `player_${cls.id}_idle`).setInteractive());
+      const sprite = this.addTracked(this.add.image(x, y + 18, `player_${cls.id}_idle`).setInteractive());
       fitImage(this, sprite, 210, 285);
 
       this.addTracked(this.add.text(x, y - 170, cls.characterName, {
