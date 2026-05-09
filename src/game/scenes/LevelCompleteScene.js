@@ -73,7 +73,20 @@ export class LevelCompleteScene extends Phaser.Scene {
       runState.player.specialUsesRemaining = runState.player.specialUsesMax;
 
       this.registry.set("runState", runState);
-      this.scene.start("HallwayScene");
+      const nextLevelNumber = (runState.levelIndex || 0) + 1;
+
+const levelIntroChains = {
+  1: ["level1_intro", "level1_intro_response"],
+  2: ["level2_intro", "level2_intro_response"],
+  3: ["level3_intro", "level3_intro_response"],
+  4: ["level4_intro", "level4_intro_response"],
+  5: ["level5_intro", "level5_intro_response"]
+};
+
+this.scene.start("DialogueScene", {
+  dialogueIds: levelIntroChains[nextLevelNumber] || [`level${nextLevelNumber}_intro`],
+  returnScene: "HallwayScene"
+});
     });
 
     extractButton.on("pointerdown", () => {
@@ -85,7 +98,17 @@ export class LevelCompleteScene extends Phaser.Scene {
 
   this.registry.set("runState", runState);
 
-  this.scene.start("ExtractScene");
+  const extractChains = {
+  1: ["extract_level_1", "extract_level_1_response"],
+  2: ["extract_level_2", "extract_level_2_response"],
+  3: ["extract_level_3", "extract_level_3_response"],
+  4: ["extract_level_4", "extract_level_4_response"]
+};
+
+this.scene.start("DialogueScene", {
+  dialogueIds: extractChains[levelNumber] || [`extract_level_${levelNumber}`],
+  returnScene: "ExtractScene"
+});
 });
   }
 }
