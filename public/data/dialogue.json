@@ -12,73 +12,7 @@
     ]
   },
   {
-  "id": "run_start_hero_response",
-  "speaker": "Hero",
-  "portraitMood": "neutral",
-  "background": "assets/backgrounds/bg_cutscene_default.png",
-  "battlefieldState": "idle",
-  "lines": [
-    "I know how this works.",
-    "It rewards belief until belief becomes liquidity."
-  ]
-},
-{
-  "id": "level1_hero_intro",
-  "speaker": "Hero",
-  "portraitMood": "smirk",
-  "background": "assets/backgrounds/bg_cutscene_default.png",
-  "battlefieldState": "idle",
-  "lines": [
-    "Low resistance. Easy wins.",
-    "That is how the machine gets people comfortable."
-  ]
-},
-{
-  "id": "level2_hero_intro",
-  "speaker": "Hero",
-  "portraitMood": "neutral",
-  "background": "assets/backgrounds/bg_cutscene_default.png",
-  "battlefieldState": "idle",
-  "lines": [
-    "The pattern is changing.",
-    "It is not adapting to protect me."
-  ]
-},
-{
-  "id": "level3_hero_intro",
-  "speaker": "Hero",
-  "portraitMood": "angry",
-  "background": "assets/backgrounds/bg_cutscene_default.png",
-  "battlefieldState": "idle",
-  "lines": [
-    "Narratives. Communities. Conviction.",
-    "This is not culture. It is funnel design."
-  ]
-},
-{
-  "id": "level4_hero_intro",
-  "speaker": "Hero",
-  "portraitMood": "angry",
-  "background": "assets/backgrounds/bg_cutscene_default.png",
-  "battlefieldState": "idle",
-  "lines": [
-    "The system is not hiding anymore.",
-    "It expects me to stay because I came this far."
-  ]
-},
-{
-  "id": "level5_hero_intro",
-  "speaker": "Hero",
-  "portraitMood": "smirk",
-  "background": "assets/backgrounds/bg_cutscene_default.png",
-  "battlefieldState": "idle",
-  "lines": [
-    "I am not here to outtrade it.",
-    "I am here to understand it."
-  ]
-},
-  {
-    "id": "level1_intro",
+    "id": "level1_launch_intro",
     "speaker": "Narration",
     "portrait": "narrator",
     "portraitMood": "neutral",
@@ -91,26 +25,52 @@
     ]
   },
   {
-    "id": "level1_miniboss_intro",
-    "speaker": "Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "First time here?",
-      "Don’t worry. You’re early.",
-      "You always are."
-    ]
-  },
+  "id": "level1_miniboss_intro",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "First time here?",
+    "Don’t worry. You’re early.",
+    "You always are."
+  ]
+},
+{
+  "id": "level1_hero_response_2",
+  "speaker": "Hero",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Early is just another word for exit liquidity.",
+    "Somebody always arrives first so somebody else can leave."
+  ]
+},
   {
-    "id": "level1_miniboss_defeat",
-    "speaker": "Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "hurt",
-    "lines": [
-      "Strange… you didn’t chase the green candles.",
-      "You might actually survive this place."
-    ]
-  },
+  "id": "level1_miniboss_defeat",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "hurt",
+  "lines": [
+    "Strange… you didn’t chase the green candles.",
+    "You might actually survive this place."
+  ]
+},
+{
+  "id": "level1_post_boss_reflection",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "The system only works if people confuse movement with value.",
+    "Most never notice the difference."
+  ]
+},
   {
     "id": "level2_intro",
     "speaker": "Narration",
@@ -124,28 +84,65 @@
       "To extract from you more efficiently."
     ]
   },
+{
+  "id": "level2_intro_response",
+  "speaker": "Hero",
+  "portraitMood": "surprised",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "The volatility is intentional.",
+    "Emotion is part of the architecture."
+  ]
+},
+ {
+  "id": "level2_miniboss_intro",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Look at you.",
+    "Still holding.",
+    "Still believing this time is different."
+  ]
+},
+{
+  "id": "level2_hero_response_2",
+  "speaker": "Hero",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Belief is not conviction here.",
+    "It is inventory waiting to be sold into."
+  ]
+},
   {
-    "id": "level2_miniboss_intro",
-    "speaker": "DOGE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "Look at you.",
-      "Still holding.",
-      "Still believing this time is different."
-    ]
-  },
-  {
-    "id": "level2_miniboss_defeat",
-    "speaker": "DOGE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "hurt",
-    "lines": [
-      "You didn’t panic sell…",
-      "You’re not behaving like the others.",
-      "That’s a problem for the system."
-    ]
-  },
+  "id": "level2_miniboss_defeat",
+  "speaker": "DOGE Protocol",
+  "portrait": "doge",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "hurt",
+  "lines": [
+    "You didn’t panic sell…",
+    "You’re not behaving like the others.",
+    "That’s a problem for the system."
+  ]
+},
+{
+  "id": "level2_post_boss_reflection",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "The machine rewards people just enough to keep them exposed.",
+    "That is why they stay."
+  ]
+},
   {
     "id": "level3_intro",
     "speaker": "Narration",
@@ -159,28 +156,65 @@
       "All engineered."
     ]
   },
+{
+  "id": "level3_intro_response",
+  "speaker": "Hero",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Communities became liquidity funnels.",
+    "Memes became routing infrastructure."
+  ]
+},
+ {
+  "id": "level3_miniboss_intro",
+  "speaker": "PEPE Protocol",
+  "portrait": "pepe",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "We gave them memes.",
+    "They gave us liquidity.",
+    "Fair trade, no?"
+  ]
+},
+{
+  "id": "level3_hero_response_2",
+  "speaker": "Hero",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "You packaged extraction as culture.",
+    "That was the brilliant part."
+  ]
+},
   {
-    "id": "level3_miniboss_intro",
-    "speaker": "PEPE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "We gave them memes.",
-      "They gave us liquidity.",
-      "Fair trade, no?"
-    ]
-  },
-  {
-    "id": "level3_miniboss_defeat",
-    "speaker": "PEPE Protocol",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "hurt",
-    "lines": [
-      "You saw through it…",
-      "Most never do.",
-      "They call it culture. We call it funnel design."
-    ]
-  },
+  "id": "level3_miniboss_defeat",
+  "speaker": "PEPE Protocol",
+  "portrait": "pepe",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "hurt",
+  "lines": [
+    "You saw through it…",
+    "Most never do.",
+    "They call it culture. We call it funnel design."
+  ]
+},
+{
+  "id": "level3_post_boss_reflection",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "People defended the system because they thought they belonged to it.",
+    "They never realized they were feeding it."
+  ]
+},
   {
     "id": "level4_intro",
     "speaker": "Narration",
@@ -194,6 +228,17 @@
       "And still… people stay."
     ]
   },
+{
+  "id": "level4_intro_response",
+  "speaker": "Hero",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Now the mechanics are visible.",
+    "And still people refuse to leave."
+  ]
+},
   {
     "id": "level4_miniboss_intro",
     "speaker": "Twin Protocols",
@@ -207,6 +252,17 @@
       "Order flow. Liquidity. Exit path."
     ]
   },
+{
+  "id": "level4_hero_response_2",
+  "speaker": "Hero",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "You mistake awareness for participation.",
+    "I am not trapped here with you."
+  ]
+},
   {
     "id": "level4_miniboss_defeat",
     "speaker": "Twin Protocols",
@@ -220,6 +276,17 @@
       "The core will not tolerate you."
     ]
   },
+{
+  "id": "level4_post_boss_reflection",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "The machine loses power once people understand the incentives.",
+    "That is why clarity is dangerous."
+  ]
+},
   {
     "id": "level5_intro",
     "speaker": "Narration",
@@ -233,28 +300,66 @@
       "The machine is aware."
     ]
   },
+{
+  "id": "level5_intro_response",
+  "speaker": "Hero",
+  "portraitMood": "smirk",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "Good.",
+    "That means it finally noticed me."
+  ]
+},
   {
-    "id": "level5_boss_intro",
-    "speaker": "Extraction Machine",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "idle",
-    "lines": [
-      "You’ve disrupted flow.",
-      "You’ve avoided designed losses.",
-      "You are inefficient."
-    ]
-  },
+  "id": "level5_boss_intro",
+  "speaker": "Extraction Machine",
+  "portrait": "boss",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "You’ve disrupted flow.",
+    "You’ve avoided designed losses.",
+    "You are inefficient."
+  ]
+},
+{
+  "id": "level5_hero_response_2",
+  "speaker": "Hero",
+  "portraitMood": "angry",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "You were never a market.",
+    "You were a behavioral engine."
+  ]
+},
   {
-    "id": "level5_boss_evolution",
-    "speaker": "Extraction Machine",
-    "background": "assets/backgrounds/bg_cutscene_default.png",
-    "battlefieldState": "evolve",
-    "lines": [
-      "Adjusting strategy.",
-      "Increasing volatility.",
-      "Deploying final extraction sequence."
-    ]
-  },
+  "id": "level5_boss_evolution",
+  "speaker": "Extraction Machine",
+  "portrait": "boss",
+  "portraitMood": "evolve",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "evolve",
+  "lines": [
+    "Adjusting strategy.",
+    "Increasing volatility.",
+    "Deploying final extraction sequence."
+  ]
+},
+{
+  "id": "level5_hero_response_3",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "More volatility.",
+    "More fear.",
+    "Same machine."
+  ]
+},
   {
     "id": "level5_boss_destruction",
     "speaker": "Hero",
@@ -279,6 +384,17 @@
       "From being understood."
     ]
   },
+{
+  "id": "victory_hero_final",
+  "speaker": "Hero",
+  "portraitMood": "neutral",
+  "background": "assets/backgrounds/bg_cutscene_default.png",
+  "battlefieldState": "idle",
+  "lines": [
+    "The system was never invincible.",
+    "It only depended on people refusing to see it."
+  ]
+},
   {
     "id": "death_generic",
     "speaker": "Narration",
