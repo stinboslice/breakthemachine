@@ -6,6 +6,7 @@ import {
   shouldShowBossDoor
 } from "../systems/RouteSystem.js";
 
+import { logEvent } from "../systems/EventLogger.js";
 
 const ROOM_TITLES = {
   safe: "SAFE PASSAGE",
@@ -79,11 +80,34 @@ export class RoomResultScene extends Phaser.Scene {
 
   runState = resolveRoom(runState, roomType);
 
+logEvent(runState, "room_resolved", {
+  roomType,
+  routeSetIndex: runState.route?.setIndex,
+  currentRoomType: runState.route?.currentRoomType,
+  playerHp: runState.player?.hp,
+  rewards: {
+    rewardDamageMult: runState.route?.rewardDamageMult,
+    rewardCritFlat: runState.route?.rewardCritFlat,
+    rewardFirstHitBlock: runState.route?.rewardFirstHitBlock,
+    trapStacks: runState.route?.trapStacks,
+    trapDamageMult: runState.route?.trapDamageMult
+  }
+});
+      
   if (roomType === "safe") {
     runState = advanceHallwaySet(runState);
+    logEvent(runState, "hallway_set_advanced", {
+  newSetIndex: runState.route?.setIndex,
+  bossDoorReady: runState.route?.bossDoorReady || false
+});
     this.registry.set("runState", runState);
 
     if (shouldShowBossDoor(runState, dataStore)) {
+
+      logEvent(runState, "boss_door_ready", {
+  level: (runState.levelIndex || 0) + 1
+});
+this.registry.set("runState", runState);
       this.scene.start("BossDoorScene");
       return;
     }
@@ -93,6 +117,12 @@ export class RoomResultScene extends Phaser.Scene {
   }
 
   runState = startBattleBlockForCurrentSet(runState);
+      logEvent(runState, "battle_started", {
+  roomType,
+  level: (runState.levelIndex || 0) + 1,
+  waveIndex: runState.waveIndex || 0,
+  forceBoss: !!runState.forceBoss
+});
   this.registry.set("runState", runState);
   this.scene.start("BattleScene");
 });
