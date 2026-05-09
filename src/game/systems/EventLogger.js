@@ -85,3 +85,5 @@ export function exportRunLogCsv(runState) {
 
   URL.revokeObjectURL(url);
 }
+
+export const ensureRunLog = createRunLog;
