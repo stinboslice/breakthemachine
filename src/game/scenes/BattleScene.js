@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { playMusic } from "../systems/AudioManager.js";
 import { playerAttack, enemyAttack } from "../systems/CombatSystem.js";
 import {
   getWaveAtCurrentIndex,
@@ -51,7 +52,8 @@ this.playerGroundY = 0;
 
     const dataStore = this.registry.get("dataStore");
     this.runState = this.registry.get("runState");
-
+const levelNumber = (this.runState?.levelIndex || 0) + 1;
+playMusic(this, `audio_level_${levelNumber}`, { volume: 0.45 });
     const player = this.runState?.player;
     const selectedClassId = player?.classId || "rogue";
 
