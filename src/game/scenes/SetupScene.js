@@ -162,46 +162,124 @@ openRulesPanel() {
   const h = this.scale.height;
   const add = o => (this.detailObjects.push(o), o);
 
+  const panelX = w / 2;
+  const panelY = h / 2;
+  const panelW = Math.min(780, w * 0.92);
+  const panelH = Math.min(700, h * 0.86);
+
+  const textX = panelX - panelW * 0.39;
+  const textStartY = panelY - panelH * 0.28;
+  const maskX = panelX - panelW * 0.40;
+  const maskY = panelY - panelH * 0.30;
+  const maskW = panelW * 0.80;
+  const maskH = panelH * 0.50;
+
   add(
-    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.72)
+    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.78)
       .setInteractive()
       .setDepth(2000)
   );
 
-  add(
-    this.add.rectangle(w / 2, h / 2, Math.min(760, w * 0.9), Math.min(620, h * 0.82), 0x070707, 0.94)
-      .setStrokeStyle(2, 0xc9b56d, 0.75)
+  const panel = add(
+    this.add.rectangle(panelX, panelY, panelW, panelH, 0x070707, 0.96)
+      .setStrokeStyle(2, 0xc9b56d, 0.85)
+      .setInteractive()
       .setDepth(2001)
   );
 
-  add(this.add.text(w / 2, h * 0.16, "HOW TO PLAY", {
+  add(this.add.text(w / 2, panelY - panelH * 0.40, "HOW TO PLAY", {
     fontFamily: "Georgia",
-    fontSize: "32px",
+    fontSize: "34px",
     color: "#f4e7c1",
     stroke: "#000",
     strokeThickness: 5
   }).setOrigin(0.5).setDepth(2002));
 
-  add(this.add.text(w / 2, h * 0.48, GAME_RULES.map((line, i) => `${i + 1}. ${line}`).join("\n\n"), {
+  const maskShape = this.make.graphics({ x: 0, y: 0, add: false });
+  maskShape.fillStyle(0xffffff);
+  maskShape.fillRect(maskX, maskY, maskW, maskH);
+
+  const textMask = maskShape.createGeometryMask();
+
+  const rulesText = add(this.add.text(
+    textX,
+    textStartY,
+    GAME_RULES.map((line, i) => `${i + 1}. ${line}`).join("\n\n"),
+    {
+      fontFamily: "Georgia",
+      fontSize: "21px",
+      color: "#ffffff",
+      align: "left",
+      wordWrap: { width: maskW },
+      lineSpacing: 8
+    }
+  ).setDepth(2002));
+
+  rulesText.setMask(textMask);
+
+  let scrollY = 0;
+  const maxScroll = Math.max(0, rulesText.height - maskH);
+
+  const updateScroll = nextValue => {
+    scrollY = Phaser.Math.Clamp(nextValue, 0, maxScroll);
+    rulesText.y = textStartY - scrollY;
+  };
+
+  this.rulesWheelHandler = (pointer, objects, dx, dy) => {
+    updateScroll(scrollY + dy * 0.6);
+  };
+
+  this.input.on("wheel", this.rulesWheelHandler);
+
+  let dragging = false;
+  let dragStartY = 0;
+  let dragStartScroll = 0;
+
+  panel.on("pointerdown", pointer => {
+    dragging = true;
+    dragStartY = pointer.y;
+    dragStartScroll = scrollY;
+  });
+
+  panel.on("pointermove", pointer => {
+    if (!dragging || !pointer.isDown) return;
+    updateScroll(dragStartScroll + (dragStartY - pointer.y));
+  });
+
+  panel.on("pointerup", () => {
+    dragging = false;
+  });
+
+  panel.on("pointerout", () => {
+    dragging = false;
+  });
+
+  add(this.add.text(w / 2, panelY + panelH * 0.28, "Swipe or scroll to read", {
     fontFamily: "Georgia",
-    fontSize: "17px",
-    color: "#ffffff",
-    align: "left",
-    wordWrap: { width: Math.min(640, w * 0.78) },
-    lineSpacing: 5
+    fontSize: "16px",
+    color: "#c9b56d",
+    stroke: "#000",
+    strokeThickness: 3
   }).setOrigin(0.5).setDepth(2002));
 
-  const close = add(this.add.text(w / 2, h * 0.82, "CLOSE", {
+  const close = add(this.add.text(w / 2, panelY + panelH * 0.38, "CLOSE", {
     fontFamily: "Georgia",
     fontSize: "22px",
     color: "#f4e7c1",
     backgroundColor: "#7b1113",
-    padding: { x: 30, y: 12 }
+    padding: { x: 34, y: 12 }
   }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(2002));
 
-  close.on("pointerdown", () => this.closeBuffDetail());
-}
+  close.on("pointerdown", () => {
+    if (this.rulesWheelHandler) {
+      this.input.off("wheel", this.rulesWheelHandler);
+      this.rulesWheelHandler = null;
+    }
 
+    maskShape.destroy();
+    this.closeBuffDetail();
+  });
+}
 openClassConfirmPanel(cls) {
   this.closeBuffDetail();
 
