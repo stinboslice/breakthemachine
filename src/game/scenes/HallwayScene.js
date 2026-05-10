@@ -2,6 +2,8 @@ import Phaser from "phaser";
 
 import { logEvent } from "../systems/EventLogger.js";
 
+import { playMusic } from "../systems/AudioManager.js";
+
 const ROOM_ICONS = {
   trap: "icon_room_trap",
   corrupt: "icon_room_corrupt",
@@ -38,7 +40,7 @@ export class HallwayScene extends Phaser.Scene {
 
     const runState = this.registry.get("runState");
     const levelNumber = (runState?.levelIndex || 0) + 1;
-
+playMusic(this, `audio_level_${levelNumber}`, { volume: 0.42 });
     if (!runState.route) runState.route = {};
     if (typeof runState.route.setIndex !== "number") runState.route.setIndex = 0;
     if (typeof runState.scanUsed !== "boolean") runState.scanUsed = false;
