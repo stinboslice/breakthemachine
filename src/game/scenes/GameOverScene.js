@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import { exportRunLogCsv } from "../systems/EventLogger.js";
+import { playMusic } from "../systems/AudioManager.js";
+
 export class GameOverScene extends Phaser.Scene {
   constructor() {
     super("GameOverScene");
@@ -8,7 +10,7 @@ export class GameOverScene extends Phaser.Scene {
   create() {
     const w = this.scale.width;
     const h = this.scale.height;
-
+playMusic(this, "audio_game_over", { volume: 0.5 });
     this.add.image(w / 2, h / 2, "bg_game_over")
       .setDisplaySize(w, h);
 
