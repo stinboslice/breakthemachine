@@ -32,14 +32,19 @@ const CLASS_DETAILS = {
 };
 
 const GAME_RULES = [
-  "Choose a class. Each class has different HP, attack, speed, passive behavior, and special ability.",
-  "Before the run, choose up to 3 buffs. Higher tiers are stronger but will cost more once credits are live.",
-  "Each level has hallway choices. Some are safe. Some lead to enemies, traps, treasure, or corruption.",
-  "Rogue can scan one hallway outcome per level. Scan resets only after completing a level.",
-  "Combat is turn based. Speed affects initiative order. Attacks, special attacks, damage, deaths, and choices are logged.",
+  "Choose a class, then confirm your class details before selecting buffs.",
+  "Choose up to 3 buffs before entering the run. Higher tiers are stronger and will become credit based later.",
+  "Each level gives you 2 hallway sets. Each set has 3 hidden choices.",
+  "Safe rooms advance the hallway with no fight.",
+  "Enemy rooms start combat.",
+  "Treasure rooms grant value but still lead into combat.",
+  "Corrupt rooms offer power with a penalty.",
+  "Trap rooms punish the player before combat.",
+  "Rogue can scan one hallway result per level before choosing.",
+  "Combat is turn based. Speed affects initiative order.",
   "Special abilities have limited uses per level and reset after level completion.",
-  "After clearing a level, you can extract or continue deeper. Continuing increases risk.",
-  "The event log can be exported as a run report. This becomes the foundation for validation, rewards, and future credit payouts."
+  "After each level, extract or continue. Extracting secures the run. Continuing increases risk.",
+  "Every major decision and combat action is logged for export."
 ];
 
 const LAUNCH_BUFFS = [
@@ -196,6 +201,106 @@ openRulesPanel() {
 
   close.on("pointerdown", () => this.closeBuffDetail());
 }
+
+openClassConfirmPanel(cls) {
+  this.closeBuffDetail();
+
+  const details = CLASS_DETAILS[cls.id];
+  const w = this.scale.width;
+  const h = this.scale.height;
+  const add = o => (this.detailObjects.push(o), o);
+
+  add(
+    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.72)
+      .setInteractive()
+      .setDepth(2000)
+  );
+
+  add(
+    this.add.rectangle(
+      w / 2,
+      h / 2,
+      Math.min(720, w * 0.9),
+      Math.min(560, h * 0.78),
+      0x070707,
+      0.95
+    )
+      .setStrokeStyle(2, 0xc9b56d, 0.8)
+      .setDepth(2001)
+  );
+
+  add(this.add.text(w / 2, h * 0.18, `${cls.characterName} | ${cls.className}`, {
+    fontFamily: "Georgia",
+    fontSize: "30px",
+    color: "#f4e7c1",
+    stroke: "#000",
+    strokeThickness: 5
+  }).setOrigin(0.5).setDepth(2002));
+
+  const sprite = add(this.add.image(w / 2, h * 0.39, `player_${cls.id}_idle`).setDepth(2002));
+  fitImage(this, sprite, 190, 230);
+
+  add(this.add.text(w / 2, h * 0.55,
+    `HP ${cls.hp} | ATK ${cls.attackMultiplier} | SPD ${cls.speed}`,
+    {
+      fontFamily: "Georgia",
+      fontSize: "18px",
+      color: "#c9b56d",
+      stroke: "#000",
+      strokeThickness: 3
+    }
+  ).setOrigin(0.5).setDepth(2002));
+
+  add(this.add.text(w / 2, h * 0.66,
+    `Difficulty: ${details.difficulty}\n\nPassive: ${details.passive}\n\nSpecial: ${details.special}\n\nPlaystyle: ${details.playstyle}`,
+    {
+      fontFamily: "Georgia",
+      fontSize: "16px",
+      color: "#ffffff",
+      align: "center",
+      wordWrap: { width: Math.min(600, w * 0.78) },
+      lineSpacing: 4
+    }
+  ).setOrigin(0.5).setDepth(2002));
+
+  const confirm = add(this.add.text(w / 2 - 110, h * 0.84, "CONFIRM", {
+    fontFamily: "Georgia",
+    fontSize: "20px",
+    color: "#f4e7c1",
+    backgroundColor: "#7b1113",
+    padding: { x: 24, y: 10 }
+  }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(2002));
+
+  const close = add(this.add.text(w / 2 + 110, h * 0.84, "CLOSE", {
+    fontFamily: "Georgia",
+    fontSize: "20px",
+    color: "#f4e7c1",
+    backgroundColor: "#222222",
+    padding: { x: 24, y: 10 }
+  }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(2002));
+
+  confirm.on("pointerdown", () => {
+    this.selectedClass = cls;
+
+    window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
+    window.ELF_PENDING_SETUP_LOG.push({
+      type: "class_selected",
+      payload: {
+        classId: cls.id,
+        characterName: cls.characterName,
+        className: cls.className,
+        hp: cls.hp,
+        attackMultiplier: cls.attackMultiplier,
+        speed: cls.speed
+      }
+    });
+
+    this.closeBuffDetail();
+    this.showBuffScreen();
+  });
+
+  close.on("pointerdown", () => this.closeBuffDetail());
+}
   // ---------- CLASS SCREEN ----------
   showClassScreen() {
     this.clearTracked();
@@ -252,46 +357,9 @@ rulesButton.on("pointerdown", () => this.openRulesPanel());
         { fontSize: "13px", color: "#c9b56d" }
       ).setOrigin(0.5));
 
-const details = CLASS_DETAILS[cls.id];
-
-this.addTracked(this.add.text(x, y + 228,
-  `${details.difficulty} | ${details.playstyle}`,
-  {
-    fontSize: "11px",
-    color: "#ffffff",
-    align: "center",
-    wordWrap: { width: 210 }
-  }
-).setOrigin(0.5));
-
-this.addTracked(this.add.text(x, y + 268,
-  `Passive: ${details.passive}\nSpecial: ${details.special}`,
-  {
-    fontSize: "10px",
-    color: "#c9b56d",
-    align: "center",
-    wordWrap: { width: 215 },
-    lineSpacing: 3
-  }
-).setOrigin(0.5));
 
       const select = () => {
-  this.selectedClass = cls;
-
-  window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
-  window.ELF_PENDING_SETUP_LOG.push({
-    type: "class_selected",
-    payload: {
-      classId: cls.id,
-      characterName: cls.characterName,
-      className: cls.className,
-      hp: cls.hp,
-      attackMultiplier: cls.attackMultiplier,
-      speed: cls.speed
-    }
-  });
-
-  this.showBuffScreen();
+  this.openClassConfirmPanel(cls);
 };
 
       panel.on("pointerdown", select);
