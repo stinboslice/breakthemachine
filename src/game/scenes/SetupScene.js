@@ -116,6 +116,7 @@ this.selectedWeaponTier = "base";
 
     this.objects = [];
     this.detailObjects = [];
+this.weaponTierButtons = [];
   }
 
   // 🔥 SAFETY LOADER (prevents missing assets on GitHub Pages)
@@ -456,6 +457,20 @@ rulesButton.on("pointerdown", () => this.openRulesPanel());
 
   this.addTracked(this.add.image(w / 2, h / 2, "bg_cutscene_default").setDisplaySize(w, h));
 
+const backButton = this.addTracked(this.add.text(24, 24, "BACK", {
+  fontFamily: "Georgia",
+  fontSize: "18px",
+  color: "#f4e7c1",
+  backgroundColor: "#111111",
+  padding: { x: 16, y: 8 },
+  stroke: "#000",
+  strokeThickness: 3
+}).setOrigin(0, 0).setInteractive({ useHandCursor: true }));
+
+backButton.on("pointerdown", () => {
+  this.selectedClass = null;
+  this.showClassScreen();
+});
   this.addTracked(this.add.text(w / 2, 42, `${this.selectedClass.characterName} selected`, {
     fontSize: "32px",
     color: "#f4e7c1",
@@ -500,6 +515,8 @@ rulesButton.on("pointerdown", () => this.openRulesPanel());
     }).setOrigin(0.5)
   );
 
+this.weaponTierButtons = [];
+
   const tierLabels = [
     { label: "BASE", value: "base" },
     { label: "TIER 1", value: "tier1" },
@@ -508,29 +525,41 @@ rulesButton.on("pointerdown", () => this.openRulesPanel());
   ];
 
   tierLabels.forEach((tier, index) => {
-    const tierButton = this.addTracked(
-      this.add.text(w / 2 - 210 + index * 140, h * 0.805, tier.label, {
-        fontSize: "16px",
-        color: "#ffffff",
-        backgroundColor: tier.value === this.selectedWeaponTier ? "#7b1113" : "#222222",
-        padding: { x: 14, y: 8 }
-      }).setOrigin(0.5).setInteractive({ useHandCursor: true })
-    );
+  const tierButton = this.addTracked(
+    this.add.text(w / 2 - 210 + index * 140, h * 0.805, tier.label, {
+      fontFamily: "Georgia",
+      fontSize: "16px",
+      color: "#ffffff",
+      backgroundColor: "#222222",
+      padding: { x: 14, y: 8 },
+      stroke: "#000",
+      strokeThickness: 3
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true })
+  );
 
-    tierButton.on("pointerdown", () => {
-      this.selectedWeaponTier = tier.value;
-this.weaponTierText.setText(`Weapon Tier: ${tier.label}`);
+  tierButton.tierValue = tier.value;
+  tierButton.tierLabel = tier.label;
 
-window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
-window.ELF_PENDING_SETUP_LOG.push({
-  type: "weapon_tier_selected",
-  payload: {
-    weaponTier: tier.value,
-    label: tier.label
-  }
-});
+  this.weaponTierButtons.push(tierButton);
+
+  tierButton.on("pointerdown", () => {
+    this.selectedWeaponTier = tier.value;
+    this.weaponTierText.setText(`Weapon Tier: ${tier.label}`);
+
+    this.updateWeaponTierButtons();
+
+    window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
+    window.ELF_PENDING_SETUP_LOG.push({
+      type: "weapon_tier_selected",
+      payload: {
+        weaponTier: tier.value,
+        label: tier.label
+      }
     });
   });
+});
+
+this.updateWeaponTierButtons();
 
   this.continueButton = this.addTracked(
     this.add.image(w / 2, h * 0.91, "button_continue").setInteractive({ useHandCursor: true })
@@ -569,6 +598,28 @@ window.ELF_PENDING_SETUP_LOG = [];
     this.registry.set("selectedBuffs", this.selectedBuffs);
 
     this.scene.start("RunIntroScene");
+  });
+}
+
+updateWeaponTierButtons() {
+  if (!this.weaponTierButtons) return;
+
+  this.weaponTierButtons.forEach(button => {
+    const isSelected = button.tierValue === this.selectedWeaponTier;
+
+    button.setBackgroundColor(isSelected ? "#7b1113" : "#222222");
+    button.setColor(isSelected ? "#f4e7c1" : "#ffffff");
+
+    button.setShadow(
+      0,
+      0,
+      isSelected ? "#f4e7c1" : "#000000",
+      isSelected ? 14 : 0,
+      true,
+      true
+    );
+
+    button.setAlpha(isSelected ? 1 : 0.78);
   });
 }
 
