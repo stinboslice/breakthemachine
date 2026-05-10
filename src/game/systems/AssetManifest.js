@@ -290,4 +290,9 @@ export function loadAllAssets(scene) {
   JSON_ASSETS.forEach(([key, path]) => {
     scene.load.json(key, path);
   });
+
+    AUDIO_ASSETS.forEach(([key, path]) => {
+  scene.load.audio(key, path);
+});
 }
+
