@@ -229,6 +229,7 @@ export const IMAGE_ASSETS = [
   ["fx_trail_purple", "assets/effects/fx_trail_purple.png"],
   ["fx_wave_dual", "assets/effects/fx_wave_dual.png"],
 
+    
   // ICONS
   ["icon_buff_block", "assets/icons/icon_buff_block.png"],
   ["icon_buff_crit", "assets/icons/icon_buff_crit.png"],
@@ -267,6 +268,18 @@ export const JSON_ASSETS = [
   ["weapons", "data/weapons.json"],
 ];
 
+export const AUDIO_ASSETS = [
+  ["audio_setup_scene", "assets/audio/audio_setup_scene.mp3"],
+  ["audio_dialogue_scene", "assets/audio/audio_dialogue_scene.mp3"],
+  ["audio_game_over", "assets/audio/audio_game_over.mp3"],
+  ["audio_intro_level_1", "assets/audio/audio_intro_level_1.mp3"],
+  ["audio_level_1", "assets/audio/audio_level_1.mp3"],
+  ["audio_level_2", "assets/audio/audio_level_2.mp3"],
+  ["audio_level_3", "assets/audio/audio_level_3.mp3"],
+  ["audio_level_4", "assets/audio/audio_level_4.mp3"],
+  ["audio_level_5", "assets/audio/audio_level_5.mp3"],
+  ["audio_level_complete", "assets/audio/audio_level_complete.mp3"]
+];
 
 // 🔥 THIS IS THE IMPORTANT PART
 export function loadAllAssets(scene) {
