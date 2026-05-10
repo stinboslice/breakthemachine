@@ -319,10 +319,10 @@ openClassConfirmPanel(cls) {
     strokeThickness: 5
   }).setOrigin(0.5).setDepth(2002));
 
-  const sprite = add(this.add.image(w / 2, h * 0.39, `player_${cls.id}_idle`).setDepth(2002));
+  const sprite = add(this.add.image(w / 2, h * 0.35, `player_${cls.id}_idle`).setDepth(2002));
   fitImage(this, sprite, 190, 230);
 
-  add(this.add.text(w / 2, h * 0.55,
+  add(this.add.text(w / 2, h * 0.53,
     `HP ${cls.hp} | ATK ${cls.attackMultiplier} | SPD ${cls.speed}`,
     {
       fontFamily: "Georgia",
