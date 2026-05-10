@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { playMusic } from "../systems/AudioManager.js";
 
 function getPortraitKey(scene, dialogue, runState) {
   if (!dialogue) return null;
@@ -69,7 +70,13 @@ export class DialogueScene extends Phaser.Scene {
   create() {
     const w = this.scale.width;
     const h = this.scale.height;
+const levelNumber = (this.registry.get("runState")?.levelIndex || 0) + 1;
 
+if (this.dialogueIds?.includes("level1_intro") || this.dialogueId === "level1_intro") {
+  playMusic(this, "audio_intro_level_1", { volume: 0.45 });
+} else {
+  playMusic(this, "audio_dialogue_scene", { volume: 0.42 });
+}
     this.dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
     this.runState = this.registry.get("runState");
     this.dialogueList = this.dataStore?.data?.dialogue || [];
