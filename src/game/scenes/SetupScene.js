@@ -4,6 +4,8 @@ import { buildRunState } from "../systems/RunBuilder.js";
 
 import { logEvent } from "../systems/EventLogger.js";
 
+import { playMusic } from "../systems/AudioManager.js";
+
 const LAUNCH_CLASSES = [
   { id: "vanguard", characterName: "Noah", className: "Vanguard", hp: 130, attackMultiplier: 0.9, speed: 0.8 },
   { id: "berserker", characterName: "Rory", className: "Berserker", hp: 110, attackMultiplier: 1.2, speed: 1.0 },
@@ -141,6 +143,7 @@ this.weaponTierButtons = [];
   this.registry.remove("selectedBuffs");
 
   this.buffs = LAUNCH_BUFFS;
+    playMusic(this, "audio_setup_scene", { volume: 0.45 });
   this.showClassScreen();
 }
 
