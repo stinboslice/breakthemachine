@@ -10,6 +10,38 @@ const LAUNCH_CLASSES = [
   { id: "rogue", characterName: "Charlotte", className: "Rogue", hp: 85, attackMultiplier: 1.0, speed: 1.3 }
 ];
 
+const CLASS_DETAILS = {
+  vanguard: {
+    difficulty: "Stable",
+    passive: "Built to survive longer runs with higher HP and steady pressure.",
+    special: "Heavy strike focused on controlled damage and survivability.",
+    playstyle: "Best for players who want durability, slower pacing, and safer decisions."
+  },
+  berserker: {
+    difficulty: "Aggressive",
+    passive: "Higher damage output with less safety than Vanguard.",
+    special: "Power attack designed to punish priority targets.",
+    playstyle: "Best for players who want to end fights quickly and accept more risk."
+  },
+  rogue: {
+    difficulty: "Technical",
+    passive: "Can scan one hallway outcome per level before choosing a route.",
+    special: "Fast burst attack built around speed, crits, and target control.",
+    playstyle: "Best for players who want information advantage and precision."
+  }
+};
+
+const GAME_RULES = [
+  "Choose a class. Each class has different HP, attack, speed, passive behavior, and special ability.",
+  "Before the run, choose up to 3 buffs. Higher tiers are stronger but will cost more once credits are live.",
+  "Each level has hallway choices. Some are safe. Some lead to enemies, traps, treasure, or corruption.",
+  "Rogue can scan one hallway outcome per level. Scan resets only after completing a level.",
+  "Combat is turn based. Speed affects initiative order. Attacks, special attacks, damage, deaths, and choices are logged.",
+  "Special abilities have limited uses per level and reset after level completion.",
+  "After clearing a level, you can extract or continue deeper. Continuing increases risk.",
+  "The event log can be exported as a run report. This becomes the foundation for validation, rewards, and future credit payouts."
+];
+
 const LAUNCH_BUFFS = [
   { id: "hp_boost", name: "HP Boost", description: "Raises maximum health before entering the run." },
   { id: "damage_boost", name: "Damage Boost", description: "Increases weapon damage dealt during the run." },
@@ -118,6 +150,52 @@ this.selectedWeaponTier = "base";
     this.closeBuffDetail();
   }
 
+openRulesPanel() {
+  this.closeBuffDetail();
+
+  const w = this.scale.width;
+  const h = this.scale.height;
+  const add = o => (this.detailObjects.push(o), o);
+
+  add(
+    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.72)
+      .setInteractive()
+      .setDepth(2000)
+  );
+
+  add(
+    this.add.rectangle(w / 2, h / 2, Math.min(760, w * 0.9), Math.min(620, h * 0.82), 0x070707, 0.94)
+      .setStrokeStyle(2, 0xc9b56d, 0.75)
+      .setDepth(2001)
+  );
+
+  add(this.add.text(w / 2, h * 0.16, "HOW TO PLAY", {
+    fontFamily: "Georgia",
+    fontSize: "32px",
+    color: "#f4e7c1",
+    stroke: "#000",
+    strokeThickness: 5
+  }).setOrigin(0.5).setDepth(2002));
+
+  add(this.add.text(w / 2, h * 0.48, GAME_RULES.map((line, i) => `${i + 1}. ${line}`).join("\n\n"), {
+    fontFamily: "Georgia",
+    fontSize: "17px",
+    color: "#ffffff",
+    align: "left",
+    wordWrap: { width: Math.min(640, w * 0.78) },
+    lineSpacing: 5
+  }).setOrigin(0.5).setDepth(2002));
+
+  const close = add(this.add.text(w / 2, h * 0.82, "CLOSE", {
+    fontFamily: "Georgia",
+    fontSize: "22px",
+    color: "#f4e7c1",
+    backgroundColor: "#7b1113",
+    padding: { x: 30, y: 12 }
+  }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(2002));
+
+  close.on("pointerdown", () => this.closeBuffDetail());
+}
   // ---------- CLASS SCREEN ----------
   showClassScreen() {
     this.clearTracked();
@@ -134,6 +212,18 @@ this.selectedWeaponTier = "base";
       stroke: "#000",
       strokeThickness: 6
     }).setOrigin(0.5));
+
+const rulesButton = this.addTracked(this.add.text(w / 2, 95, "HOW TO PLAY", {
+  fontFamily: "Georgia",
+  fontSize: "18px",
+  color: "#f4e7c1",
+  backgroundColor: "#111111",
+  padding: { x: 18, y: 8 },
+  stroke: "#000",
+  strokeThickness: 3
+}).setOrigin(0.5).setInteractive({ useHandCursor: true }));
+
+rulesButton.on("pointerdown", () => this.openRulesPanel());
 
     LAUNCH_CLASSES.forEach((cls, i) => {
       const x = w * 0.25 + i * w * 0.25;
@@ -161,6 +251,29 @@ this.selectedWeaponTier = "base";
         `HP ${cls.hp} | ATK ${cls.attackMultiplier} | SPD ${cls.speed}`,
         { fontSize: "13px", color: "#c9b56d" }
       ).setOrigin(0.5));
+
+const details = CLASS_DETAILS[cls.id];
+
+this.addTracked(this.add.text(x, y + 228,
+  `${details.difficulty} | ${details.playstyle}`,
+  {
+    fontSize: "11px",
+    color: "#ffffff",
+    align: "center",
+    wordWrap: { width: 210 }
+  }
+).setOrigin(0.5));
+
+this.addTracked(this.add.text(x, y + 268,
+  `Passive: ${details.passive}\nSpecial: ${details.special}`,
+  {
+    fontSize: "10px",
+    color: "#c9b56d",
+    align: "center",
+    wordWrap: { width: 215 },
+    lineSpacing: 3
+  }
+).setOrigin(0.5));
 
       const select = () => {
   this.selectedClass = cls;
