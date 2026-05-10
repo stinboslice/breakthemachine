@@ -204,7 +204,7 @@ openRulesPanel() {
   const rulesText = add(this.add.text(
     textX,
     textStartY,
-    GAME_RULES.map((line, i) => `${i + 1}. ${line}`).join("\n\n"),
+    GAME_RULES.map((line, i) => `${i + 1}. ${line}`).join("\n\n") + "\n\n\n\n\n",
     {
       fontFamily: "Georgia",
       fontSize: "21px",
