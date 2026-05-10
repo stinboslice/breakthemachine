@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import { logEvent, exportRunLogCsv } from "../systems/EventLogger.js";
+import { playMusic } from "../systems/AudioManager.js";
+
 export class LevelCompleteScene extends Phaser.Scene {
   constructor() {
     super("LevelCompleteScene");
@@ -8,6 +10,7 @@ export class LevelCompleteScene extends Phaser.Scene {
   create() {
     const w = this.scale.width;
     const h = this.scale.height;
+    playMusic(this, "audio_level_complete", { volume: 0.48 });
 
     const runState = this.registry.get("runState");
     const levelNumber = (runState?.levelIndex || 0) + 1;
