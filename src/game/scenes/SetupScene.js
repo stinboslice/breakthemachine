@@ -503,10 +503,11 @@ backButton.on("pointerdown", () => {
     this.showTierRequiredPopup();
     return;
   }
+ 
 
   this.openBuffDetail(buff);
 });
-
+});
   this.statusText = this.addTracked(
     this.add.text(w / 2, h * 0.705, `${this.selectedBuffs.length} / 3 buffs selected`, {
       fontSize: "20px",
