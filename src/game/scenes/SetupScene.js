@@ -497,8 +497,15 @@ backButton.on("pointerdown", () => {
     );
 
     fitImage(this, icon, 96, 96);
-    icon.on("pointerdown", () => this.openBuffDetail(buff));
-  });
+
+    icon.on("pointerdown", () => {
+  if (this.selectedWeaponTier === "base") {
+    this.showTierRequiredPopup();
+    return;
+  }
+
+  this.openBuffDetail(buff);
+});
 
   this.statusText = this.addTracked(
     this.add.text(w / 2, h * 0.705, `${this.selectedBuffs.length} / 3 buffs selected`, {
@@ -626,6 +633,57 @@ updateWeaponTierButtons() {
   });
 }
 
+showTierRequiredPopup() {
+  this.closeBuffDetail();
+
+  const w = this.scale.width;
+  const h = this.scale.height;
+  const add = o => (this.detailObjects.push(o), o);
+
+  add(
+    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.72)
+      .setInteractive()
+      .setDepth(3000)
+  );
+
+  add(
+    this.add.rectangle(w / 2, h / 2, Math.min(650, w * 0.88), Math.min(360, h * 0.48), 0x070707, 0.96)
+      .setStrokeStyle(2, 0xc9b56d, 0.9)
+      .setDepth(3001)
+  );
+
+  add(this.add.text(w / 2, h * 0.38, "ACCESS DENIED", {
+    fontFamily: "Georgia",
+    fontSize: "30px",
+    color: "#f4e7c1",
+    stroke: "#000",
+    strokeThickness: 5
+  }).setOrigin(0.5).setDepth(3002));
+
+  add(this.add.text(w / 2, h * 0.50,
+    "Who do you think you are?\n\nWelcome to the real world, cyber PUNK.\n\nGotta be at least Tier 1 to shop here.",
+    {
+      fontFamily: "Georgia",
+      fontSize: "19px",
+      color: "#ffffff",
+      align: "center",
+      wordWrap: { width: Math.min(540, w * 0.76) },
+      lineSpacing: 5,
+      stroke: "#000",
+      strokeThickness: 3
+    }
+  ).setOrigin(0.5).setDepth(3002));
+
+  const close = add(this.add.text(w / 2, h * 0.66, "CHOOSE A TIER", {
+    fontFamily: "Georgia",
+    fontSize: "20px",
+    color: "#f4e7c1",
+    backgroundColor: "#7b1113",
+    padding: { x: 26, y: 11 }
+  }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(3002));
+
+  close.on("pointerdown", () => this.closeBuffDetail());
+}
   // ---------- DETAIL PANEL ----------
   openBuffDetail(buff) {
   this.closeBuffDetail();
