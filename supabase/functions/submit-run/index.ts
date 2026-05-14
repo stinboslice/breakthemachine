@@ -62,8 +62,8 @@ serve(async req => {
     const eventLogHash = await sha256Hex(eventLogJson);
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SB_URL")!,
+      Deno.env.get("SERVICE_ROLE_KEY")!
     );
 
     const { data, error } = await supabase.rpc("server_record_run_result", {

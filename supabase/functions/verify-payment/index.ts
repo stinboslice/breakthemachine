@@ -38,8 +38,8 @@ serve(async req => {
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SB_URL")!,
+      Deno.env.get("SERVICE_ROLE_KEY")!
     );
 
     const { data: intent, error: intentError } = await supabase
