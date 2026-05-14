@@ -6,6 +6,14 @@ import { logEvent } from "../systems/EventLogger.js";
 
 import { playMusic } from "../systems/AudioManager.js";
 
+import {
+  connectWallet,
+  reconnectWalletSilently,
+  getPlayerProfile,
+  getWalletSession,
+  disconnectWallet
+} from "../systems/WalletManager.js";
+
 const LAUNCH_CLASSES = [
   { id: "vanguard", characterName: "Noah", className: "Vanguard", hp: 130, attackMultiplier: 0.9, speed: 0.8 },
   { id: "berserker", characterName: "Rory", className: "Berserker", hp: 110, attackMultiplier: 1.2, speed: 1.0 },
@@ -119,6 +127,11 @@ this.selectedWeaponTier = "base";
     this.objects = [];
     this.detailObjects = [];
 this.weaponTierButtons = [];
+
+this.walletSession = null;
+this.playerProfile = null;
+this.walletText = null;
+this.creditText = null;
   }
 
   // 🔥 SAFETY LOADER (prevents missing assets on GitHub Pages)
@@ -144,6 +157,7 @@ this.weaponTierButtons = [];
 
   this.buffs = LAUNCH_BUFFS;
     playMusic(this, "audio_setup_scene", { volume: 0.45 });
+this.restoreWalletSession();
   this.showClassScreen();
 }
 
@@ -158,6 +172,86 @@ this.weaponTierButtons = [];
     this.objects = [];
     this.closeBuffDetail();
   }
+
+async restoreWalletSession() {
+  try {
+    const session = await reconnectWalletSilently();
+
+    if (!session?.walletAddress) return;
+
+    this.walletSession = session;
+    const profile = await getPlayerProfile(session.walletAddress);
+    this.playerProfile = profile.profile || null;
+  } catch (err) {
+    console.warn("Wallet restore failed:", err.message);
+  }
+}
+
+addWalletHud(w, h) {
+  const session = getWalletSession();
+
+  const walletLabel = session?.walletMasked
+    ? `Wallet: ${session.walletMasked}`
+    : "Wallet: Not connected";
+
+  const credits = this.playerProfile?.creditBalance ?? 0;
+
+  this.walletText = this.addTracked(this.add.text(w - 24, 24, walletLabel, {
+    fontFamily: "Georgia",
+    fontSize: "15px",
+    color: "#f4e7c1",
+    backgroundColor: "#111111",
+    padding: { x: 12, y: 7 },
+    stroke: "#000",
+    strokeThickness: 3
+  }).setOrigin(1, 0));
+
+  this.creditText = this.addTracked(this.add.text(w - 24, 58, `Credits: ${credits}`, {
+    fontFamily: "Georgia",
+    fontSize: "15px",
+    color: "#c9b56d",
+    backgroundColor: "#111111",
+    padding: { x: 12, y: 7 },
+    stroke: "#000",
+    strokeThickness: 3
+  }).setOrigin(1, 0));
+
+  const connectLabel = session?.walletAddress ? "DISCONNECT" : "CONNECT WALLET";
+
+  const walletButton = this.addTracked(this.add.text(w - 24, 92, connectLabel, {
+    fontFamily: "Georgia",
+    fontSize: "15px",
+    color: "#f4e7c1",
+    backgroundColor: session?.walletAddress ? "#333333" : "#7b1113",
+    padding: { x: 14, y: 8 },
+    stroke: "#000",
+    strokeThickness: 3
+  }).setOrigin(1, 0).setInteractive({ useHandCursor: true }));
+
+  walletButton.on("pointerdown", async () => {
+    try {
+      if (getWalletSession()?.walletAddress) {
+        disconnectWallet();
+        this.walletSession = null;
+        this.playerProfile = null;
+        this.showClassScreen();
+        return;
+      }
+
+      walletButton.setText("CONNECTING...");
+      const newSession = await connectWallet();
+      this.walletSession = newSession;
+
+      const profile = await getPlayerProfile(newSession.walletAddress);
+      this.playerProfile = profile.profile || null;
+
+      this.showClassScreen();
+    } catch (err) {
+      walletButton.setText("CONNECT FAILED");
+      console.warn("Wallet connect failed:", err.message);
+    }
+  });
+}
 
 openRulesPanel() {
   this.closeBuffDetail();
@@ -392,7 +486,9 @@ openClassConfirmPanel(cls) {
 
     this.addTracked(this.add.image(w/2, h/2, "bg_cutscene_default").setDisplaySize(w,h));
 
-    this.addTracked(this.add.text(w/2, 50, "CHOOSE YOUR ELF", {
+    this.addWalletHud(w, h);
+
+this.addTracked(this.add.text(w/2, 50, "CHOOSE YOUR ELF", {
       fontFamily: "Georgia",
       fontSize: "38px",
       color: "#f4e7c1",
