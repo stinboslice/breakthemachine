@@ -246,9 +246,24 @@ addWalletHud(w, h) {
       this.playerProfile = profile.profile || null;
 
       this.showClassScreen();
-    } catch (err) {
+       } catch (err) {
+      const message = err?.message || "Unknown wallet error";
+
       walletButton.setText("CONNECT FAILED");
-      console.warn("Wallet connect failed:", err.message);
+
+      this.add.text(this.scale.width / 2, this.scale.height * 0.16, message, {
+        fontFamily: "Georgia",
+        fontSize: "16px",
+        color: "#ffb3b3",
+        backgroundColor: "#140000",
+        padding: { x: 14, y: 8 },
+        stroke: "#000",
+        strokeThickness: 3,
+        wordWrap: { width: Math.min(620, this.scale.width * 0.82) },
+        align: "center"
+      }).setOrigin(0.5).setDepth(5000);
+
+      console.warn("Wallet connect failed:", message);
     }
   });
 }
