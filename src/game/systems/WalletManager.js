@@ -252,41 +252,44 @@ export async function sendSolPayment({
     throw new Error("Solana Web3 is not loaded yet.");
   }
 
-  const fromPublicKey = provider.publicKey;
-
-  if (!fromPublicKey) {
+  if (!provider.publicKey) {
     throw new Error("Wallet is not connected.");
   }
 
   const connection = new window.solanaWeb3.Connection(
-  "https://mainnet.helius-rpc.com/?api-key=5c224cdf-853c-489f-9070-ac1f144934e7",
-  "confirmed"
-);
+    "https://mainnet.helius-rpc.com/?api-key=5c224cdf-853c-489f-9070-ac1f144934e7",
+    "confirmed"
+  );
 
   const transaction = new window.solanaWeb3.Transaction().add(
     window.solanaWeb3.SystemProgram.transfer({
-      fromPubkey: fromPublicKey,
+      fromPubkey: provider.publicKey,
       toPubkey: new window.solanaWeb3.PublicKey(toWallet),
-      lamports
+      lamports: Number(lamports)
     })
   );
 
-  transaction.feePayer = fromPublicKey;
+  transaction.feePayer = provider.publicKey;
 
-  const latestBlockhash = await connection.getLatestBlockhash();
+  const latestBlockhash = await connection.getLatestBlockhash("confirmed");
   transaction.recentBlockhash = latestBlockhash.blockhash;
 
-  const signedTransaction = await provider.signTransaction(transaction);
+  if (provider.signAndSendTransaction) {
+    const result = await provider.signAndSendTransaction(transaction);
+    return result.signature;
+  }
 
+  const signedTransaction = await provider.signTransaction(transaction);
   const signature = await connection.sendRawTransaction(
-    signedTransaction.serialize()
+    signedTransaction.serialize(),
+    { skipPreflight: false }
   );
 
   await connection.confirmTransaction({
     signature,
     blockhash: latestBlockhash.blockhash,
     lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
-  });
+  }, "confirmed");
 
   return signature;
 }
