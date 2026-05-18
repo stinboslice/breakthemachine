@@ -259,7 +259,7 @@ export async function sendSolPayment({
   }
 
   const connection = new window.solanaWeb3.Connection(
-  "https://rpc.ankr.com/solana",
+  "https://mainnet.helius-rpc.com/?api-key=5c224cdf-853c-489f-9070-ac1f144934e7",
   "confirmed"
 );
 
