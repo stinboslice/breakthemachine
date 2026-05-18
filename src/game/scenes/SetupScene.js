@@ -363,9 +363,17 @@ openCreditShop() {
           this.closeBuffDetail();
           this.showClassScreen();
         });
-      } catch (err) {
-        const message = err?.message || "Payment failed";
-        button.setText("PAYMENT FAILED");
+      }
+      
+      const message =
+  err?.message ||
+  err?.error ||
+  JSON.stringify(err) ||
+  "Payment failed";
+
+button.setText("PAYMENT FAILED");
+
+alert(`Payment failed:\n\n${message}`);
 
         this.add.text(w / 2, h * 0.70, message, {
           fontFamily: "Georgia",
