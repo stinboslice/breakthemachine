@@ -11,7 +11,8 @@ import {
   reconnectWalletSilently,
   getPlayerProfile,
   getWalletSession,
-  disconnectWallet
+  disconnectWallet,
+  buyCreditsWithSol
 } from "../systems/WalletManager.js";
 
 const LAUNCH_CLASSES = [
@@ -64,6 +65,12 @@ const LAUNCH_BUFFS = [
   { id: "crit_boost", name: "Crit Boost", description: "Raises critical strike chance for stronger bursts." },
   { id: "block", name: "Block", description: "Chance to negate incoming attacks." },
   { id: "double_strike", name: "Double Strike", description: "Chance to perform an extra attack." }
+];
+
+const CREDIT_PACKAGES = [
+  { id: "starter_10", label: "Starter Pack", credits: 10, sol: 0.005, lamports: 5000000 },
+  { id: "runner_25", label: "Runner Pack", credits: 25, sol: 0.011, lamports: 11000000 },
+  { id: "deep_60", label: "Deep Run Pack", credits: 60, sol: 0.025, lamports: 25000000 }
 ];
 
 const BUFF_ICON_KEYS = {
@@ -265,7 +272,127 @@ addWalletHud(w, h) {
 
       console.warn("Wallet connect failed:", message);
     }
+    });
+
+  const buyButton = this.addTracked(this.add.text(w - 24, 130, "BUY CREDITS", {
+    fontFamily: "Georgia",
+    fontSize: "15px",
+    color: "#f4e7c1",
+    backgroundColor: "#7b1113",
+    padding: { x: 14, y: 8 },
+    stroke: "#000",
+    strokeThickness: 3
+  }).setOrigin(1, 0).setInteractive({ useHandCursor: true }));
+
+  buyButton.on("pointerdown", () => {
+    if (!getWalletSession()?.walletAddress) {
+      buyButton.setText("CONNECT FIRST");
+      return;
+    }
+
+    this.openCreditShop();
   });
+}
+
+openCreditShop() {
+  this.closeBuffDetail();
+
+  const w = this.scale.width;
+  const h = this.scale.height;
+  const add = o => (this.detailObjects.push(o), o);
+
+  add(
+    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.72)
+      .setInteractive()
+      .setDepth(4000)
+  );
+
+  add(
+    this.add.rectangle(w / 2, h / 2, Math.min(720, w * 0.9), Math.min(560, h * 0.78), 0x070707, 0.96)
+      .setStrokeStyle(2, 0xc9b56d, 0.9)
+      .setDepth(4001)
+  );
+
+  add(this.add.text(w / 2, h * 0.20, "CREDIT SHOP", {
+    fontFamily: "Georgia",
+    fontSize: "32px",
+    color: "#f4e7c1",
+    stroke: "#000",
+    strokeThickness: 5
+  }).setOrigin(0.5).setDepth(4002));
+
+  add(this.add.text(w / 2, h * 0.28, "Buy credits to unlock tiers, buffs, and deeper extraction attempts.", {
+    fontFamily: "Georgia",
+    fontSize: "16px",
+    color: "#ffffff",
+    align: "center",
+    wordWrap: { width: Math.min(560, w * 0.75) }
+  }).setOrigin(0.5).setDepth(4002));
+
+  CREDIT_PACKAGES.forEach((pack, index) => {
+    const y = h * 0.40 + index * 70;
+
+    const button = add(this.add.text(w / 2, y,
+      `${pack.label} | ${pack.credits} Credits | ${pack.sol} SOL`,
+      {
+        fontFamily: "Georgia",
+        fontSize: "19px",
+        color: "#f4e7c1",
+        backgroundColor: "#111111",
+        padding: { x: 24, y: 12 },
+        stroke: "#000",
+        strokeThickness: 3
+      }
+    ).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(4002));
+
+    button.on("pointerdown", async () => {
+      try {
+        button.setText("CONFIRM IN PHANTOM...");
+
+        const result = await buyCreditsWithSol({
+          packageId: pack.id,
+          lamports: pack.lamports
+        });
+
+        const profile = result.profile?.profile || null;
+        this.playerProfile = profile;
+
+        button.setText(`SUCCESS | ${pack.credits} CREDITS ADDED`);
+
+        this.time.delayedCall(1200, () => {
+          this.closeBuffDetail();
+          this.showClassScreen();
+        });
+      } catch (err) {
+        const message = err?.message || "Payment failed";
+        button.setText("PAYMENT FAILED");
+
+        this.add.text(w / 2, h * 0.70, message, {
+          fontFamily: "Georgia",
+          fontSize: "15px",
+          color: "#ffb3b3",
+          backgroundColor: "#140000",
+          padding: { x: 14, y: 8 },
+          stroke: "#000",
+          strokeThickness: 3,
+          wordWrap: { width: Math.min(620, w * 0.82) },
+          align: "center"
+        }).setOrigin(0.5).setDepth(5000);
+
+        console.warn("Credit purchase failed:", message);
+      }
+    });
+  });
+
+  const close = add(this.add.text(w / 2, h * 0.78, "CLOSE", {
+    fontFamily: "Georgia",
+    fontSize: "20px",
+    color: "#f4e7c1",
+    backgroundColor: "#333333",
+    padding: { x: 26, y: 11 }
+  }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(4002));
+
+  close.on("pointerdown", () => this.closeBuffDetail());
 }
 
 openRulesPanel() {
