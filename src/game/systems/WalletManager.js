@@ -259,9 +259,9 @@ export async function sendSolPayment({
   }
 
   const connection = new window.solanaWeb3.Connection(
-    "https://api.mainnet-beta.solana.com",
-    "confirmed"
-  );
+  "https://rpc.ankr.com/solana",
+  "confirmed"
+);
 
   const transaction = new window.solanaWeb3.Transaction().add(
     window.solanaWeb3.SystemProgram.transfer({
