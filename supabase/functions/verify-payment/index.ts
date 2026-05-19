@@ -15,12 +15,8 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
-function toBigIntAmount(value: string | undefined | null) {
-  try {
-    return BigInt(value || "0");
-  } catch {
-    return 0n;
-  }
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 serve(async req => {
@@ -53,36 +49,36 @@ serve(async req => {
     }
 
     if (intent.status === "confirmed") {
-      return jsonResponse({
-        success: true,
-        alreadyConfirmed: true,
-        purchaseIntentId
-      });
-    }
-
-    if (!["created", "submitted"].includes(intent.status)) {
-      return jsonResponse({ success: false, error: "Purchase intent is not confirmable" }, 400);
+      return jsonResponse({ success: true, alreadyConfirmed: true, purchaseIntentId });
     }
 
     const rpcUrl = Deno.env.get("SOLANA_RPC_URL") || "https://api.mainnet-beta.solana.com";
     const connection = new Connection(rpcUrl, "confirmed");
 
-    const tx = await connection.getParsedTransaction(txSignature, {
-      maxSupportedTransactionVersion: 0,
-      commitment: "confirmed"
-    });
+    let tx = null;
 
-    if (!tx || !tx.meta || tx.meta.err) {
-      return jsonResponse({ success: false, error: "Transaction not found or failed" }, 400);
+    for (let i = 0; i < 8; i += 1) {
+      tx = await connection.getParsedTransaction(txSignature, {
+        maxSupportedTransactionVersion: 0,
+        commitment: "confirmed"
+      });
+
+      if (tx?.meta && !tx.meta.err) break;
+      await sleep(1500);
     }
 
-    const walletAddress = String(intent.wallet_address);
-    const receiverWallet = String(intent.expected_receiver_wallet);
+    if (!tx || !tx.meta || tx.meta.err) {
+      return jsonResponse({ success: false, error: "Transaction not found or failed after retry" }, 400);
+    }
+
+    const walletAddress = String(intent.wallet_address).toLowerCase();
+    const receiverWallet = String(intent.expected_receiver_wallet).toLowerCase();
     const paymentToken = String(intent.payment_token).toUpperCase();
 
-    const signerMatch = tx.transaction.message.accountKeys.some(account => {
-      return account.signer === true && account.pubkey.toBase58() === walletAddress;
-    });
+    const signerMatch = tx.transaction.message.accountKeys.some(account =>
+      account.signer === true &&
+      account.pubkey.toBase58().toLowerCase() === walletAddress
+    );
 
     if (!signerMatch) {
       return jsonResponse({ success: false, error: "Transaction was not signed by purchase wallet" }, 400);
@@ -91,9 +87,9 @@ serve(async req => {
     let validPayment = false;
 
     if (paymentToken === "SOL") {
-      const receiverIndex = tx.transaction.message.accountKeys.findIndex(account => {
-        return account.pubkey.toBase58() === receiverWallet;
-      });
+      const receiverIndex = tx.transaction.message.accountKeys.findIndex(account =>
+        account.pubkey.toBase58().toLowerCase() === receiverWallet
+      );
 
       if (receiverIndex >= 0) {
         const pre = BigInt(tx.meta.preBalances[receiverIndex] || 0);
@@ -102,25 +98,8 @@ serve(async req => {
       }
     }
 
-    if (paymentToken === "ELF") {
-      const expectedMint = String(intent.expected_elf_mint_address || "");
-
-      const preAmount = (tx.meta.preTokenBalances || [])
-        .filter(balance => balance.mint === expectedMint && balance.owner === receiverWallet)
-        .reduce((sum, balance) => sum + toBigIntAmount(balance.uiTokenAmount.amount), 0n);
-
-      const postAmount = (tx.meta.postTokenBalances || [])
-        .filter(balance => balance.mint === expectedMint && balance.owner === receiverWallet)
-        .reduce((sum, balance) => sum + toBigIntAmount(balance.uiTokenAmount.amount), 0n);
-
-      validPayment = postAmount > preAmount;
-    }
-
     if (!validPayment) {
-      return jsonResponse({
-        success: false,
-        error: "Payment did not reach expected treasury wallet"
-      }, 400);
+      return jsonResponse({ success: false, error: "Payment did not reach expected treasury wallet" }, 400);
     }
 
     const { data, error } = await supabase.rpc("server_confirm_purchase_intent", {
@@ -135,6 +114,8 @@ serve(async req => {
     return jsonResponse({
       success: true,
       verified: true,
+      purchaseIntentId,
+      txSignature,
       confirmation: data
     });
   } catch (error) {
