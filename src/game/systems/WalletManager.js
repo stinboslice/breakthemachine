@@ -308,10 +308,19 @@ export async function buyCreditsWithSol({
     lamports
   });
 
-  const verification = await verifyPayment({
-    purchaseIntentId: intent.purchaseIntentId || intent.id,
-    txSignature
-  });
+  const purchaseIntentId =
+  intent?.id ||
+  intent?.purchaseIntentId ||
+  intent?.purchase_intent_id;
+
+if (!purchaseIntentId) {
+  throw new Error(`Missing purchase intent id: ${JSON.stringify(intent)}`);
+}
+
+const verification = await verifyPayment({
+  purchaseIntentId,
+  txSignature
+});
 
   const profile = await getPlayerProfile();
 
