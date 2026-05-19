@@ -147,7 +147,22 @@ export async function createPurchaseIntent({
     throw new Error(data.error || "Could not create purchase intent.");
   }
 
-  return data.purchaseIntent;
+  const rawIntent = data.purchaseIntent || data.intent || data;
+
+  const purchaseIntentId =
+    rawIntent.id ||
+    rawIntent.purchaseIntentId ||
+    rawIntent.purchase_intent_id;
+
+  if (!purchaseIntentId) {
+    throw new Error(`Create purchase intent returned no id: ${JSON.stringify(data)}`);
+  }
+
+  return {
+    ...rawIntent,
+    id: purchaseIntentId,
+    purchaseIntentId
+  };
 }
 
 export async function verifyPayment({
@@ -318,7 +333,7 @@ if (!purchaseIntentId) {
 }
 
 const verification = await verifyPayment({
-  purchaseIntentId,
+  purchaseIntentId: intent.id,
   txSignature
 });
 
