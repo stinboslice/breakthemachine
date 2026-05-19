@@ -125,7 +125,7 @@ serve(async req => {
 
     const { data, error } = await supabase.rpc("server_confirm_purchase_intent", {
       p_purchase_intent_id: purchaseIntentId,
-      p_payment_signature: txSignature
+      p_tx_signature: txSignature
     });
 
     if (error) {
