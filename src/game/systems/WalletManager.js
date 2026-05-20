@@ -167,15 +167,21 @@ export async function createPurchaseIntent({
 
 export async function verifyPayment({
   purchaseIntentId,
-  txSignature
+  txSignature,
+  walletAddress = null,
+  packageId = null
 }) {
-  if (!purchaseIntentId || !txSignature) {
-    throw new Error("Missing purchase intent or transaction signature.");
+  if (!txSignature) {
+    throw new Error("Missing transaction signature.");
   }
+
+  const session = getWalletSession();
 
   const data = await callEdgeFunction("verify-payment", {
     purchaseIntentId,
-    txSignature
+    txSignature,
+    walletAddress: walletAddress || session?.walletAddress,
+    packageId
   });
 
   if (!data.success) {
@@ -334,7 +340,9 @@ if (!purchaseIntentId) {
 
 const verification = await verifyPayment({
   purchaseIntentId: intent.id,
-  txSignature
+  txSignature,
+  walletAddress: getWalletSession()?.walletAddress,
+  packageId
 });
 
   const profile = await getPlayerProfile();
