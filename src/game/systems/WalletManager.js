@@ -339,7 +339,7 @@ if (!purchaseIntentId) {
 }
 
 const verification = await verifyPayment({
-  purchaseIntentId: intent.id,
+  purchaseIntentId,
   txSignature,
   walletAddress: getWalletSession()?.walletAddress,
   packageId
