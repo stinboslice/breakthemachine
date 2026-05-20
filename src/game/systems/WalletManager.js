@@ -143,25 +143,28 @@ export async function createPurchaseIntent({
     paymentToken
   });
 
-  if (!data.success) {
-    throw new Error(data.error || "Could not create purchase intent.");
-  }
-
-  const rawIntent = data.purchaseIntent || data.intent || data;
-
-  const purchaseIntentId =
-    rawIntent.id ||
-    rawIntent.purchaseIntentId ||
-    rawIntent.purchase_intent_id;
-
-  if (!purchaseIntentId) {
-    throw new Error(`Create purchase intent returned no id: ${JSON.stringify(data)}`);
+  if (!data.success || !data.purchaseIntent?.id) {
+    throw new Error(`Invalid purchase intent response: ${JSON.stringify(data)}`);
   }
 
   return {
-    ...rawIntent,
-    id: purchaseIntentId,
-    purchaseIntentId
+    id: data.purchaseIntent.id,
+    packageId: data.purchaseIntent.package_id || data.purchaseIntent.packageId,
+    walletAddress: data.purchaseIntent.wallet_address || data.purchaseIntent.walletAddress,
+    expectedReceiverWallet:
+      data.purchaseIntent.expected_receiver_wallet ||
+      data.purchaseIntent.expectedReceiverWallet ||
+      ELF_TREASURY_WALLET,
+    expectedAmount:
+      data.purchaseIntent.expected_amount ||
+      data.purchaseIntent.expectedAmount,
+    expectedCredits:
+      data.purchaseIntent.expected_credits ||
+      data.purchaseIntent.expectedCredits,
+    paymentToken:
+      data.purchaseIntent.payment_token ||
+      data.purchaseIntent.paymentToken ||
+      paymentToken
   };
 }
 
