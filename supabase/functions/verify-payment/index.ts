@@ -16,6 +16,7 @@ function jsonResponse(body: unknown, status = 200) {
 
 serve(async req => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
   if (req.method !== "POST") {
     return jsonResponse({ success: false, error: "Method not allowed" }, 405);
   }
@@ -26,8 +27,12 @@ serve(async req => {
     const purchaseIntentId = String(body.purchaseIntentId || "").trim();
     const txSignature = String(body.txSignature || "").trim();
 
-    if (!purchaseIntentId || !txSignature) {
-      return jsonResponse({ success: false, error: "Missing purchaseIntentId or txSignature" }, 400);
+    if (!purchaseIntentId) {
+      return jsonResponse({ success: false, error: "Missing purchaseIntentId" }, 400);
+    }
+
+    if (!txSignature) {
+      return jsonResponse({ success: false, error: "Missing txSignature" }, 400);
     }
 
     const supabase = createClient(
@@ -37,12 +42,19 @@ serve(async req => {
 
     const { data: intent, error: intentError } = await supabase
       .from("purchase_intents")
-      .select("id, status")
+      .select("id, status, payment_signature")
       .eq("id", purchaseIntentId)
-      .single();
+      .maybeSingle();
 
-    if (intentError || !intent) {
-      return jsonResponse({ success: false, error: "Purchase intent not found" }, 404);
+    if (intentError) {
+      return jsonResponse({ success: false, error: intentError.message }, 500);
+    }
+
+    if (!intent) {
+      return jsonResponse({
+        success: false,
+        error: `Purchase intent not found for id: ${purchaseIntentId}`
+      }, 404);
     }
 
     const { data, error } = await supabase.rpc("server_confirm_purchase_intent", {
@@ -64,7 +76,7 @@ serve(async req => {
   } catch (error) {
     return jsonResponse({
       success: false,
-      error: error instanceof Error ? error.message : "Unknown server error"
+      error: error instanceof Error ? error.message : String(error)
     }, 500);
   }
 });
