@@ -40,23 +40,6 @@ serve(async req => {
       Deno.env.get("SERVICE_ROLE_KEY")!
     );
 
-    const { data: intent, error: intentError } = await supabase
-      .from("purchase_intents")
-      .select("id, status, payment_signature")
-      .eq("id", purchaseIntentId)
-      .maybeSingle();
-
-    if (intentError) {
-      return jsonResponse({ success: false, error: intentError.message }, 500);
-    }
-
-    if (!intent) {
-      return jsonResponse({
-        success: false,
-        error: `Purchase intent not found for id: ${purchaseIntentId}`
-      }, 404);
-    }
-
     const { data, error } = await supabase.rpc("server_confirm_purchase_intent", {
       p_purchase_intent_id: purchaseIntentId,
       p_tx_signature: txSignature
