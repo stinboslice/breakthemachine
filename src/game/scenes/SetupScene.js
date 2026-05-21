@@ -187,8 +187,11 @@ async restoreWalletSession() {
     if (!session?.walletAddress) return;
 
     this.walletSession = session;
+
     const profile = await getPlayerProfile(session.walletAddress);
     this.playerProfile = profile.profile || null;
+
+    this.showClassScreen();
   } catch (err) {
     console.warn("Wallet restore failed:", err.message);
   }
@@ -274,7 +277,7 @@ addWalletHud(w, h) {
     }
     });
 
-  const buyButton = this.addTracked(this.add.text(w - 24, 130, "BUY CREDITS", {
+  const buyButton = this.addTracked(this.add.text(w - 24, 150, "BUY CREDITS", {
     fontFamily: "Georgia",
     fontSize: "15px",
     color: "#f4e7c1",
