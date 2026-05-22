@@ -22,3 +22,12 @@
     "editor.defaultFormatter": "denoland.vscode-deno"
   }
 }
+{
+  "deno.enable": true,
+  "deno.unstable": true,
+  "deno.lint": true,
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true,
+    "https://esm.sh": true
+  }
+}
