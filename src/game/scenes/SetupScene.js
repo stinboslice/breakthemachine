@@ -12,7 +12,8 @@ import {
   getPlayerProfile,
   getWalletSession,
   disconnectWallet,
-  buyCreditsWithSol
+  buyCreditsWithSol,
+spendRunCredits
 } from "../systems/WalletManager.js";
 
 const LAUNCH_CLASSES = [
@@ -827,7 +828,7 @@ this.updateWeaponTierButtons();
 
   fitImage(this, this.continueButton, 260, 70);
 
-  this.continueButton.on("pointerdown", () => {
+  this.continueButton.on("pointerdown", async () => {
     if (this.detailObjects.length) return;
 
     const dataStore = this.registry.get("dataStore") || window.ELF_DATASTORE;
@@ -838,6 +839,28 @@ this.updateWeaponTierButtons();
       weaponTier: this.selectedWeaponTier,
       dataStore
     });
+
+const runId = crypto.randomUUID
+  ? crypto.randomUUID()
+  : `run_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+
+runState.runId = runId;
+
+try {
+  if (runState.totalBurn > 0) {
+    await spendRunCredits({
+      runId,
+      selectedBuffs: this.selectedBuffs,
+      weaponTier: this.selectedWeaponTier
+    });
+
+    const profile = await getPlayerProfile();
+    this.playerProfile = profile.profile || this.playerProfile;
+  }
+} catch (err) {
+  alert(err?.message || "Could not spend credits.");
+  return;
+}
 
 const pendingLogs = window.ELF_PENDING_SETUP_LOG || [];
 
