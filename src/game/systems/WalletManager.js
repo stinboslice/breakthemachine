@@ -237,6 +237,31 @@ export async function submitRunResult({
   return data;
 }
 
+export async function spendRunCredits({
+  runId,
+  selectedBuffs = [],
+  weaponTier = "base"
+}) {
+  const session = getWalletSession();
+
+  if (!session?.walletAddress) {
+    throw new Error("Connect wallet before spending credits.");
+  }
+
+  const data = await callEdgeFunction("spend-run-credits", {
+    walletAddress: session.walletAddress,
+    runId,
+    selectedBuffs,
+    weaponTier
+  });
+
+  if (!data.success) {
+    throw new Error(data.error || "Could not spend credits.");
+  }
+
+  return data;
+}
+
 export async function requestWithdrawal({
   creditsRequested
 }) {
