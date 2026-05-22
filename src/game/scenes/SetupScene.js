@@ -366,19 +366,19 @@ openCreditShop() {
           this.closeBuffDetail();
           this.showClassScreen();
         });
-      }
-      
-      const message =
-  err?.message ||
-  err?.error ||
-  JSON.stringify(err) ||
-  "Payment failed";
+            } catch (err) {
+        const message =
+          err?.message ||
+          err?.error ||
+          JSON.stringify(err) ||
+          "Payment failed";
 
-button.setText("PAYMENT FAILED");
+        button.setText("PAYMENT FAILED");
 
-alert(`Payment failed:\n\n${message}`);
+        alert(`Payment failed:\n\n${message}`);
 
         this.add.text(w / 2, h * 0.70, message, {
+
           fontFamily: "Georgia",
           fontSize: "15px",
           color: "#ffb3b3",
@@ -861,6 +861,13 @@ window.ELF_PENDING_SETUP_LOG = [];
   });
 }
 
+getSelectedTierNumber() {
+  if (this.selectedWeaponTier === "tier1") return 1;
+  if (this.selectedWeaponTier === "tier2") return 2;
+  if (this.selectedWeaponTier === "tier3") return 3;
+  return 0;
+}
+
 updateWeaponTierButtons() {
   if (!this.weaponTierButtons) return;
 
@@ -989,7 +996,7 @@ showTierRequiredPopup() {
 
   // Move Tier 3 slightly LEFT
   if (tier === 3) {
-    x -= 6.5;
+    x -= 6.0;
   }
 
   const btn = add(
@@ -1033,7 +1040,9 @@ showTierRequiredPopup() {
     }
   });
 } else if (this.selectedBuffs.length < 3) {
-  this.selectedBuffs.push({ id: buff.id, tier: this.activeTier });
+  const selectedTier = this.getSelectedTierNumber();
+
+  this.selectedBuffs.push({ id: buff.id, tier: selectedTier });
 
   window.ELF_PENDING_SETUP_LOG = window.ELF_PENDING_SETUP_LOG || [];
   window.ELF_PENDING_SETUP_LOG.push({
@@ -1041,8 +1050,8 @@ showTierRequiredPopup() {
     payload: {
       buffId: buff.id,
       buffName: buff.name,
-      tier: this.activeTier,
-      tierDetails: BUFF_TIER_DETAILS[buff.id]?.[this.activeTier] || null
+      tier: selectedTier,
+      tierDetails: BUFF_TIER_DETAILS[buff.id]?.[selectedTier] || null
     }
   });
 }
