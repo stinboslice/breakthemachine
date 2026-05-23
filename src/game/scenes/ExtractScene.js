@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import { exportRunLogCsv } from "../systems/EventLogger.js";
+import { submitRunResult } from "../systems/WalletManager.js";
+
 export class ExtractScene extends Phaser.Scene {
   constructor() {
     super("ExtractScene");
@@ -10,6 +12,7 @@ export class ExtractScene extends Phaser.Scene {
     const h = this.scale.height;
 
     const runState = this.registry.get("runState");
+    this.submitExtractedRun(runState);
 
     this.add.image(w / 2, h / 2, "bg_cutscene_default")
       .setDisplaySize(w, h);
@@ -29,18 +32,20 @@ export class ExtractScene extends Phaser.Scene {
       stroke: "#000",
       strokeThickness: 4
     }).setOrigin(0.5);
-const exportButton = this.add.text(w / 2, h * 0.60, "EXPORT RUN LOG", {
-  fontFamily: "Georgia",
-  fontSize: "22px",
-  color: "#f4e7c1",
-  backgroundColor: "#111111",
-  padding: { x: 24, y: 10 }
-}).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-exportButton.on("pointerdown", () => {
-  const runState = this.registry.get("runState");
-  exportRunLogCsv(runState);
-});
+    const exportButton = this.add.text(w / 2, h * 0.60, "EXPORT RUN LOG", {
+      fontFamily: "Georgia",
+      fontSize: "22px",
+      color: "#f4e7c1",
+      backgroundColor: "#111111",
+      padding: { x: 24, y: 10 }
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+    exportButton.on("pointerdown", () => {
+      const runState = this.registry.get("runState");
+      exportRunLogCsv(runState);
+    });
+
     const button = this.add.image(w / 2, h * 0.72, "button_continue")
       .setInteractive({ useHandCursor: true });
 
@@ -49,5 +54,32 @@ exportButton.on("pointerdown", () => {
     button.on("pointerdown", () => {
       this.scene.start("SetupScene");
     });
+  }
+
+  async submitExtractedRun(runState) {
+    if (!runState || runState.rewardSubmitted) return;
+
+    try {
+      const levelReached = Number(runState.levelIndex || 0) + 1;
+
+      const result = await submitRunResult({
+        runId: runState.runId,
+        classId: runState.player?.classId,
+        buffs: runState.player?.buffs || [],
+        weaponTier: runState.player?.weaponTier || "base",
+        eventLogJson: runState.eventLog || [],
+        result: "extracted",
+        extractionLevel: levelReached,
+        bossKills: runState.bossKills || 0,
+        runtimeSeconds: runState.runtimeSeconds || 0,
+        clientReportVersion: "v1"
+      });
+
+      runState.rewardSubmitted = true;
+      runState.rewardResult = result;
+      this.registry.set("runState", runState);
+    } catch (err) {
+      console.warn("Run reward submission failed:", err?.message || err);
+    }
   }
 }
