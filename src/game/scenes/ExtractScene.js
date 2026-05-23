@@ -78,8 +78,10 @@ export class ExtractScene extends Phaser.Scene {
       runState.rewardSubmitted = true;
       runState.rewardResult = result;
       this.registry.set("runState", runState);
+  
     } catch (err) {
-      console.warn("Run reward submission failed:", err?.message || err);
-    }
+  alert(`Run reward submission failed: ${err?.message || err}`);
+  console.error("Run reward submission failed:", err);
+}
   }
 }
