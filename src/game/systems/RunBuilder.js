@@ -86,8 +86,11 @@ export function buildRunState({ selectedClass, selectedBuffs, weaponTier = "base
   return sum + getBuffTierBurnCost(buff.tier || 1);
 }, 0);
 
+const runId = crypto.randomUUID();
+
   const runState = {
-    levelIndex: 0,
+  runId,
+  levelIndex: 0,
     waveIndex: 0,
     roundNumber: 1,
     selectedTargetIndex: 0,
