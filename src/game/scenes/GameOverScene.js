@@ -72,7 +72,8 @@ export class GameOverScene extends Phaser.Scene {
       runState.rewardResult = result;
       this.registry.set("runState", runState);
     } catch (err) {
-      console.warn("Failed run submission failed:", err?.message || err);
-    }
+  alert(`Failed run submission failed: ${err?.message || err}`);
+  console.error("Failed run submission failed:", err);
+}
   }
 }
