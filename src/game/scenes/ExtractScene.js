@@ -63,17 +63,18 @@ export class ExtractScene extends Phaser.Scene {
       const levelReached = Number(runState.levelIndex || 0) + 1;
 
       const result = await submitRunResult({
-        runId: runState.runId,
-        classId: runState.player?.classId,
-        buffs: runState.player?.buffs || [],
-        weaponTier: runState.player?.weaponTier || "base",
-        eventLogJson: runState.eventLog || [],
-        result: "extracted",
-        extractionLevel: levelReached,
-        bossKills: runState.bossKills || 0,
-        runtimeSeconds: runState.runtimeSeconds || 0,
-        clientReportVersion: "v1"
-      });
+  runId: runState.runId,
+  classId: runState.player?.classId,
+  buffs: runState.player?.buffs || [],
+  weaponTier: runState.player?.weaponTier || "base",
+  eventLogJson: runState.eventLog || [],
+  result: "extracted",
+  extractionLevel: levelReached,
+  pendingRewardCredits: runState.pendingRewardCredits || 0,
+  bossKills: runState.bossKills || 0,
+  runtimeSeconds: runState.runtimeSeconds || 0,
+  clientReportVersion: "v1"
+});
 
       runState.rewardSubmitted = true;
       runState.rewardResult = result;
