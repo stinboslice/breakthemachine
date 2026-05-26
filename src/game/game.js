@@ -32,7 +32,8 @@ export function createGame() {
   BattleScene,
   LevelCompleteScene,
   GameOverScene,
-  ExtractScene
+  ExtractScene,
+      FinalBossTransformScene
 ],
     scale: {
       mode: Phaser.Scale.FIT,
