@@ -21,6 +21,7 @@ async function sha256Hex(value: unknown) {
   const text = JSON.stringify(value ?? []);
   const bytes = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest("SHA-256", bytes);
+
   return Array.from(new Uint8Array(hash))
     .map(byte => byte.toString(16).padStart(2, "0"))
     .join("");
@@ -44,6 +45,7 @@ serve(async req => {
     const weaponTier = String(body.weaponTier || "base").trim();
     const result = String(body.result || "").trim();
     const extractionLevel = Number(body.extractionLevel || 0);
+    const pendingRewardCredits = Number(body.pendingRewardCredits || 0);
     const bossKills = Number(body.bossKills || 0);
     const runtimeSeconds = Number(body.runtimeSeconds || 0);
     const clientReportVersion = String(body.clientReportVersion || "v1").trim();
@@ -75,6 +77,7 @@ serve(async req => {
       p_event_log_json: eventLogJson,
       p_result: result,
       p_extraction_level: extractionLevel,
+      p_pending_reward_credits: pendingRewardCredits,
       p_boss_kills: bossKills,
       p_runtime_seconds: runtimeSeconds,
       p_event_log_hash: eventLogHash,
