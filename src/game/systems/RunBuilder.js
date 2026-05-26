@@ -92,6 +92,11 @@ const runId = crypto.randomUUID();
 
   const runState = {
   runId,
+  bossTransitionActive: false,
+  finalBossPhase2Started: false,
+  finalBossPhase2Cleared: false,
+  pendingRewardCredits: 0,
+  levelRewardsBanked: {},
   levelIndex: 0,
     waveIndex: 0,
     roundNumber: 1,
