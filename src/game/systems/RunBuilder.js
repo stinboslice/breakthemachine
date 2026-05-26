@@ -82,9 +82,11 @@ export function buildRunState({ selectedClass, selectedBuffs, weaponTier = "base
         : 0.15
     : 0;
 
-  const totalBurn = selectedBuffs.reduce((sum, buff) => {
-  return sum + getBuffTierBurnCost(buff.tier || 1);
-}, 0);
+  const totalBurn =
+  getWeaponTierBurnCost(weaponTier) +
+  selectedBuffs.reduce((sum, buff) => {
+    return sum + getBuffTierBurnCost(buff.tier || 1);
+  }, 0);
 
 const runId = crypto.randomUUID();
 
