@@ -15,7 +15,7 @@ export class GameOverScene extends Phaser.Scene {
     playMusic(this, "audio_game_over", { volume: 0.5 });
 
     const runState = this.registry.get("runState");
-    this.submitFailedRun(runState);
+    
 
     this.add.image(w / 2, h / 2, "bg_game_over")
       .setDisplaySize(w, h);
@@ -46,9 +46,21 @@ export class GameOverScene extends Phaser.Scene {
 
     button.setScale(0.45);
 
-    button.on("pointerdown", () => {
-      this.scene.start("SetupScene");
-    });
+    button.on("pointerdown", async () => {
+  button.disableInteractive();
+
+  try {
+    const runState = this.registry.get("runState");
+
+    if (runState && !runState.rewardSubmitted) {
+      await this.submitFailedRun(runState);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  this.scene.start("SetupScene");
+});
   }
 
   async submitFailedRun(runState) {
