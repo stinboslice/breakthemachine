@@ -709,10 +709,7 @@ if (this.runState.forceBoss) {
 
     this.registry.set("runState", this.runState);
 
-    this.scene.start("DialogueScene", {
-      dialogueIds: ["level5_boss_evolution"],
-      returnScene: "BattleScene"
-    });
+    this.scene.start("FinalBossTransformScene");
 
     return;
   }
