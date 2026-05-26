@@ -57,9 +57,18 @@ playMusic(this, `audio_level_${levelNumber}`, { volume: 0.45 });
     const player = this.runState?.player;
     const selectedClassId = player?.classId || "rogue";
 
-    const wave = this.runState.forceBoss
-  ? getBossBattleWave(this.runState, dataStore)
-  : getWaveAtCurrentIndex(this.runState, dataStore);
+    let wave;
+
+if (this.runState.finalBossPhase2Started && !this.runState.finalBossPhase2Cleared) {
+  wave = {
+    type: "battle",
+    enemies: ["level5_boss_phase2"]
+  };
+} else {
+  wave = this.runState.forceBoss
+    ? getBossBattleWave(this.runState, dataStore)
+    : getWaveAtCurrentIndex(this.runState, dataStore);
+}
 
 this.enemies = buildEnemiesForWave(wave, dataStore);
 
@@ -692,11 +701,33 @@ if (this.runState.forceBoss) {
   };
 
   this.time.delayedCall(800, () => {
+  if (levelNumber >= 5 && !this.runState.finalBossPhase2Started) {
+    this.runState.bossTransitionActive = true;
+    this.runState.finalBossPhase2Started = true;
+    this.runState.forceBoss = false;
+    this.runState.bossCleared = false;
+
+    this.registry.set("runState", this.runState);
+
     this.scene.start("DialogueScene", {
-      dialogueIds: defeatChains[levelNumber] || ["victory_final", "victory_hero_final"],
-      returnScene: levelNumber >= 5 ? "ExtractScene" : "LevelCompleteScene"
+      dialogueIds: ["level5_boss_evolution"],
+      returnScene: "BattleScene"
     });
+
+    return;
+  }
+
+  if (levelNumber >= 5 && this.runState.finalBossPhase2Started) {
+    this.runState.finalBossPhase2Cleared = true;
+    this.runState.bossTransitionActive = false;
+    this.registry.set("runState", this.runState);
+  }
+
+  this.scene.start("DialogueScene", {
+    dialogueIds: defeatChains[levelNumber] || ["victory_final", "victory_hero_final"],
+    returnScene: levelNumber >= 5 ? "ExtractScene" : "LevelCompleteScene"
   });
+});
 
   return;
 }
