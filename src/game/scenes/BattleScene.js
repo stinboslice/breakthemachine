@@ -709,7 +709,7 @@ if (this.runState.forceBoss) {
 
     this.registry.set("runState", this.runState);
 
-    this.scene.start("FinalBossTransformScene");
+    this.playFinalBossEvolution();
 
     return;
   }
