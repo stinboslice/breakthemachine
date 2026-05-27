@@ -225,16 +225,6 @@
       },
       {
         "type": "cutscene",
-        "dialogueId": "level5_boss_evolution"
-      },
-      {
-        "type": "battle",
-        "enemies": [
-          "level5_boss_phase2"
-        ]
-      },
-      {
-        "type": "cutscene",
         "dialogueId": "level5_boss_destruction"
       }
     ]
