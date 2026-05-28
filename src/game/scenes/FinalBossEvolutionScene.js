@@ -22,7 +22,7 @@ export class FinalBossEvolutionScene extends Phaser.Scene {
       strokeThickness: 6
     }).setOrigin(0.5).setDepth(10);
 
-    const boss = this.add.image(width / 2, height * 0.58, "final_boss_hurt");
+    const boss = this.add.image(width / 2, height * 0.78, "final_boss_hurt");
     boss.setOrigin(0.5, 1);
     boss.setScale(1.15);
     boss.setDepth(5);
@@ -94,8 +94,8 @@ export class FinalBossEvolutionScene extends Phaser.Scene {
 
       this.tweens.add({
         targets: boss,
-        scaleX: 1.85,
-        scaleY: 1.85,
+        scaleX: 1.45,
+        scaleY: 1.45,
         duration: 1100,
         ease: "Sine.easeOut"
       });
