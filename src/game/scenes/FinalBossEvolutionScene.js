@@ -24,7 +24,7 @@ export class FinalBossEvolutionScene extends Phaser.Scene {
 
     const boss = this.add.image(width / 2, height * 0.78, "final_boss_hurt");
     boss.setOrigin(0.5, 1);
-    boss.setScale(1.15);
+    boss.setScale(0.72);
     boss.setDepth(5);
 
     const flash = this.add.rectangle(width / 2, height / 2, width, height, 0xffffff, 0);
@@ -87,15 +87,15 @@ export class FinalBossEvolutionScene extends Phaser.Scene {
 
       boss.clearTint();
       boss.setAlpha(1);
-      boss.setScale(0.8);
+      boss.setScale(0.7);
 
       this.cameras.main.flash(500, 255, 255, 255);
       this.cameras.main.shake(1300, 0.018);
 
       this.tweens.add({
         targets: boss,
-        scaleX: 1.45,
-        scaleY: 1.45,
+        scaleX: 1.28,
+        scaleY: 1.28,
         duration: 1100,
         ease: "Sine.easeOut"
       });
