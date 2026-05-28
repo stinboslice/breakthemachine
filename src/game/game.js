@@ -10,7 +10,7 @@ import { LevelCompleteScene } from "./scenes/LevelCompleteScene.js";
 import { GameOverScene } from "./scenes/GameOverScene.js";
 import { ExtractScene } from "./scenes/ExtractScene.js";
 import { DialogueScene } from "./scenes/DialogueScene.js";
-
+import { FinalBossEvolutionScene } from "./scenes/FinalBossEvolutionScene.js";
 
 export function createGame() {
   return new Phaser.Game({
@@ -30,7 +30,8 @@ export function createGame() {
   RoomResultScene,
   BossDoorScene,
   BattleScene,
-  LevelCompleteScene,
+FinalBossEvolutionScene,
+LevelCompleteScene,
   GameOverScene,
   ExtractScene
       
