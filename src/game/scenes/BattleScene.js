@@ -87,7 +87,11 @@ this.add.rectangle(width / 2, height * 0.885, 560, 130, 0x050508, 0.62)
 
     this.playerSprite = this.add.image(width * 0.75, height * 0.9, `${playerBase}_idle`);
 this.playerSprite.setOrigin(0.5, 1);
-this.playerSprite.setScale(1);
+this.playerSprite.setScale(
+  this.runState.finalBossPhase2Started && !this.runState.finalBossPhase2Cleared
+    ? 0.5
+    : 1
+);
 
 // store base ground position
 this.playerGroundY = this.playerSprite.y;
@@ -182,7 +186,13 @@ this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
 
       const sprite = this.add.image(x, y, `${enemy.spritePrefix}_idle`);
 sprite.setOrigin(0.5, 1);
-sprite.setScale(enemy.role === "miniboss" ? 1.05 : 0.85);
+if (enemy.id === "level5_boss_phase2") {
+  sprite.setScale(1.65);
+} else if (enemy.id === "level5_boss_phase1") {
+  sprite.setScale(1.15);
+} else {
+  sprite.setScale(enemy.role === "miniboss" ? 1.05 : 0.85);
+}
 sprite.setInteractive({ useHandCursor: true });
 
 this.tweens.add({
@@ -448,8 +458,30 @@ duration: 260,
         this.logText.setText(`You hit ${target.name} for ${result.damage}.`);
 
         // DEATH HANDLING
-        if (result.enemyDefeated) {
-          if (targetGroup) {
+if (result.enemyDefeated) {
+  if (target.id === "level5_boss_phase1") {
+  this.runState.bossTransitionActive = true;
+  this.runState.finalBossPhase2Started = false;
+  this.runState.finalBossPhase2Cleared = false;
+  this.runState.forceBoss = true;
+  this.runState.bossCleared = false;
+
+  this.registry.set("runState", this.runState);
+
+  if (targetGroup) {
+    targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "hurt"));
+    targetGroup.sprite.clearTint();
+  }
+
+  this.cameras.main.shake(700, 0.012);
+
+  this.time.delayedCall(700, () => {
+    this.scene.start("FinalBossEvolutionScene");
+  });
+
+  return;
+}
+  if (targetGroup) {
             targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
 
             this.tweens.add({
@@ -553,8 +585,30 @@ duration: 360,
 
       this.logText.setText(`SPECIAL hit ${target.name} for ${result.damage}.`);
 
-      if (result.enemyDefeated && targetGroup) {
-        targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
+      if (result.enemyDefeated && target.id === "level5_boss_phase1") {
+  this.runState.bossTransitionActive = true;
+  this.runState.finalBossPhase2Started = false;
+  this.runState.finalBossPhase2Cleared = false;
+  this.runState.forceBoss = true;
+  this.runState.bossCleared = false;
+
+  this.registry.set("runState", this.runState);
+
+  if (targetGroup) {
+    targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "hurt"));
+    targetGroup.sprite.clearTint();
+  }
+
+  this.cameras.main.shake(700, 0.012);
+
+  this.time.delayedCall(900, () => {
+    this.scene.start("FinalBossEvolutionScene");
+  });
+
+  return;
+}
+if (result.enemyDefeated && targetGroup) {
+  targetGroup.sprite.setTexture(this.getEnemyFrameKey(target, "down"));
         targetGroup.sprite.clearTint();
 
         this.tweens.add({
@@ -682,52 +736,39 @@ enemyGroup.sprite.y = originalY;
   }
 
   handleVictory() {
-if (this.runState.forceBoss) {
-  const levelNumber = (this.runState.levelIndex || 0) + 1;
+  if (this.runState.forceBoss) {
+    const levelNumber = (this.runState.levelIndex || 0) + 1;
 
-  this.runState.forceBoss = false;
-  this.runState.bossCleared = true;
-
-  this.registry.set("runState", this.runState);
-
-  this.logText.setText("Boss cleared.");
-
-  const defeatChains = {
-    1: ["level1_miniboss_defeat", "level1_post_boss_reflection"],
-    2: ["level2_miniboss_defeat", "level2_post_boss_reflection"],
-    3: ["level3_miniboss_defeat", "level3_post_boss_reflection"],
-    4: ["level4_miniboss_defeat", "level4_post_boss_reflection"],
-    5: ["victory_final", "victory_hero_final"]
-  };
-
-  this.time.delayedCall(800, () => {
-  if (levelNumber >= 5 && !this.runState.finalBossPhase2Started) {
-    this.runState.bossTransitionActive = true;
-    this.runState.finalBossPhase2Started = true;
     this.runState.forceBoss = false;
-    this.runState.bossCleared = false;
+    this.runState.bossCleared = true;
+
+    if (levelNumber >= 5) {
+      this.runState.finalBossPhase2Cleared = true;
+      this.runState.bossTransitionActive = false;
+    }
 
     this.registry.set("runState", this.runState);
 
-    this.scene.start("FinalBossEvolutionScene");
+    const defeatChains = {
+      1: ["level1_miniboss_defeat", "level1_post_boss_reflection"],
+      2: ["level2_miniboss_defeat", "level2_post_boss_reflection"],
+      3: ["level3_miniboss_defeat", "level3_post_boss_reflection"],
+      4: ["level4_miniboss_defeat", "level4_post_boss_reflection"],
+      5: ["victory_final", "victory_hero_final"]
+    };
+
+    this.logText.setText(levelNumber >= 5 ? "The Machine breaks." : "Boss cleared.");
+
+    this.time.delayedCall(900, () => {
+      this.scene.start("DialogueScene", {
+        dialogueIds: defeatChains[levelNumber] || ["victory_final", "victory_hero_final"],
+        returnScene: levelNumber >= 5 ? "ExtractScene" : "LevelCompleteScene"
+      });
+    });
 
     return;
   }
 
-  if (levelNumber >= 5 && this.runState.finalBossPhase2Started) {
-    this.runState.finalBossPhase2Cleared = true;
-    this.runState.bossTransitionActive = false;
-    this.registry.set("runState", this.runState);
-  }
-
-  this.scene.start("DialogueScene", {
-    dialogueIds: defeatChains[levelNumber] || ["victory_final", "victory_hero_final"],
-    returnScene: levelNumber >= 5 ? "ExtractScene" : "LevelCompleteScene"
-  });
-});
-
-  return;
-}
   this.logText.setText("Wave cleared.");
 
   this.time.delayedCall(800, () => {
