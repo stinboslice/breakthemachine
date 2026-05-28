@@ -182,7 +182,11 @@ this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
 
     this.enemies.forEach((enemy, index) => {
       const x = startX + index * spacing;
-      const y = height * 0.82;
+      let y = height * 0.82;
+
+if (enemy.id === "level5_boss_phase2") {
+  y = height * 0.96;
+}
 
       const sprite = this.add.image(x, y, `${enemy.spritePrefix}_idle`);
 sprite.setOrigin(0.5, 1);
