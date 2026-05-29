@@ -202,6 +202,7 @@ export async function submitRunResult({
   eventLogJson = [],
   result,
   extractionLevel = 0,
+  pendingRewardCredits = 0,
   bossKills = 0,
   runtimeSeconds = 0,
   clientReportVersion = "v1"
@@ -225,6 +226,7 @@ export async function submitRunResult({
     eventLogJson,
     result,
     extractionLevel,
+    pendingRewardCredits,
     bossKills,
     runtimeSeconds,
     clientReportVersion
