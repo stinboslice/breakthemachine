@@ -846,20 +846,24 @@ const runId = crypto.randomUUID
 
 runState.runId = runId;
 
-try {
-  if (runState.totalBurn > 0) {
+if (runState.totalBurn > 0) {
+  try {
     await spendRunCredits({
       runId,
       selectedBuffs: this.selectedBuffs,
       weaponTier: this.selectedWeaponTier
     });
+  } catch (err) {
+    alert(err?.message || "Could not spend credits.");
+    return;
+  }
 
+  try {
     const profile = await getPlayerProfile();
     this.playerProfile = profile.profile || this.playerProfile;
+  } catch (err) {
+    console.warn("Profile refresh after spend failed:", err?.message || err);
   }
-} catch (err) {
-  alert(err?.message || "Could not spend credits.");
-  return;
 }
 
 const pendingLogs = window.ELF_PENDING_SETUP_LOG || [];
