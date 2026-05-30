@@ -2,6 +2,13 @@ import Phaser from "phaser";
 import { exportRunLogCsv } from "../systems/EventLogger.js";
 import { submitRunResult } from "../systems/WalletManager.js";
 
+function getFallbackRewardCredits(levelNumber) {
+  if (levelNumber === 1) return 1;
+  if (levelNumber === 2) return 2;
+  if (levelNumber === 3) return 4;
+  if (levelNumber === 4) return 7;
+  return 12;
+}
 export class ExtractScene extends Phaser.Scene {
   constructor() {
     super("ExtractScene");
@@ -70,7 +77,10 @@ export class ExtractScene extends Phaser.Scene {
   eventLogJson: runState.eventLog || [],
   result: "extracted",
   extractionLevel: levelReached,
-  pendingRewardCredits: runState.pendingRewardCredits || 0,
+  pendingRewardCredits:
+  runState.pendingRewardCredits > 0
+    ? runState.pendingRewardCredits
+    : getFallbackRewardCredits(levelReached),
   bossKills: runState.bossKills || 0,
   runtimeSeconds: runState.runtimeSeconds || 0,
   clientReportVersion: "v1"
