@@ -59,7 +59,7 @@ export class ExtractScene extends Phaser.Scene {
     button.setScale(0.45);
 
     button.on("pointerdown", () => {
-      this.scene.start("SetupScene");
+      this.scene.start("RunSummaryScene");
     });
   }
 
