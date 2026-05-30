@@ -59,7 +59,7 @@ export class GameOverScene extends Phaser.Scene {
     console.error(err);
   }
 
-  this.scene.start("SetupScene");
+  this.scene.start("RunSummaryScene");
 });
   }
 
