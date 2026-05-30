@@ -69,6 +69,14 @@ export class ExtractScene extends Phaser.Scene {
     try {
       const levelReached = Number(runState.levelIndex || 0) + 1;
 
+console.log("EXTRACT SUBMIT", {
+  runId: runState.runId,
+  extractionLevel: levelReached,
+  pendingRewardCredits: runState.pendingRewardCredits,
+  rewardSubmitted: runState.rewardSubmitted,
+  eventLogLength: runState.eventLog?.length || 0
+});
+
       const result = await submitRunResult({
   runId: runState.runId,
   classId: runState.player?.classId,
