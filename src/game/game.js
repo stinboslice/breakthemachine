@@ -11,6 +11,7 @@ import { GameOverScene } from "./scenes/GameOverScene.js";
 import { ExtractScene } from "./scenes/ExtractScene.js";
 import { DialogueScene } from "./scenes/DialogueScene.js";
 import { FinalBossEvolutionScene } from "./scenes/FinalBossEvolutionScene.js";
+import { RunSummaryScene } from "./scenes/RunSummaryScene.js";
 
 export function createGame() {
   return new Phaser.Game({
@@ -33,7 +34,8 @@ export function createGame() {
 FinalBossEvolutionScene,
 LevelCompleteScene,
   GameOverScene,
-  ExtractScene
+  ExtractScene,
+      RunSummaryScene
       
 ],
     scale: {
