@@ -61,8 +61,8 @@ export class FinalBossEvolutionScene extends Phaser.Scene {
 
       this.tweens.add({
         targets: boss,
-        scaleX: 1.1 + index * 0.08,
-        scaleY: 1.1 + index * 0.08,
+        scaleX: 0.72 + index * 0.045,
+scaleY: 0.72 + index * 0.045,
         duration: Math.max(45, 170 - index * 16),
         yoyo: true,
         onComplete: () => {
@@ -94,8 +94,8 @@ export class FinalBossEvolutionScene extends Phaser.Scene {
 
       this.tweens.add({
         targets: boss,
-        scaleX: 1.28,
-        scaleY: 1.28,
+        scaleX: 1.08,
+        scaleY: 1.08,
         duration: 1100,
         ease: "Sine.easeOut"
       });
