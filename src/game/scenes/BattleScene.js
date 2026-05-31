@@ -191,11 +191,11 @@ if (enemy.id === "level5_boss_phase2") {
       const sprite = this.add.image(x, y, `${enemy.spritePrefix}_idle`);
 sprite.setOrigin(0.5, 1);
 if (enemy.id === "level5_boss_phase2") {
-  sprite.setScale(1.38);
+  sprite.setScale(1.28);
 } else if (enemy.id === "level5_boss_phase1") {
-  sprite.setScale(1.15);
+  sprite.setScale(1.00);
 } else {
-  sprite.setScale(enemy.role === "miniboss" ? 1.05 : 0.85);
+  sprite.setScale(enemy.role === "miniboss" ? 1.00 : 0.82);
 }
 sprite.setInteractive({ useHandCursor: true });
 
