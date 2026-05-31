@@ -18,6 +18,14 @@ function getPlayerSpriteBase(classId) {
   return "player_rogue";
 }
 
+function formatBuffs(buffs = []) {
+  if (!buffs.length) return "None";
+
+  return buffs
+    .map(buff => `${buff.id} | Tier ${buff.tier || 1}`)
+    .join("\n");
+}
+
 export class BattleScene extends Phaser.Scene {
   constructor() {
     super("BattleScene");
@@ -37,6 +45,7 @@ this.specialButton = null;
 this.actionLocked = false;
 this.playerBobTween = null;
 this.playerGroundY = 0;
+this.detailObjects = [];
   }
 
   create() {
@@ -150,6 +159,20 @@ this.specialButton = this.add.text(width / 2 + 95, height * 0.88, "SPECIAL", {
 }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(21);
 
 this.specialButton.on("pointerdown", () => this.handleSpecialAttack());
+
+const detailsButton = this.add.text(width * 0.08, height * 0.88, "DETAILS", {
+  fontFamily: "Georgia",
+  fontSize: "18px",
+  color: "#f4e7c1",
+  backgroundColor: "#111111",
+  padding: { x: 18, y: 9 },
+  stroke: "#000000",
+  strokeThickness: 3
+}).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(21);
+
+detailsButton.on("pointerdown", () => {
+  this.openBattleDetailPanel();
+});
 
 this.targetText = this.add.text(width / 2, height * 0.96, "TARGET: AUTO", {
   fontFamily: "Georgia",
@@ -738,6 +761,98 @@ enemyGroup.sprite.y = originalY;
 
     this.processTurn();
   }
+
+closeBattleDetailPanel() {
+  if (!this.detailObjects) return;
+
+  this.detailObjects.forEach(obj => obj.destroy());
+  this.detailObjects = [];
+}
+
+openBattleDetailPanel() {
+  this.closeBattleDetailPanel();
+
+  const w = this.scale.width;
+  const h = this.scale.height;
+  const runState = this.runState || this.registry.get("runState");
+  const player = runState?.player || {};
+  const route = runState?.route || {};
+
+  const add = obj => {
+    this.detailObjects.push(obj);
+    return obj;
+  };
+
+  add(
+    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.72)
+      .setInteractive()
+      .setDepth(5000)
+  );
+
+  add(
+    this.add.rectangle(w / 2, h / 2, Math.min(760, w * 0.9), Math.min(560, h * 0.78), 0x070707, 0.96)
+      .setStrokeStyle(2, 0xc9b56d, 0.85)
+      .setDepth(5001)
+  );
+
+  add(this.add.text(w / 2, h * 0.18, "RUN DETAILS", {
+    fontFamily: "Georgia",
+    fontSize: "34px",
+    color: "#f4e7c1",
+    stroke: "#000000",
+    strokeThickness: 5
+  }).setOrigin(0.5).setDepth(5002));
+
+  const levelNumber = Number(runState?.levelIndex || 0) + 1;
+
+  const lines = [
+    `Level: ${levelNumber}`,
+    `Pending Credits: ${runState?.pendingRewardCredits || 0}`,
+    `Weapon Tier: ${player.weaponTier || "base"}`,
+    "",
+    "BUFFS",
+    formatBuffs(player.buffs || []),
+    "",
+    "ACTIVE EFFECTS",
+    `Trap Stacks: ${route.trapStacks || 0}`,
+    `Trap Damage Mult: ${route.trapDamageMult || 1}`,
+    `Reward Damage Mult: ${route.rewardDamageMult || 1}`,
+    `Reward Crit Flat: ${route.rewardCritFlat || 0}`,
+    `First Hit Block: ${route.rewardFirstHitBlock && !route.rewardFirstHitBlockUsed ? "Ready" : "Inactive"}`,
+    "",
+    "COMBAT",
+    `HP: ${player.hp || 0}/${player.maxHp || 0}`,
+    `Crit: ${player.crit || 0}%`,
+    `Block Chance: ${Math.round((player.blockChance || 0) * 100)}%`,
+    `Double Strike: ${Math.round((player.doubleStrikeChance || 0) * 100)}%`,
+    `Special Uses: ${player.specialUsesRemaining || 0}/${player.specialUsesMax || 0}`
+  ];
+
+  add(this.add.text(w / 2, h * 0.47, lines.join("\n"), {
+    fontFamily: "Georgia",
+    fontSize: "18px",
+    color: "#ffffff",
+    stroke: "#000000",
+    strokeThickness: 3,
+    align: "left",
+    lineSpacing: 5,
+    wordWrap: { width: Math.min(620, w * 0.78) }
+  }).setOrigin(0.5).setDepth(5002));
+
+  const closeButton = add(this.add.text(w / 2, h * 0.82, "CLOSE", {
+    fontFamily: "Georgia",
+    fontSize: "22px",
+    color: "#f4e7c1",
+    backgroundColor: "#7b1113",
+    padding: { x: 30, y: 12 },
+    stroke: "#000000",
+    strokeThickness: 3
+  }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5002));
+
+  closeButton.on("pointerdown", () => {
+    this.closeBattleDetailPanel();
+  });
+}
 
   handleVictory() {
   if (this.runState.forceBoss) {
