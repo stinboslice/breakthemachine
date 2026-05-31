@@ -87,10 +87,12 @@ export function enemyAttack(runState, enemy) {
   }
 
   if (enemy.abilities?.includes("heavy_strike") && Math.random() <= 0.2) {
-    damage = Math.floor(damage * 1.5);
-  }
+  damage = Math.floor(damage * 1.5);
+}
 
-  if (runState.route.rewardFirstHitBlock && !runState.route.rewardFirstHitBlockUsed) {
+damage = Math.floor(damage * (runState.route?.trapDamageMult || 1));
+
+if (runState.route.rewardFirstHitBlock && !runState.route.rewardFirstHitBlockUsed) {
     runState.route.rewardFirstHitBlockUsed = true;
     damage = 0;
   } else if (player.blockChance > 0 && Math.random() <= player.blockChance) {
