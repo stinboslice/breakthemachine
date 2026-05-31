@@ -18,12 +18,54 @@ function getPlayerSpriteBase(classId) {
   return "player_rogue";
 }
 
-function formatBuffs(buffs = []) {
-  if (!buffs.length) return "None";
+function getBuffEffectText(buff) {
+  const tier = buff.tier || 1;
 
-  return buffs
-    .map(buff => `${buff.id} | Tier ${buff.tier || 1}`)
-    .join("\n");
+  if (buff.id === "hp_boost") {
+    const value = tier === 1 ? 10 : tier === 2 ? 15 : 20;
+    return `HP Boost Tier ${tier}\nAdds ${value} max HP.`;
+  }
+
+  if (buff.id === "damage_boost") {
+    const value = tier === 1 ? 5 : tier === 2 ? 7.5 : 10;
+    return `Damage Boost Tier ${tier}\nAdds ${value}% outgoing damage.`;
+  }
+
+  if (buff.id === "speed_boost") {
+    const value = tier === 1 ? 5 : tier === 2 ? 7.5 : 10;
+    return `Speed Boost Tier ${tier}\nAdds ${value}% initiative speed.`;
+  }
+
+  if (buff.id === "crit_boost") {
+    const value = tier === 1 ? 5 : tier === 2 ? 7.5 : 10;
+    return `Crit Boost Tier ${tier}\nAdds ${value}% crit chance.`;
+  }
+
+  if (buff.id === "block") {
+    const value = tier === 1 ? 10 : tier === 2 ? 15 : 20;
+    return `Block Tier ${tier}\n${value}% chance to negate incoming damage.`;
+  }
+
+  if (buff.id === "double_strike") {
+    const value = tier === 1 ? 7.5 : tier === 2 ? 11 : 15;
+    return `Double Strike Tier ${tier}\n${value}% chance to attack twice.`;
+  }
+
+  return `${buff.id} Tier ${tier}`;
+}
+
+function formatActiveBuffEffects(buffs = []) {
+  if (!buffs.length) return "No active buffs.";
+
+  return buffs.map(getBuffEffectText).join("\n\n");
+}
+
+function formatPercent(value) {
+  return `${Math.round((Number(value || 0)) * 100)}%`;
+}
+
+function formatMult(value) {
+  return `${Math.round((Number(value || 1) - 1) * 100)}%`;
 }
 
 export class BattleScene extends Phaser.Scene {
@@ -784,67 +826,79 @@ openBattleDetailPanel() {
   };
 
   add(
-    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.72)
+    this.add.rectangle(w / 2, h / 2, w, h, 0x000000, 0.68)
       .setInteractive()
       .setDepth(5000)
   );
 
   add(
-    this.add.rectangle(w / 2, h / 2, Math.min(760, w * 0.9), Math.min(560, h * 0.78), 0x070707, 0.96)
+    this.add.rectangle(w / 2, h / 2, Math.min(620, w * 0.82), Math.min(430, h * 0.60), 0x070707, 0.96)
       .setStrokeStyle(2, 0xc9b56d, 0.85)
       .setDepth(5001)
   );
 
-  add(this.add.text(w / 2, h * 0.18, "RUN DETAILS", {
+  add(this.add.text(w / 2, h * 0.27, "ACTIVE EFFECTS", {
     fontFamily: "Georgia",
-    fontSize: "34px",
+    fontSize: "30px",
     color: "#f4e7c1",
     stroke: "#000000",
     strokeThickness: 5
   }).setOrigin(0.5).setDepth(5002));
 
-  const levelNumber = Number(runState?.levelIndex || 0) + 1;
+  const activeRoomEffects = [];
 
-  const lines = [
-    `Level: ${levelNumber}`,
-    `Pending Credits: ${runState?.pendingRewardCredits || 0}`,
-    `Weapon Tier: ${player.weaponTier || "base"}`,
-    "",
-    "BUFFS",
-    formatBuffs(player.buffs || []),
-    "",
-    "ACTIVE EFFECTS",
-    `Trap Stacks: ${route.trapStacks || 0}`,
-    `Trap Damage Mult: ${route.trapDamageMult || 1}`,
-    `Reward Damage Mult: ${route.rewardDamageMult || 1}`,
-    `Reward Crit Flat: ${route.rewardCritFlat || 0}`,
-    `First Hit Block: ${route.rewardFirstHitBlock && !route.rewardFirstHitBlockUsed ? "Ready" : "Inactive"}`,
-    "",
-    "COMBAT",
-    `HP: ${player.hp || 0}/${player.maxHp || 0}`,
-    `Crit: ${player.crit || 0}%`,
-    `Block Chance: ${Math.round((player.blockChance || 0) * 100)}%`,
-    `Double Strike: ${Math.round((player.doubleStrikeChance || 0) * 100)}%`,
-    `Special Uses: ${player.specialUsesRemaining || 0}/${player.specialUsesMax || 0}`
-  ];
+  if ((route.rewardDamageMult || 1) > 1) {
+    activeRoomEffects.push(`Reward Damage Bonus\nOutgoing damage increased by ${formatMult(route.rewardDamageMult)}.`);
+  }
 
-  add(this.add.text(w / 2, h * 0.47, lines.join("\n"), {
+  if ((route.rewardCritFlat || 0) > 0) {
+    activeRoomEffects.push(`Reward Crit Bonus\nCrit chance increased by ${route.rewardCritFlat}%.`);
+  }
+
+  if (route.rewardFirstHitBlock && !route.rewardFirstHitBlockUsed) {
+    activeRoomEffects.push("First Hit Block\nYour next incoming hit will be blocked.");
+  }
+
+  if ((route.trapDamageMult || 1) > 1) {
+    activeRoomEffects.push(`Trap Wounds\nIncoming damage increased by ${formatMult(route.trapDamageMult)}.`);
+  }
+
+  if (!activeRoomEffects.length) {
+    activeRoomEffects.push("No active room effects.");
+  }
+
+  const text = [
+    "BUFF EFFECTS",
+    formatActiveBuffEffects(player.buffs || []),
+    "",
+    "ROOM EFFECTS",
+    activeRoomEffects.join("\n\n"),
+    "",
+    "CURRENT TOTALS",
+    `Max HP: ${player.maxHp || 0}`,
+    `Outgoing Damage Multiplier: ${Number(player.attackMultiplier || 1).toFixed(2)}`,
+    `Crit Chance: ${player.crit || 0}%`,
+    `Block Chance: ${formatPercent(player.blockChance)}`,
+    `Double Strike Chance: ${formatPercent(player.doubleStrikeChance)}`
+  ].join("\n");
+
+  add(this.add.text(w / 2, h * 0.50, text, {
     fontFamily: "Georgia",
-    fontSize: "18px",
+    fontSize: "16px",
     color: "#ffffff",
     stroke: "#000000",
     strokeThickness: 3,
     align: "left",
-    lineSpacing: 5,
-    wordWrap: { width: Math.min(620, w * 0.78) }
+    lineSpacing: 4,
+    wordWrap: { width: Math.min(500, w * 0.70) }
   }).setOrigin(0.5).setDepth(5002));
 
-  const closeButton = add(this.add.text(w / 2, h * 0.82, "CLOSE", {
+  const closeButton = add(this.add.text(w / 2, h * 0.75, "CLOSE", {
     fontFamily: "Georgia",
-    fontSize: "22px",
+    fontSize: "20px",
     color: "#f4e7c1",
     backgroundColor: "#7b1113",
-    padding: { x: 30, y: 12 },
+    padding: { x: 28, y: 10 },
     stroke: "#000000",
     strokeThickness: 3
   }).setOrigin(0.5).setInteractive({ useHandCursor: true }).setDepth(5002));
