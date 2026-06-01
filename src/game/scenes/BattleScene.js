@@ -24,7 +24,10 @@ function formatHallwayEffects(effects = []) {
   }
 
   return effects
-    .map(effect => `${effect.name}\n${effect.description}`)
+    .map(effect => {
+      const countLabel = effect.count && effect.count > 1 ? ` x${effect.count}` : "";
+      return `${effect.name}${countLabel}\n${effect.description}`;
+    })
     .join("\n\n");
 }
 
@@ -765,6 +768,11 @@ enemyGroup.sprite.y = originalY;
   }
 
 closeBattleDetailPanel() {
+  if (this.detailWheelHandler) {
+    this.input.off("wheel", this.detailWheelHandler);
+    this.detailWheelHandler = null;
+  }
+
   if (!this.detailObjects) return;
 
   this.detailObjects.forEach(obj => obj.destroy());
@@ -794,20 +802,18 @@ openBattleDetailPanel() {
       .setDepth(5000)
   );
 
+  const panelW = Math.min(600, w * 0.84);
+  const panelH = Math.min(390, h * 0.56);
+  const panelX = w / 2;
+  const panelY = h / 2;
+
   add(
-    this.add.rectangle(
-      w / 2,
-      h / 2,
-      Math.min(600, w * 0.84),
-      Math.min(390, h * 0.56),
-      0x070707,
-      0.96
-    )
+    this.add.rectangle(panelX, panelY, panelW, panelH, 0x070707, 0.96)
       .setStrokeStyle(2, 0xc9b56d, 0.85)
       .setDepth(5001)
   );
 
-  add(this.add.text(w / 2, h * 0.29, "HALLWAY EFFECTS", {
+  add(this.add.text(panelX, panelY - panelH * 0.40, "HALLWAY EFFECTS", {
     fontFamily: "Georgia",
     fontSize: "28px",
     color: "#f4e7c1",
@@ -826,7 +832,19 @@ openBattleDetailPanel() {
     formatHallwayEffects(traps)
   ].join("\n");
 
-  add(this.add.text(w / 2, h * 0.50, text, {
+  const maskX = panelX - panelW * 0.40;
+  const maskY = panelY - panelH * 0.26;
+  const maskW = panelW * 0.80;
+  const maskH = panelH * 0.46;
+
+  const maskShape = this.make.graphics({ x: 0, y: 0, add: false });
+  maskShape.fillStyle(0xffffff);
+  maskShape.fillRect(maskX, maskY, maskW, maskH);
+
+  const textMask = maskShape.createGeometryMask();
+  this.detailObjects.push(maskShape);
+
+  const effectsText = add(this.add.text(maskX, maskY, text, {
     fontFamily: "Georgia",
     fontSize: "16px",
     color: "#ffffff",
@@ -834,10 +852,59 @@ openBattleDetailPanel() {
     strokeThickness: 3,
     align: "left",
     lineSpacing: 4,
-    wordWrap: { width: Math.min(500, w * 0.72) }
+    wordWrap: { width: maskW }
+  }).setDepth(5002));
+
+  effectsText.setMask(textMask);
+
+  let scrollY = 0;
+  const textStartY = maskY;
+  const maxScroll = Math.max(0, effectsText.height - maskH);
+
+  const updateScroll = nextValue => {
+    scrollY = Phaser.Math.Clamp(nextValue, 0, maxScroll);
+    effectsText.y = textStartY - scrollY;
+  };
+
+  this.detailWheelHandler = (pointer, objects, dx, dy) => {
+    updateScroll(scrollY + dy * 0.7);
+  };
+
+  this.input.on("wheel", this.detailWheelHandler);
+
+  let dragging = false;
+  let dragStartY = 0;
+  let dragStartScroll = 0;
+
+  effectsText.setInteractive(
+    new Phaser.Geom.Rectangle(0, 0, maskW, Math.max(maskH, effectsText.height)),
+    Phaser.Geom.Rectangle.Contains
+  );
+
+  effectsText.on("pointerdown", pointer => {
+    dragging = true;
+    dragStartY = pointer.y;
+    dragStartScroll = scrollY;
+  });
+
+  this.input.on("pointermove", pointer => {
+    if (!dragging || !pointer.isDown) return;
+    updateScroll(dragStartScroll + (dragStartY - pointer.y));
+  });
+
+  this.input.on("pointerup", () => {
+    dragging = false;
+  });
+
+  add(this.add.text(panelX, panelY + panelH * 0.24, "Swipe or scroll to read", {
+    fontFamily: "Georgia",
+    fontSize: "14px",
+    color: "#c9b56d",
+    stroke: "#000000",
+    strokeThickness: 3
   }).setOrigin(0.5).setDepth(5002));
 
-  const closeButton = add(this.add.text(w / 2, h * 0.75, "CLOSE", {
+  const closeButton = add(this.add.text(panelX, panelY + panelH * 0.36, "CLOSE", {
     fontFamily: "Georgia",
     fontSize: "20px",
     color: "#f4e7c1",
