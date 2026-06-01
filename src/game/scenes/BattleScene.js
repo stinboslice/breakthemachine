@@ -18,54 +18,14 @@ function getPlayerSpriteBase(classId) {
   return "player_rogue";
 }
 
-function getBuffEffectText(buff) {
-  const tier = buff.tier || 1;
-
-  if (buff.id === "hp_boost") {
-    const value = tier === 1 ? 10 : tier === 2 ? 15 : 20;
-    return `HP Boost Tier ${tier}\nAdds ${value} max HP.`;
+function formatHallwayEffects(effects = []) {
+  if (!effects.length) {
+    return "None";
   }
 
-  if (buff.id === "damage_boost") {
-    const value = tier === 1 ? 5 : tier === 2 ? 7.5 : 10;
-    return `Damage Boost Tier ${tier}\nAdds ${value}% outgoing damage.`;
-  }
-
-  if (buff.id === "speed_boost") {
-    const value = tier === 1 ? 5 : tier === 2 ? 7.5 : 10;
-    return `Speed Boost Tier ${tier}\nAdds ${value}% initiative speed.`;
-  }
-
-  if (buff.id === "crit_boost") {
-    const value = tier === 1 ? 5 : tier === 2 ? 7.5 : 10;
-    return `Crit Boost Tier ${tier}\nAdds ${value}% crit chance.`;
-  }
-
-  if (buff.id === "block") {
-    const value = tier === 1 ? 10 : tier === 2 ? 15 : 20;
-    return `Block Tier ${tier}\n${value}% chance to negate incoming damage.`;
-  }
-
-  if (buff.id === "double_strike") {
-    const value = tier === 1 ? 7.5 : tier === 2 ? 11 : 15;
-    return `Double Strike Tier ${tier}\n${value}% chance to attack twice.`;
-  }
-
-  return `${buff.id} Tier ${tier}`;
-}
-
-function formatActiveBuffEffects(buffs = []) {
-  if (!buffs.length) return "No active buffs.";
-
-  return buffs.map(getBuffEffectText).join("\n\n");
-}
-
-function formatPercent(value) {
-  return `${Math.round((Number(value || 0)) * 100)}%`;
-}
-
-function formatMult(value) {
-  return `${Math.round((Number(value || 1) - 1) * 100)}%`;
+  return effects
+    .map(effect => `${effect.name}\n${effect.description}`)
+    .join("\n\n");
 }
 
 export class BattleScene extends Phaser.Scene {
@@ -817,8 +777,11 @@ openBattleDetailPanel() {
   const w = this.scale.width;
   const h = this.scale.height;
   const runState = this.runState || this.registry.get("runState");
-  const player = runState?.player || {};
-  const route = runState?.route || {};
+  const effects = runState?.route?.activeHallwayEffects || [];
+
+  const rewards = effects.filter(effect => effect.category === "reward");
+  const corrupt = effects.filter(effect => effect.category === "corrupt");
+  const traps = effects.filter(effect => effect.category === "trap");
 
   const add = obj => {
     this.detailObjects.push(obj);
@@ -832,54 +795,35 @@ openBattleDetailPanel() {
   );
 
   add(
-    this.add.rectangle(w / 2, h / 2, Math.min(620, w * 0.82), Math.min(430, h * 0.60), 0x070707, 0.96)
+    this.add.rectangle(
+      w / 2,
+      h / 2,
+      Math.min(600, w * 0.84),
+      Math.min(390, h * 0.56),
+      0x070707,
+      0.96
+    )
       .setStrokeStyle(2, 0xc9b56d, 0.85)
       .setDepth(5001)
   );
 
-  add(this.add.text(w / 2, h * 0.27, "ACTIVE EFFECTS", {
+  add(this.add.text(w / 2, h * 0.29, "HALLWAY EFFECTS", {
     fontFamily: "Georgia",
-    fontSize: "30px",
+    fontSize: "28px",
     color: "#f4e7c1",
     stroke: "#000000",
     strokeThickness: 5
   }).setOrigin(0.5).setDepth(5002));
 
-  const activeRoomEffects = [];
-
-  if ((route.rewardDamageMult || 1) > 1) {
-    activeRoomEffects.push(`Reward Damage Bonus\nOutgoing damage increased by ${formatMult(route.rewardDamageMult)}.`);
-  }
-
-  if ((route.rewardCritFlat || 0) > 0) {
-    activeRoomEffects.push(`Reward Crit Bonus\nCrit chance increased by ${route.rewardCritFlat}%.`);
-  }
-
-  if (route.rewardFirstHitBlock && !route.rewardFirstHitBlockUsed) {
-    activeRoomEffects.push("First Hit Block\nYour next incoming hit will be blocked.");
-  }
-
-  if ((route.trapDamageMult || 1) > 1) {
-    activeRoomEffects.push(`Trap Wounds\nIncoming damage increased by ${formatMult(route.trapDamageMult)}.`);
-  }
-
-  if (!activeRoomEffects.length) {
-    activeRoomEffects.push("No active room effects.");
-  }
-
   const text = [
-    "BUFF EFFECTS",
-    formatActiveBuffEffects(player.buffs || []),
+    "REWARD",
+    formatHallwayEffects(rewards),
     "",
-    "ROOM EFFECTS",
-    activeRoomEffects.join("\n\n"),
+    "CORRUPT",
+    formatHallwayEffects(corrupt),
     "",
-    "CURRENT TOTALS",
-    `Max HP: ${player.maxHp || 0}`,
-    `Outgoing Damage Multiplier: ${Number(player.attackMultiplier || 1).toFixed(2)}`,
-    `Crit Chance: ${player.crit || 0}%`,
-    `Block Chance: ${formatPercent(player.blockChance)}`,
-    `Double Strike Chance: ${formatPercent(player.doubleStrikeChance)}`
+    "TRAP",
+    formatHallwayEffects(traps)
   ].join("\n");
 
   add(this.add.text(w / 2, h * 0.50, text, {
@@ -890,7 +834,7 @@ openBattleDetailPanel() {
     strokeThickness: 3,
     align: "left",
     lineSpacing: 4,
-    wordWrap: { width: Math.min(500, w * 0.70) }
+    wordWrap: { width: Math.min(500, w * 0.72) }
   }).setOrigin(0.5).setDepth(5002));
 
   const closeButton = add(this.add.text(w / 2, h * 0.75, "CLOSE", {
@@ -906,6 +850,7 @@ openBattleDetailPanel() {
   closeButton.on("pointerdown", () => {
     this.closeBattleDetailPanel();
   });
+}
 }
 
   handleVictory() {
