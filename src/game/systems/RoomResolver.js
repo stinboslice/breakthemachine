@@ -37,8 +37,20 @@ function randomChoice(list) {
 function addHallwayEffect(runState, effect) {
   ensureRoute(runState);
 
+  const existing = runState.route.activeHallwayEffects.find(
+    item => item.id === effect.id
+  );
+
+  if (existing) {
+    existing.count = (existing.count || 1) + 1;
+    existing.description = effect.description;
+    existing.updatedAt = new Date().toISOString();
+    return;
+  }
+
   runState.route.activeHallwayEffects.push({
     ...effect,
+    count: 1,
     createdAt: new Date().toISOString()
   });
 }
@@ -177,11 +189,11 @@ function applyTrap(runState) {
   damagePlayer(runState, trapDamage);
 
   addHallwayEffect(runState, {
-    id: "trap_pressure",
-    category: "trap",
-    name: "Trap Pressure",
-    description: `Took ${trapDamage} trap damage. Enemy damage increased by 10%.`
-  });
+  id: "trap_pressure",
+  category: "trap",
+  name: "Trap Pressure",
+  description: `${runState.route.trapStacks} trap stack${runState.route.trapStacks === 1 ? "" : "s"}. Took ${trapDamage} trap damage. Enemy damage increased by ${Math.round(((runState.route.trapDamageMult || 1) - 1) * 100)}%.`
+});
 }
 
 export function resolveRoom(runState, roomType) {
