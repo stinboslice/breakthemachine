@@ -851,7 +851,7 @@ openBattleDetailPanel() {
     this.closeBattleDetailPanel();
   });
 }
-}
+
 
   handleVictory() {
   if (this.runState.forceBoss) {
